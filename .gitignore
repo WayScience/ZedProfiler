@@ -174,3 +174,5 @@ cython_debug/
 .pypirc
 data/*
 testing.ipynb
+
+.DS_Store
