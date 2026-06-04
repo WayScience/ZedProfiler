@@ -13,14 +13,14 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       # checks out the repo
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.2
       # run pre-commit
       - name: Python setup
         uses: actions/setup-python@v6
         with:
           python-version: "3.13"
       - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@v8.1.0
       - name: Install just
         run: sudo apt-get update && sudo apt-get install -y just
       - uses: pre-commit/action@v3.0.1
@@ -37,26 +37,26 @@ jobs:
       OS: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.2
       - name: Python setup
         uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python_version }}
       - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@v8.1.0
       - name: Run pytest
         run: uv run --frozen pytest
   coverage_and_badge:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.2
       - name: Python setup
         uses: actions/setup-python@v6
         with:
           python-version: "3.13"
       - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@v8.1.0
       - name: Install just
         run: sudo apt-get update && sudo apt-get install -y just
       - name: Run coverage check and update badge
