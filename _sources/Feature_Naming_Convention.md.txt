@@ -87,7 +87,7 @@ The `<channel>` component:
 - MAY use pascalcase capitalization
 - MAY use hyphen-separated channel combinations for colocalization features (e.g., `DNA-mito`)
 - MUST list channels in alphabetical order when combined (e.g., `DNA-mito` not `mito-DNA`)
-- MUST be set to `NoChannel` for channel-independent features (e.g., areasizeshape)
+- MUST be set to `NoChannel` for channel-independent features (e.g., volumesizeshape)
 
 **Example:** `DNA`, `Mito`, `DNA-Mito`
 
@@ -97,7 +97,7 @@ The `<featuretype>` component:
 
 - MUST identify the category or method of feature extraction
 - MUST be one of the following enumerated values:
-  - `Areasizeshape` - morphological measurements (area, volume, shape descriptors)
+  - `volumesizeshape` - morphological measurements (area, volume, shape descriptors)
   - `Colocalization` - channel colocalization metrics
   - `Granularity` - granular spectrum and texture-at-scale features
   - `Intensity` - pixel intensity statistics
@@ -138,7 +138,7 @@ Valid feature names conforming to this specification:
 Nuclei_DNA_Intensity_MeanIntensity
 Cytoplasm_Mito_Texture_Entropy-256-3
 Cell_DNA-Mito_Colocalization_Correlation
-Organoid_NoChannel_AreaSizeShape_Volume
+Organoid_NoChannel_volumesizeshape_Volume
 Nuclei_NoChannel_Neighbors_AdjacentCount
 Cell_Mito_Granularity_Spectrum-10
 Nuclei_DNA_SAMMed3D_CLSFeature-512

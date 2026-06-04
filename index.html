@@ -27,18 +27,18 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css?v=5661ff97" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="_static/documentation_options.js?v=5929fcd5"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
@@ -68,7 +68,9 @@
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -312,7 +314,7 @@
   <!-- include contents from the root readme -->
 <section id="zedprofiler">
 <h1>ZedProfiler<a class="headerlink" href="#zedprofiler" title="Link to this heading">#</a></h1>
-<p><a class="reference internal" href="#quality-gates"><img alt="Coverage" src="https://img.shields.io/badge/coverage-94%25-brightgreen" /></a></p>
+<p><a class="reference internal" href="#quality-gates"><img alt="Coverage" src="https://img.shields.io/badge/coverage-92%25-brightgreen" /></a></p>
 <p>CPU-first 3D image feature extraction toolkit for high-content and high-throughput image-based profiling.</p>
 <p>This repository is used for image-based feature extraction of objects in 3D microscopy images.
 In this use case we extract freatures from single cells in 3D volumetric microscopy images.
@@ -326,12 +328,55 @@ ZedProfiler is extensible to any fluorescence microscopy image modality, and is 
 </section>
 <section id="quick-usage-api-shape">
 <h2>Quick usage (API shape)<a class="headerlink" href="#quick-usage-api-shape" title="Link to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">zedprofiler</span><span class="w"> </span><span class="kn">import</span> <span class="n">colocalization</span>  <span class="c1"># promoted convenience import</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">zedprofiler.featurization</span><span class="w"> </span><span class="kn">import</span> <span class="n">texture</span>  <span class="c1"># stays in feature namespace</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="c1"># Implementation is scaffolded in PR 1 and will be completed in module PRs.</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">colocalization</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-<span class="n">texture_result</span> <span class="o">=</span> <span class="n">texture</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">zedprofiler.IO.loading_classes</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImageSetConfig</span><span class="p">,</span> <span class="n">ImageSetLoader</span><span class="p">,</span> <span class="n">ObjectLoader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">zedprofiler.featurization.volumesizeshape</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute</span> <span class="k">as</span> <span class="n">compute_volumesizeshape</span>
+
+<span class="n">image_set_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span>
+        <span class="s2">&quot;~/mnt/bandicoot/NF1_organoid_data/data/NF0014_T1/zstack_images/C2-1/&quot;</span>
+        <span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">mask_set_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span>
+        <span class="s2">&quot;~/mnt/bandicoot/NF1_organoid_data/data/NF0014_T1/segmentation_masks/C2-1/&quot;</span>
+        <span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">image_set_config</span> <span class="o">=</span> <span class="n">ImageSetConfig</span><span class="p">(</span>
+    <span class="n">image_set_name</span><span class="o">=</span><span class="s2">&quot;test_set&quot;</span><span class="p">,</span>
+    <span class="n">raw_image_key_name</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;AGP&quot;</span><span class="p">],</span>
+    <span class="n">mask_key_name</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Nuclei&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">image_set_loader</span> <span class="o">=</span> <span class="n">ImageSetLoader</span><span class="p">(</span>
+    <span class="n">image_set_path</span><span class="o">=</span><span class="n">image_set_path</span><span class="p">,</span>
+    <span class="n">mask_set_path</span><span class="o">=</span><span class="n">mask_set_path</span><span class="p">,</span>
+    <span class="n">anisotropy_spacing</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.1</span><span class="p">),</span>
+    <span class="n">channel_mapping</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;DNA&quot;</span><span class="p">:</span> <span class="mi">405</span><span class="p">,</span>
+        <span class="s2">&quot;ER&quot;</span><span class="p">:</span> <span class="mi">488</span><span class="p">,</span>
+        <span class="s2">&quot;AGP&quot;</span><span class="p">:</span> <span class="mi">555</span><span class="p">,</span>
+        <span class="s2">&quot;Mito&quot;</span><span class="p">:</span> <span class="mi">640</span><span class="p">,</span>
+        <span class="s2">&quot;Organoid&quot;</span><span class="p">:</span> <span class="s2">&quot;organoid_&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Cell&quot;</span><span class="p">:</span> <span class="s2">&quot;cell_&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Nuclei&quot;</span><span class="p">:</span> <span class="s2">&quot;nuclei_&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Cytoplasm&quot;</span><span class="p">:</span> <span class="s2">&quot;cytoplasm_&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">image_set_config</span>
+<span class="p">)</span>
+
+<span class="n">object_loader</span> <span class="o">=</span> <span class="n">ObjectLoader</span><span class="p">(</span>
+    <span class="n">image_set_loader</span><span class="o">=</span><span class="n">image_set_loader</span><span class="p">,</span>
+    <span class="n">channel_name</span><span class="o">=</span><span class="n">image_set_config</span><span class="o">.</span><span class="n">raw_image_key_name</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="n">compartment_name</span><span class="o">=</span><span class="n">image_set_config</span><span class="o">.</span><span class="n">mask_key_name</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">area_dict_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">compute_volumesizeshape</span><span class="p">(</span>
+    <span class="n">image_set_loader</span><span class="o">=</span><span class="n">image_set_loader</span><span class="p">,</span>
+    <span class="n">object_loader</span><span class="o">=</span><span class="n">object_loader</span><span class="p">,</span>
+<span class="p">))</span>
+<span class="n">area_dict_df</span>
 </pre></div>
 </div>
 </section>
@@ -367,7 +412,20 @@ The <code class="docutils literal notranslate"><span class="pre">x</span></code>
 <li class="toctree-l1"><a class="reference internal" href="python-api.html">Python API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="python-api.html#module-zedprofiler">zedprofiler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="python-api.html#module-zedprofiler.contracts">zedprofiler.contracts</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="python-api.html#zedprofiler.contracts.ImageArrayContract"><code class="docutils literal notranslate"><span class="pre">ImageArrayContract</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api.html#zedprofiler.contracts.ColumnNameModel"><code class="docutils literal notranslate"><span class="pre">ColumnNameModel</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api.html#zedprofiler.contracts.ExpectedFeatureNameValues"><code class="docutils literal notranslate"><span class="pre">ExpectedFeatureNameValues</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api.html#zedprofiler.contracts.FeatureDictModel"><code class="docutils literal notranslate"><span class="pre">FeatureDictModel</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api.html#zedprofiler.contracts.ImageArrayModel"><code class="docutils literal notranslate"><span class="pre">ImageArrayModel</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api.html#zedprofiler.contracts.MetadataDictModel"><code class="docutils literal notranslate"><span class="pre">MetadataDictModel</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api.html#zedprofiler.contracts.ReturnSchemaModel"><code class="docutils literal notranslate"><span class="pre">ReturnSchemaModel</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api.html#zedprofiler.contracts.create_image_array_schema"><code class="docutils literal notranslate"><span class="pre">create_image_array_schema()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api.html#zedprofiler.contracts.validate_column_name_schema"><code class="docutils literal notranslate"><span class="pre">validate_column_name_schema()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api.html#zedprofiler.contracts.validate_column_name_with_pydantic"><code class="docutils literal notranslate"><span class="pre">validate_column_name_with_pydantic()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api.html#zedprofiler.contracts.validate_image_array_shape_contracts"><code class="docutils literal notranslate"><span class="pre">validate_image_array_shape_contracts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api.html#zedprofiler.contracts.validate_image_array_type_contracts"><code class="docutils literal notranslate"><span class="pre">validate_image_array_type_contracts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api.html#zedprofiler.contracts.validate_image_with_pydantic"><code class="docutils literal notranslate"><span class="pre">validate_image_with_pydantic()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api.html#zedprofiler.contracts.validate_return_schema_contract"><code class="docutils literal notranslate"><span class="pre">validate_return_schema_contract()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api.html#zedprofiler.contracts.validate_return_with_pydantic"><code class="docutils literal notranslate"><span class="pre">validate_return_with_pydantic()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="python-api.html#module-zedprofiler.exceptions">zedprofiler.exceptions</a><ul>
@@ -447,8 +505,8 @@ The <code class="docutils literal notranslate"><span class="pre">x</span></code>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -486,7 +544,7 @@ The <code class="docutils literal notranslate"><span class="pre">x</span></code>
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.17.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.17.1.
 </p></div>
       
     </div>
