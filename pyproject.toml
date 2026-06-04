@@ -24,7 +24,7 @@ dependencies = [
   "jinja2>=3.1.6",
   "mahotas>=1.4.18",
   "matplotlib>=3.10.8",
-  "pandas>=3.0.2",
+  "pandas>=3.0.3",
   "pandera>=0.31.1",
   "pyarrow>=23.0.1",
   "pydantic>=2.10",
@@ -35,22 +35,22 @@ scripts.ZedProfiler = "ZedProfiler.cli:trigger"
 
 [dependency-groups]
 dev = [
-  "poethepoet>=0.44",
+  "poethepoet>=0.46.0",
   "pytest>=9.0.3",
   "pytest-cov>=5",
-  "ruff>=0.15.10",
+  "ruff>=0.15.15",
 ]
 docs = [
   "myst-nb>=1.4",
-  "pydata-sphinx-theme>=0.17",
+  "pydata-sphinx-theme>=0.18.0",
   "sphinx>=9.1",
 ]
 notebooks = [
-  "black>=26.3.1",
+  "black>=26.5.1",
   "isort>=8.0.1",
   "jupyterlab>=4.5.6",
   "jupyterlab-code-formatter>=3.0.3",
-  "jupytext>=1.19.1",
+  "jupytext>=1.19.3",
 ]
 
 [tool.setuptools_scm]
