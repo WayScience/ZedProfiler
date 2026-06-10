@@ -4,18 +4,22 @@ requires = [ "setuptools>=82.0.1", "setuptools-scm>=10.0.5" ]
 
 [project]
 name = "zedprofiler"
-version = "0.0.1"
 description = "CPU-first handcrafted 3D featurization toolkit for high-throughput profiling"
 readme = "README.md"
 authors = [
   { name = "Your NameWay Lab" },
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.9"
 classifiers = [
   "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
 ]
+dynamic = [ "version" ]
 dependencies = [
   "beartype>=0.19",
   "bioio>=3.3",
@@ -60,7 +64,7 @@ notebooks = [
 ]
 
 [tool.setuptools_scm]
-version_file = "src/ZedProfiler/_version.py"
+version_file = "src/zedprofiler/_version.py"
 version_scheme = "no-guess-dev"
 local_scheme = "no-local-version"
 root = "."
