@@ -1,0 +1,1552 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Reference &mdash; ZEDprofiler  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=5661ff97" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ZEDprofiler scalability" href="scalability.html" />
+    <link rel="prev" title="Texture" href="features/texture.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ZEDprofiler
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="readme.html">ZEDprofiler  </a><ul>
+<li class="toctree-l2"><a class="reference internal" href="readme.html#install-environment">Install environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="readme.html#data-contract">Data Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="readme.html#quality-gates">Quality Gates</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/walkthrough.html">ZEDprofiler Walkthrough</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#what-this-walkthrough-covers">What this walkthrough covers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#imports">Imports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#define-paths-and-parameters">Define Paths and Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#preview-synthetic-data">Preview Synthetic Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#loading-objects-and-image-sets">Loading Objects and Image Sets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#colocalization">Colocalization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#granularity">Granularity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#intensity">Intensity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#neighbors">Neighbors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#texture">Texture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#volume-size-and-shape">Volume, Size, and Shape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#merging-all-features-into-a-single-profile">Merging All Features into a Single Profile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#normalize-and-feature-select">Normalize and Feature Select</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#pairwise-object-correlation">Pairwise Object Correlation</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Feature Schema</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="features/Feature_Naming_Convention.html">Feature schema</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features/Feature_Naming_Convention.html#abstract">Abstract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/Feature_Naming_Convention.html#introduction">1. Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#purpose">1.1 Purpose</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#scope">1.2 Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#key-words">1.3 Key words</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features/Feature_Naming_Convention.html#a-feature-name-format-specification">2A. feature name format specification</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#general-structure">2.1 General structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#component-definitions">2.2 Component definitions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="features/Feature_Naming_Convention.html#compartment-component">2.2.1 Compartment component</a></li>
+<li class="toctree-l4"><a class="reference internal" href="features/Feature_Naming_Convention.html#channel-component">2.2.2 Channel component</a></li>
+<li class="toctree-l4"><a class="reference internal" href="features/Feature_Naming_Convention.html#featuretype-component">2.2.3 Featuretype component</a></li>
+<li class="toctree-l4"><a class="reference internal" href="features/Feature_Naming_Convention.html#measurement-component">2.2.4 Measurement component</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#complete-feature-name-examples">2.3 Complete feature name examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features/Feature_Naming_Convention.html#b-metadata-naming-specification">2B. metadata naming specification</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#id1">2.1 General structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#metadata-category-definitions">2.2 Metadata category definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#complete-metadata-name-examples">2.3 Complete metadata name examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features/Feature_Naming_Convention.html#references">3. References</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#normative-references">3.1 Normative references</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#informative-references">3.2 Informative references</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Feature Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="features/areasizeshape.html">Volume.size.shape</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features/areasizeshape.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/areasizeshape.html#features-extracted">Features extracted</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features/areasizeshape.html#volume-size-shape-feature-measurements">Volume.size.shape feature measurements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features/areasizeshape.html#calculation-method">Calculation method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/areasizeshape.html#applications">Applications</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="features/colocalization.html">Colocalization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features/colocalization.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/colocalization.html#features-extracted">Features extracted</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features/colocalization.html#correlation-based-metrics">Correlation-based metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/colocalization.html#manders-coefficients-m1-and-m2">Manders coefficients (M1 and M2)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/colocalization.html#overlap-coefficient">Overlap coefficient</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/colocalization.html#k1-and-k2-coefficients">K1 and K2 coefficients</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features/colocalization.html#use-cases">Use cases</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="features/granularity.html">Granularity</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features/granularity.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/granularity.html#spectrum-approach">Spectrum approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/granularity.html#features-extracted">Features extracted</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/granularity.html#interpretation">Interpretation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features/granularity.html#high-granularity-at-small-scales-1-3">High granularity at small scales (1-3):</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/granularity.html#high-granularity-at-medium-scales-4-8">High granularity at medium scales (4-8):</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/granularity.html#high-granularity-at-large-scales-9-16">High granularity at large scales (9-16):</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/granularity.html#smooth-profile-low-across-all-scales">Smooth profile (low across all scales):</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/granularity.html#as-an-example-if-a-drug-causes-mitochondria-to-fragment-you-d-see">As an example, if a drug causes mitochondria to fragment, you’d see:</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features/granularity.html#applications">Applications</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="features/intensity.html">Intensity</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features/intensity.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/intensity.html#features-extracted">Features extracted</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features/intensity.html#location-based-intensity">Location-based intensity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/intensity.html#statistical-measures">Statistical measures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/intensity.html#edge-based-measurements">Edge-based measurements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/intensity.html#other-measurements">Other measurements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features/intensity.html#calculation-method">Calculation method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/intensity.html#applications">Applications</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="features/neighbors.html">Neighbors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features/neighbors.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/neighbors.html#current-implementation">Current implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/neighbors.html#total-features">Total features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/neighbors.html#applications">Applications</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="features/texture.html">Texture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features/texture.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/texture.html#calculation-method">Calculation method</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features/texture.html#parameters">Parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features/texture.html#features-extracted">Features extracted</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features/texture.html#texture-feature-measurements">Texture feature measurements</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-zedprofiler.featurization.colocalization">Featurization utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader"><code class="docutils literal notranslate"><span class="pre">SupportsTwoObjectLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.compartment"><code class="docutils literal notranslate"><span class="pre">SupportsTwoObjectLoader.compartment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.image1"><code class="docutils literal notranslate"><span class="pre">SupportsTwoObjectLoader.image1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.image2"><code class="docutils literal notranslate"><span class="pre">SupportsTwoObjectLoader.image2</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.image_set_loader"><code class="docutils literal notranslate"><span class="pre">SupportsTwoObjectLoader.image_set_loader</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.label_image"><code class="docutils literal notranslate"><span class="pre">SupportsTwoObjectLoader.label_image</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.object_ids"><code class="docutils literal notranslate"><span class="pre">SupportsTwoObjectLoader.object_ids</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.colocalization.bisection_costes_threshold_calculation"><code class="docutils literal notranslate"><span class="pre">bisection_costes_threshold_calculation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.colocalization.calculate_colocalization"><code class="docutils literal notranslate"><span class="pre">calculate_colocalization()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.colocalization.compute_colocalization"><code class="docutils literal notranslate"><span class="pre">compute_colocalization()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.colocalization.linear_costes_threshold_calculation"><code class="docutils literal notranslate"><span class="pre">linear_costes_threshold_calculation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.colocalization.prepare_two_images_for_colocalization"><code class="docutils literal notranslate"><span class="pre">prepare_two_images_for_colocalization()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.granularity.compute_granularity"><code class="docutils literal notranslate"><span class="pre">compute_granularity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.intensity.compute_intensity"><code class="docutils literal notranslate"><span class="pre">compute_intensity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.intensity.get_outline"><code class="docutils literal notranslate"><span class="pre">get_outline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.neighbors.calculate_centroid"><code class="docutils literal notranslate"><span class="pre">calculate_centroid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.neighbors.classify_cells_into_shells"><code class="docutils literal notranslate"><span class="pre">classify_cells_into_shells()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.neighbors.compute_neighbors"><code class="docutils literal notranslate"><span class="pre">compute_neighbors()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.neighbors.create_results_dataframe"><code class="docutils literal notranslate"><span class="pre">create_results_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.neighbors.crop_3D_image"><code class="docutils literal notranslate"><span class="pre">crop_3D_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.neighbors.euclidean_distance_from_centroid"><code class="docutils literal notranslate"><span class="pre">euclidean_distance_from_centroid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.neighbors.get_coordinates"><code class="docutils literal notranslate"><span class="pre">get_coordinates()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.neighbors.mahalanobis_distance_from_centroid"><code class="docutils literal notranslate"><span class="pre">mahalanobis_distance_from_centroid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.neighbors.neighbors_expand_box"><code class="docutils literal notranslate"><span class="pre">neighbors_expand_box()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.neighbors.plot_distance_distributions"><code class="docutils literal notranslate"><span class="pre">plot_distance_distributions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.neighbors.visualize_organoid_shells"><code class="docutils literal notranslate"><span class="pre">visualize_organoid_shells()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.texture.compute_texture"><code class="docutils literal notranslate"><span class="pre">compute_texture()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.texture.scale_image"><code class="docutils literal notranslate"><span class="pre">scale_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader"><code class="docutils literal notranslate"><span class="pre">SupportsImageSetLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader.anisotropy_spacing"><code class="docutils literal notranslate"><span class="pre">SupportsImageSetLoader.anisotropy_spacing</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.label_image"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.label_image</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.object_ids"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.object_ids</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.volumesizeshape.calculate_surface_area"><code class="docutils literal notranslate"><span class="pre">calculate_surface_area()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.volumesizeshape.compute_volume_size_shape"><code class="docutils literal notranslate"><span class="pre">compute_volume_size_shape()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.volumesizeshape.measure_3D_volume_size_shape"><code class="docutils literal notranslate"><span class="pre">measure_3D_volume_size_shape()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-zedprofiler.image_utils.image_utils">Image utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.image_utils.image_utils.check_for_xy_squareness"><code class="docutils literal notranslate"><span class="pre">check_for_xy_squareness()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.image_utils.image_utils.crop_3D_image"><code class="docutils literal notranslate"><span class="pre">crop_3D_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.image_utils.image_utils.expand_box"><code class="docutils literal notranslate"><span class="pre">expand_box()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.image_utils.image_utils.new_crop_border"><code class="docutils literal notranslate"><span class="pre">new_crop_border()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.image_utils.image_utils.select_objects_from_label"><code class="docutils literal notranslate"><span class="pre">select_objects_from_label()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.image_utils.image_utils.single_3D_image_expand_bbox"><code class="docutils literal notranslate"><span class="pre">single_3D_image_expand_bbox()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.image_utils.image_utils.square_off_xy_crop_bbox"><code class="docutils literal notranslate"><span class="pre">square_off_xy_crop_bbox()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-zedprofiler.IO.feature_writing_utils">IO utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.IO.feature_writing_utils.FeatureMetadata"><code class="docutils literal notranslate"><span class="pre">FeatureMetadata</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.feature_writing_utils.FeatureMetadata.channel"><code class="docutils literal notranslate"><span class="pre">FeatureMetadata.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.feature_writing_utils.FeatureMetadata.compartment"><code class="docutils literal notranslate"><span class="pre">FeatureMetadata.compartment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.feature_writing_utils.FeatureMetadata.cpu_or_gpu"><code class="docutils literal notranslate"><span class="pre">FeatureMetadata.cpu_or_gpu</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.feature_writing_utils.FeatureMetadata.feature_type"><code class="docutils literal notranslate"><span class="pre">FeatureMetadata.feature_type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.IO.feature_writing_utils.format_morphology_feature_name"><code class="docutils literal notranslate"><span class="pre">format_morphology_feature_name()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.IO.feature_writing_utils.remove_underscores_from_string"><code class="docutils literal notranslate"><span class="pre">remove_underscores_from_string()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.IO.feature_writing_utils.save_features_as_parquet"><code class="docutils literal notranslate"><span class="pre">save_features_as_parquet()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetConfig"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetConfig.image_set_name"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.image_set_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetConfig.label_key_name"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.label_key_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetConfig.raw_image_key_name"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.raw_image_key_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetLoader"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetLoader.image_set_name"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.image_set_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetLoader.anisotropy_spacing"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.anisotropy_spacing</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetLoader.anisotropy_factor"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.anisotropy_factor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetLoader.image_set_dict"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.image_set_dict</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetLoader.unique_label_objects"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.unique_label_objects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetLoader.unique_compartment_objects"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.unique_compartment_objects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetLoader.image_names"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.image_names</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetLoader.compartments"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.compartments</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetLoader.get_anisotropy"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.get_anisotropy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetLoader.get_compartments"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.get_compartments()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetLoader.get_image"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.get_image()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetLoader.get_image_names"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.get_image_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetLoader.get_unique_objects_in_compartments"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.get_unique_objects_in_compartments()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ObjectLoader"><code class="docutils literal notranslate"><span class="pre">ObjectLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ObjectLoader.image_set_loader"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.image_set_loader</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ObjectLoader.config"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ObjectLoader.__init__"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.IO.loading_classes.TwoObjectLoader"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.TwoObjectLoader.image_set_loader"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader.image_set_loader</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.TwoObjectLoader.compartment"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader.compartment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.TwoObjectLoader.label_image"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader.label_image</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.TwoObjectLoader.image1"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader.image1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.TwoObjectLoader.image2"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader.image2</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.TwoObjectLoader.object_ids"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader.object_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.IO.loading_classes.TwoObjectLoader.__init__"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">A Note on Scalability</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="scalability.html">ZEDprofiler scalability</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ZEDprofiler</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API Reference</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading"></a></h1>
+<p>Function documentation is generated from in-code docstrings.</p>
+<section id="module-zedprofiler.featurization.colocalization">
+<span id="featurization-utils"></span><h2>Featurization utils<a class="headerlink" href="#module-zedprofiler.featurization.colocalization" title="Link to this heading"></a></h2>
+<p>Colocalization feature extraction utilities for 3D image objects.</p>
+<p>Computes per-object colocalization metrics (Pearson correlation, Manders
+coefficients, overlap coefficient, K1/K2 coefficients) between pairs of
+fluorescence channels using the Costes automatic thresholding method.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="zedprofiler.featurization.colocalization.SupportsTwoObjectLoader">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.colocalization.</span></span><span class="sig-name descname"><span class="pre">SupportsTwoObjectLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/zedprofiler/featurization/colocalization.html#SupportsTwoObjectLoader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader" title="Link to this definition"></a></dt>
+<dd><p>Minimal loader interface required for paired-object colocalization.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.compartment">
+<span class="sig-name descname"><span class="pre">compartment</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.compartment" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.image1">
+<span class="sig-name descname"><span class="pre">image1</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.image1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.image2">
+<span class="sig-name descname"><span class="pre">image2</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.image2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.image_set_loader">
+<span class="sig-name descname"><span class="pre">image_set_loader</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">object</span></span><a class="headerlink" href="#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.image_set_loader" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.label_image">
+<span class="sig-name descname"><span class="pre">label_image</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.label_image" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.object_ids">
+<span class="sig-name descname"><span class="pre">object_ids</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.object_ids" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.colocalization.bisection_costes_threshold_calculation">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.colocalization.</span></span><span class="sig-name descname"><span class="pre">bisection_costes_threshold_calculation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first_image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">second_image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">255</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/colocalization.html#bisection_costes_threshold_calculation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.colocalization.bisection_costes_threshold_calculation" title="Link to this definition"></a></dt>
+<dd><p>Finds the Costes Automatic Threshold for colocalization using a bisection algorithm.
+Candidate thresholds are selected from within a window of possible intensities,
+this window is narrowed based on the R value of each tested candidate.
+We’re looking for the first point at 0, and R value can become highly variable
+at lower thresholds in some samples. Therefore the candidate tested in each
+loop is 1/6th of the window size below the maximum value
+(as opposed to the midpoint).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>first_image</strong> (<em>numpy.ndarray</em>) – The first fluorescence image.</p></li>
+<li><p><strong>second_image</strong> (<em>numpy.ndarray</em>) – The second fluorescence image.</p></li>
+<li><p><strong>scale_max</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum value for the image scale, by default 255.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The calculated thresholds for the first and second images.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[float, float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.colocalization.calculate_colocalization">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.colocalization.</span></span><span class="sig-name descname"><span class="pre">calculate_colocalization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cropped_image_1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cropped_image_2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_costes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Accurate'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/colocalization.html#calculate_colocalization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.colocalization.calculate_colocalization" title="Link to this definition"></a></dt>
+<dd><p>This function calculates the colocalization coefficients between two images.
+It computes the correlation coefficient, Manders’ coefficients, overlap coefficient,
+and Costes’ coefficients. The results are returned as a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cropped_image_1</strong> (<em>numpy.ndarray</em>) – The first cropped image.</p></li>
+<li><p><strong>cropped_image_2</strong> (<em>numpy.ndarray</em>) – The second cropped image.</p></li>
+<li><p><strong>thr</strong> (<em>int</em><em>, </em><em>optional</em>) – The threshold for the Manders’ coefficients, by default 15</p></li>
+<li><p><strong>fast_costes</strong> (<em>str</em><em>, </em><em>optional</em>) – The mode for Costes’ threshold calculation, by default “Accurate”.
+Options are “Accurate” or “Fast”.
+“Accurate” uses a linear algorithm, while “Fast” uses a bisection algorithm.
+The “Fast” mode is faster but less accurate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The output features for colocalization analysis.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.colocalization.compute_colocalization">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.colocalization.</span></span><span class="sig-name descname"><span class="pre">compute_colocalization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">two_object_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader" title="zedprofiler.featurization.colocalization.SupportsTwoObjectLoader"><span class="pre">SupportsTwoObjectLoader</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">thr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_costes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Accurate'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/colocalization.html#compute_colocalization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.colocalization.compute_colocalization" title="Link to this definition"></a></dt>
+<dd><p>Compute colocalization features for pairs of objects from two channels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>two_object_loader</strong> (<a class="reference internal" href="#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader" title="zedprofiler.featurization.colocalization.SupportsTwoObjectLoader"><em>SupportsTwoObjectLoader</em></a>) – The loader that provides access to the two channels and their
+corresponding labels.</p></li>
+<li><p><strong>thr</strong> (<em>int</em><em>, </em><em>optional</em>) – The threshold for the Manders’ coefficients, by default 15</p></li>
+<li><p><strong>fast_costes</strong> (<em>str</em><em>, </em><em>optional</em>) – The mode for Costes’ threshold calculation, by default “Accurate”.
+Options are “Accurate” or “Fast”.
+“Accurate” uses a linear algorithm, while “Fast” uses a bisection algorithm.
+The “Fast” mode is faster but less accurate.</p></li>
+<li><p><strong>channel1</strong> (<em>str</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – The name of the first channel, used for feature naming, by default None</p></li>
+<li><p><strong>channel2</strong> (<em>str</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – The name of the second channel, used for feature naming, by default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing lists of colocalization feature values for
+each object pair.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, list[float]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.colocalization.linear_costes_threshold_calculation">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.colocalization.</span></span><span class="sig-name descname"><span class="pre">linear_costes_threshold_calculation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first_image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">second_image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">255</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_costes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Accurate'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/colocalization.html#linear_costes_threshold_calculation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.colocalization.linear_costes_threshold_calculation" title="Link to this definition"></a></dt>
+<dd><p>Finds the Costes Automatic Threshold for colocalization using a linear algorithm.
+Candidate thresholds are gradually decreased until Pearson R falls below 0.
+If “Fast” mode is enabled the “steps” between tested thresholds will be increased
+when Pearson R is much greater than 0. The other mode is “Accurate” which
+will always step down by the same amount.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>first_image</strong> (<em>numpy.ndarray</em>) – The first fluorescence image.</p></li>
+<li><p><strong>second_image</strong> (<em>numpy.ndarray</em>) – The second fluorescence image.</p></li>
+<li><p><strong>scale_max</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum value for the image scale, by default 255.</p></li>
+<li><p><strong>fast_costes</strong> (<em>str</em><em>, </em><em>optional</em>) – The mode for the Costes threshold calculation, by default “Accurate”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The calculated thresholds for the first and second images.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[float, float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.colocalization.prepare_two_images_for_colocalization">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.colocalization.</span></span><span class="sig-name descname"><span class="pre">prepare_two_images_for_colocalization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label_object1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_object2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_object1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_object2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_id1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_id2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/colocalization.html#prepare_two_images_for_colocalization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.colocalization.prepare_two_images_for_colocalization" title="Link to this definition"></a></dt>
+<dd><p>Prepare two images for colocalization analysis by cropping to object bbox.
+It selects objects from label images, calculates their bounding boxes,
+and crops both images accordingly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label_object1</strong> (<em>numpy.ndarray</em>) – The segmented label image for the first object.</p></li>
+<li><p><strong>label_object2</strong> (<em>numpy.ndarray</em>) – The segmented label image for the second object.</p></li>
+<li><p><strong>image_object1</strong> (<em>numpy.ndarray</em>) – The spectral image to crop for the first object.</p></li>
+<li><p><strong>image_object2</strong> (<em>numpy.ndarray</em>) – The spectral image to crop for the second object.</p></li>
+<li><p><strong>object_id1</strong> (<em>int</em>) – The object index to select from the label image for the first object.</p></li>
+<li><p><strong>object_id2</strong> (<em>int</em>) – The object index to select from the label image for the second object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The two cropped images for colocalization analysis.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[numpy.ndarray, numpy.ndarray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p id="module-zedprofiler.featurization.granularity">Calculate the granularity spectrum of a 3D image.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.granularity.compute_granularity">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.granularity.</span></span><span class="sig-name descname"><span class="pre">compute_granularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ObjectLoader" title="zedprofiler.IO.loading_classes.ObjectLoader"><span class="pre">ObjectLoader</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">granular_spectrum_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsample_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_sample_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/granularity.html#compute_granularity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.granularity.compute_granularity" title="Link to this definition"></a></dt>
+<dd><p>Calculate the granularity spectrum of a 3D image.</p>
+<p>Follows the CellProfiler MeasureGranularity algorithm exactly for 3D:
+1. Subsample the image uniformly (same factor for Z, Y, X).
+2. Further subsample for background tophat removal.
+3. Iteratively erode with ball(1) and reconstruct, measuring
+signal lost at each scale as image-level and per-object values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>object_loader</strong> (<a class="reference internal" href="#zedprofiler.IO.loading_classes.ObjectLoader" title="zedprofiler.IO.loading_classes.ObjectLoader"><em>ObjectLoader</em></a>) – Loader containing the image and label arrays.</p></li>
+<li><p><strong>radius</strong> (<em>int</em>) – Radius of the structuring element for background removal.
+Should correspond to texture radius <em>after</em> subsampling.</p></li>
+<li><p><strong>granular_spectrum_length</strong> (<em>int</em>) – Number of granularity scales to measure.</p></li>
+<li><p><strong>subsample_size</strong> (<em>float</em>) – Subsampling factor for the image (0, 1]. Applied uniformly to Z/Y/X.</p></li>
+<li><p><strong>image_sample_size</strong> (<em>float</em>) – Subsampling factor for background reduction (0, 1].
+Applied relative to the already-subsampled image.</p></li>
+<li><p><strong>mask_threshold</strong> (<em>float</em>) – Threshold for converting interpolated masks back to boolean.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Print diagnostic information.</p></li>
+<li><p><strong>image_mask</strong> (<em>numpy.ndarray</em><em> or </em><em>None</em>) – Boolean mask matching the image shape. Corresponds to CellProfiler’s
+<code class="docutils literal notranslate"><span class="pre">im.mask</span></code>. If None (default), all pixels are considered valid
+(all-True mask), matching the typical CellProfiler behavior for
+unmasked images.</p></li>
+<li><p><strong>channel</strong> (<em>str</em><em> or </em><em>None</em>) – Optional channel name for feature naming. If None, channel is not
+included in feature names.</p></li>
+<li><p><strong>compartment</strong> (<em>str</em><em> or </em><em>None</em>) – Optional compartment name for feature naming. If None, compartment is
+not included in feature names.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary with keys ‘object_id’, ‘feature’, ‘value’.
+Image-level measurements use object_id=0.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, list]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p id="module-zedprofiler.featurization.intensity">Intensity feature extraction utilities for 3D image objects.</p>
+<p>Provides functions to compute intensity statistics (mean, median, min, max,
+standard deviation, quartiles), edge-based measurements, center-of-mass
+coordinates, and mass displacement for segmented 3D objects.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.intensity.compute_intensity">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.intensity.</span></span><span class="sig-name descname"><span class="pre">compute_intensity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ObjectLoader" title="zedprofiler.IO.loading_classes.ObjectLoader"><span class="pre">ObjectLoader</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/intensity.html#compute_intensity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.intensity.compute_intensity" title="Link to this definition"></a></dt>
+<dd><p>Measure the intensity of objects in a 3D image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>object_loader</strong> (<a class="reference internal" href="#zedprofiler.IO.loading_classes.ObjectLoader" title="zedprofiler.IO.loading_classes.ObjectLoader"><em>ObjectLoader</em></a>) – The object loader containing the image and label image.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing the measurements for each object.
+The keys are the measurement names and the values are the corresponding values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.intensity.get_outline">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.intensity.</span></span><span class="sig-name descname"><span class="pre">get_outline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/intensity.html#get_outline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.intensity.get_outline" title="Link to this definition"></a></dt>
+<dd><p>Get the outline of a 3D mask.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mask</strong> (<em>numpy.ndarray</em>) – The input mask.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The outline of the mask.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p id="module-zedprofiler.featurization.neighbors">Neighbors featurization module.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.neighbors.calculate_centroid">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.neighbors.</span></span><span class="sig-name descname"><span class="pre">calculate_centroid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/neighbors.html#calculate_centroid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.neighbors.calculate_centroid" title="Link to this definition"></a></dt>
+<dd><p>Calculate the centroid of cell coordinates.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.neighbors.classify_cells_into_shells">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.neighbors.</span></span><span class="sig-name descname"><span class="pre">classify_cells_into_shells</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_shells</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mahalanobis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_cells_per_shell</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/neighbors.html#classify_cells_into_shells"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.neighbors.classify_cells_into_shells" title="Link to this definition"></a></dt>
+<dd><p>Classify cells into radial shells based on distance from centroid.</p>
+<p>Automatically adjusts n_shells for small organoids to ensure meaningful statistics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coords</strong> (<em>pandas.DataFrame</em><em> or </em><em>dict</em>) – Cell coordinates with /keys: object_id, x, y, z</p></li>
+<li><p><strong>n_shells</strong> (<em>int</em>) – Number of concentric shells to create (will be adjusted if needed)</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – ‘euclidean’ or ‘mahalanobis’</p></li>
+<li><p><strong>min_cells_per_shell</strong> (<em>int</em>) – Minimum average cells per shell (default: 3)</p></li>
+<li><p><strong>centroid</strong> (<em>numpy.ndarray</em><em>, </em><em>optional</em>) – Pre-calculated centroid (if None, will be calculated from coords)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>results</strong> – Dictionary containing:
+- ‘ShellAssignments’: Shell number for each cell (0 = innermost)
+- ‘DistancesFromCenter’: Distance from centroid for each cell
+- ‘DistancesFromExterior’: Distance from exterior for each cell
+- ‘NormalizedDistancesFromCenter’: Normalized distances (0-1)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.neighbors.compute_neighbors">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.neighbors.</span></span><span class="sig-name descname"><span class="pre">compute_neighbors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ObjectLoader" title="zedprofiler.IO.loading_classes.ObjectLoader"><span class="pre">ObjectLoader</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">anisotropy_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/neighbors.html#compute_neighbors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.neighbors.compute_neighbors" title="Link to this definition"></a></dt>
+<dd><p>This function calculates the number of neighbors for each object in a 3D image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>object_loader</strong> (<a class="reference internal" href="#zedprofiler.IO.loading_classes.ObjectLoader" title="zedprofiler.IO.loading_classes.ObjectLoader"><em>ObjectLoader</em></a>) – The object loader object that contains the image and label image.</p></li>
+<li><p><strong>distance_threshold</strong> (<em>int</em><em>, </em><em>optional</em>) – The distance threshold for counting neighbors, by default 10</p></li>
+<li><p><strong>anisotropy_factor</strong> (<em>int</em><em>, </em><em>optional</em>) – The anisotropy factor for the image where the anisotropy factor is the
+ratio of the pixel size in the z direction to the pixel size in the x
+and y directions, by default 10</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing the object ID and the number of neighbors for
+each object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, list]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.neighbors.create_results_dataframe">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.neighbors.</span></span><span class="sig-name descname"><span class="pre">create_results_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/neighbors.html#create_results_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.neighbors.create_results_dataframe" title="Link to this definition"></a></dt>
+<dd><p>Create a pandas DataFrame with all cell information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>results</strong> (<em>dict</em>) – Results from classify_cells_into_shells</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>df</strong> – DataFrame with cell information</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.neighbors.crop_3D_image">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.neighbors.</span></span><span class="sig-name descname"><span class="pre">crop_3D_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/neighbors.html#crop_3D_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.neighbors.crop_3D_image" title="Link to this definition"></a></dt>
+<dd><p>Crop the 3D image to the bounding box of the object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>numpy.ndarray</em>) – The 3D image to be cropped.</p></li>
+<li><p><strong>bbox</strong> (<em>BBox3D</em>) – The bounding box of the object in the format (z1, y1, x1, z2, y2, x2).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The cropped 3D image.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.neighbors.euclidean_distance_from_centroid">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.neighbors.</span></span><span class="sig-name descname"><span class="pre">euclidean_distance_from_centroid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/neighbors.html#euclidean_distance_from_centroid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.neighbors.euclidean_distance_from_centroid" title="Link to this definition"></a></dt>
+<dd><p>Calculate Euclidean distance from centroid for each cell.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.neighbors.get_coordinates">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.neighbors.</span></span><span class="sig-name descname"><span class="pre">get_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuclei_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/neighbors.html#get_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.neighbors.get_coordinates" title="Link to this definition"></a></dt>
+<dd><p>Extract coordinates from a labeled mask.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nuclei_mask</strong> (<em>ndarray</em>) – 3D labeled mask where each object has a unique ID</p></li>
+<li><p><strong>object_ids</strong> (<em>list</em>) – List of object IDs to extract</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>coords</strong> – DataFrame with columns: object_id, x, y, z</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.neighbors.mahalanobis_distance_from_centroid">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.neighbors.</span></span><span class="sig-name descname"><span class="pre">mahalanobis_distance_from_centroid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_cells_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/neighbors.html#mahalanobis_distance_from_centroid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.neighbors.mahalanobis_distance_from_centroid" title="Link to this definition"></a></dt>
+<dd><p>Calculate Mahalanobis distance from centroid for each cell.
+This accounts for the covariance structure (shape) of the organoid.</p>
+<p>For small sample sizes (&lt;50 cells), uses regularization or falls back to Euclidean.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coords</strong> (<em>ndarray</em>) – Cell coordinates (n_cells, 3)</p></li>
+<li><p><strong>centroid</strong> (<em>ndarray</em>) – Centroid coordinates (3,)</p></li>
+<li><p><strong>min_cells_threshold</strong> (<em>int</em>) – Minimum cells needed for reliable Mahalanobis (default: 50)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>distances</strong> – Mahalanobis distances for each cell</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.neighbors.neighbors_expand_box">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.neighbors.</span></span><span class="sig-name descname"><span class="pre">neighbors_expand_box</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_coor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_coord</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expand_by</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/neighbors.html#neighbors_expand_box"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.neighbors.neighbors_expand_box" title="Link to this definition"></a></dt>
+<dd><p>Expand the bounding box of the object by a specified distance in each direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_coor</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>float</em><em>]</em>) – The global minimum coordinate of the image.</p></li>
+<li><p><strong>max_coord</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>float</em><em>]</em>) – The global maximum coordinate of the image.</p></li>
+<li><p><strong>current_min</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>float</em><em>]</em>) – The current minimum coordinate of the object.</p></li>
+<li><p><strong>current_max</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>float</em><em>]</em>) – The current maximum coordinate of the object.</p></li>
+<li><p><strong>expand_by</strong> (<em>int</em>) – The distance by which to expand the bounding box.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The new minimum and maximum coordinates of the bounding box.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[Union[int, float], Union[int, float]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.neighbors.plot_distance_distributions">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.neighbors.</span></span><span class="sig-name descname"><span class="pre">plot_distance_distributions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classification_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_shells</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">figure</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/neighbors.html#plot_distance_distributions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.neighbors.plot_distance_distributions" title="Link to this definition"></a></dt>
+<dd><p>Plot distance distributions for each shell.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>classification_results</strong> (<em>dict</em>) – Results from classify_cells_into_shells</p></li>
+<li><p><strong>n_shells</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of shells (will use ShellsUsed from results if not provided)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.neighbors.visualize_organoid_shells">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.neighbors.</span></span><span class="sig-name descname"><span class="pre">visualize_organoid_shells</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classification_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Organoid</span> <span class="pre">Shell</span> <span class="pre">Classification'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">figure</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/neighbors.html#visualize_organoid_shells"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.neighbors.visualize_organoid_shells" title="Link to this definition"></a></dt>
+<dd><p>Create 3D visualization of organoid with shell coloring.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coords</strong> (<em>pandas.DataFrame</em><em> or </em><em>dict</em>) – Cell coordinates with columns/keys: object_id, x, y, z</p></li>
+<li><p><strong>classification_results</strong> (<em>dict</em>) – Results from classify_cells_into_shells</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Plot title</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<p id="module-zedprofiler.featurization.texture">This module generates texture features for each object in the
+image using Haralick features.</p>
+<p>We do this in a as close to zero-copy way as possible.
+We want to make this module fast, memory efficient, and robust to large images
+and objects.
+We want this module to be python api callable and scalable.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.texture.compute_texture">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.texture.</span></span><span class="sig-name descname"><span class="pre">compute_texture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ObjectLoader" title="zedprofiler.IO.loading_classes.ObjectLoader"><span class="pre">ObjectLoader</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grayscale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/texture.html#compute_texture"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.texture.compute_texture" title="Link to this definition"></a></dt>
+<dd><p>Calculate texture features for each object in the image using Haralick features.</p>
+<p>The features are calculated for each object separately and the mean value
+is returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>object_loader</strong> (<a class="reference internal" href="#zedprofiler.IO.loading_classes.ObjectLoader" title="zedprofiler.IO.loading_classes.ObjectLoader"><em>ObjectLoader</em></a>) – The object loader containing the image and object information.</p></li>
+<li><p><strong>distance</strong> (<em>int</em><em>, </em><em>optional</em>) – The distance parameter for Haralick features, by default 1</p></li>
+<li><p><strong>grayscale</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of gray levels to scale the image to, by default 256</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A dictionary containing the object ID, texture name, and texture value
+with keys:
+- object_id
+- texture_name
+- texture_value</p>
+<p>Texture names include: Angular Second Moment, Contrast, Correlation,
+Variance, Inverse Difference Moment, Sum Average, Sum Variance,
+Sum Entropy, Entropy, and related texture measures.</p>
+<ul class="simple">
+<li><p>AngularSecondMoment</p></li>
+<li><p>Contrast</p></li>
+<li><p>Correlation</p></li>
+<li><p>Variance</p></li>
+<li><p>InverseDifferenceMoment</p></li>
+<li><p>SumAverage</p></li>
+<li><p>SumVariance</p></li>
+<li><p>SumEntropy</p></li>
+<li><p>Entropy</p></li>
+<li><p>DifferenceVariance</p></li>
+<li><p>DifferenceEntropy</p></li>
+<li><p>InformationMeasureOfCorrelation1</p></li>
+<li><p>InformationMeasureOfCorrelation2</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.texture.scale_image">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.texture.</span></span><span class="sig-name descname"><span class="pre">scale_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_gray_levels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/texture.html#scale_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.texture.scale_image" title="Link to this definition"></a></dt>
+<dd><p>Scale the image to a specified number of gray levels.
+Example: 1024 gray levels will be scaled to 256 gray levels if
+num_gray_levels=256.
+An image with a pixel value of 0 will be scaled to 0 and a pixel value
+of 1023 will be scaled to 255.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>numpy.ndarray</em>) – The input image to be scaled. Can be a ndarray of any shape.</p></li>
+<li><p><strong>num_gray_levels</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of gray levels to scale the image to, by default 256</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The gray level scaled image of any shape.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p id="module-zedprofiler.featurization.volumesizeshape">Volume, size, and shape features for 3D objects.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.volumesizeshape.</span></span><span class="sig-name descname"><span class="pre">SupportsImageSetLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/zedprofiler/featurization/volumesizeshape.html#SupportsImageSetLoader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader" title="Link to this definition"></a></dt>
+<dd><p>Minimal image-set loader interface required by this module.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader.anisotropy_spacing">
+<span class="sig-name descname"><span class="pre">anisotropy_spacing</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader.anisotropy_spacing" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="zedprofiler.featurization.volumesizeshape.SupportsObjectLoader">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.volumesizeshape.</span></span><span class="sig-name descname"><span class="pre">SupportsObjectLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/zedprofiler/featurization/volumesizeshape.html#SupportsObjectLoader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader" title="Link to this definition"></a></dt>
+<dd><p>Minimal object loader interface required by this module.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.label_image">
+<span class="sig-name descname"><span class="pre">label_image</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.label_image" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.object_ids">
+<span class="sig-name descname"><span class="pre">object_ids</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.object_ids" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.volumesizeshape.calculate_surface_area">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.volumesizeshape.</span></span><span class="sig-name descname"><span class="pre">calculate_surface_area</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label_object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">props</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/volumesizeshape.html#calculate_surface_area"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.volumesizeshape.calculate_surface_area" title="Link to this definition"></a></dt>
+<dd><p>Calculate surface area for one labeled object using marching cubes.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.volumesizeshape.compute_volume_size_shape">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.volumesizeshape.</span></span><span class="sig-name descname"><span class="pre">compute_volume_size_shape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_set_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader" title="zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader"><span class="pre">SupportsImageSetLoader</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader" title="zedprofiler.featurization.volumesizeshape.SupportsObjectLoader"><span class="pre">SupportsObjectLoader</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/volumesizeshape.html#compute_volume_size_shape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.volumesizeshape.compute_volume_size_shape" title="Link to this definition"></a></dt>
+<dd><p>Compute volume/size/shape features for one object loader.</p>
+<p>Supports two invocation modes:</p>
+<ul class="simple">
+<li><p>no arguments: returns an empty deterministic schema so dispatchers can
+call the function without crashing.</p></li>
+<li><p>both loaders provided: executes feature extraction.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.volumesizeshape.measure_3D_volume_size_shape">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.volumesizeshape.</span></span><span class="sig-name descname"><span class="pre">measure_3D_volume_size_shape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_set_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader" title="zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader"><span class="pre">SupportsImageSetLoader</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader" title="zedprofiler.featurization.volumesizeshape.SupportsObjectLoader"><span class="pre">SupportsObjectLoader</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/volumesizeshape.html#measure_3D_volume_size_shape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.volumesizeshape.measure_3D_volume_size_shape" title="Link to this definition"></a></dt>
+<dd><p>Measure volume/size/shape features for each non-zero label object.</p>
+</dd></dl>
+
+</section>
+<section id="module-zedprofiler.image_utils.image_utils">
+<span id="image-utils"></span><h2>Image utils<a class="headerlink" href="#module-zedprofiler.image_utils.image_utils" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.image_utils.image_utils.check_for_xy_squareness">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.image_utils.image_utils.</span></span><span class="sig-name descname"><span class="pre">check_for_xy_squareness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/zedprofiler/image_utils/image_utils.html#check_for_xy_squareness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.image_utils.image_utils.check_for_xy_squareness" title="Link to this definition"></a></dt>
+<dd><p>This function returns the ratio of the x length to the y length
+A value of 1 indicates a square bbox is present</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bbox</strong> (<em>The bbox to check</em>) – (z_min, y_min, x_min, z_max, y_max, x_max)
+Where each value is an int representing the pixel coordinate
+of the bbox in that dimension</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The ratio of the y length to the x length of the bbox.
+A value of 1 indicates a square bbox.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.image_utils.image_utils.crop_3D_image">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.image_utils.image_utils.</span></span><span class="sig-name descname"><span class="pre">crop_3D_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/zedprofiler/image_utils/image_utils.html#crop_3D_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.image_utils.image_utils.crop_3D_image" title="Link to this definition"></a></dt>
+<dd><p>Crop a 3D image to the bounding box of a mask.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>numpy.ndarray</em>) – The image to crop.</p></li>
+<li><p><strong>bbox</strong> (<em>BBox3D</em>) – The bounding box of the mask.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The cropped image.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.image_utils.image_utils.expand_box">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.image_utils.image_utils.</span></span><span class="sig-name descname"><span class="pre">expand_box</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_coor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_coord</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expand_by</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ValueError</span></span></span><a class="reference internal" href="_modules/zedprofiler/image_utils/image_utils.html#expand_box"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.image_utils.image_utils.expand_box" title="Link to this definition"></a></dt>
+<dd><p>Expand the bounding box of an object in a 3D image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_coor</strong> (<em>int</em>) – The minimum coordinate of the image for any dimension.</p></li>
+<li><p><strong>max_coord</strong> (<em>int</em>) – The maximum coordinate of the image for any dimension.</p></li>
+<li><p><strong>current_min</strong> (<em>int</em>) – The current minimum coordinate of an object’s bounding box
+for any dimension.</p></li>
+<li><p><strong>current_max</strong> (<em>int</em>) – The current maximum coordinate of an object’s bounding box
+for any dimension.</p></li>
+<li><p><strong>expand_by</strong> (<em>int</em>) – The amount to expand the bounding box by.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The new minimum and maximum coordinates of the bounding box.
+Raises ValueError if the expansion is not possible.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Union[Tuple[int, int], ValueError]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.image_utils.image_utils.new_crop_border">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.image_utils.image_utils.</span></span><span class="sig-name descname"><span class="pre">new_crop_border</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bbox1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/zedprofiler/image_utils/image_utils.html#new_crop_border"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.image_utils.image_utils.new_crop_border" title="Link to this definition"></a></dt>
+<dd><p>Expand the bounding boxes of two objects in a 3D image to match their sizes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bbox1</strong> (<em>BBox3D</em>) – The bounding box of the first object.</p></li>
+<li><p><strong>bbox2</strong> (<em>BBox3D</em>) – The bounding box of the second object.</p></li>
+<li><p><strong>image</strong> (<em>numpy.ndarray</em>) – The image to crop for each of the bounding boxes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>tuple[BBox3D, BBox3D]</em> – The new bounding boxes of the two objects.</p></li>
+<li><p><em>Raises</em></p></li>
+<li><p><em>ValueError</em> – If the expansion is not possible.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.image_utils.image_utils.select_objects_from_label">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.image_utils.image_utils.</span></span><span class="sig-name descname"><span class="pre">select_objects_from_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label_image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/zedprofiler/image_utils/image_utils.html#select_objects_from_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.image_utils.image_utils.select_objects_from_label" title="Link to this definition"></a></dt>
+<dd><p>Selects objects from a label image based on the provided object IDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label_image</strong> (<em>numpy.ndarray</em>) – The segmented label image.</p></li>
+<li><p><strong>object_ids</strong> (<em>list</em>) – The object IDs to select.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The label image with only the selected objects.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.image_utils.image_utils.single_3D_image_expand_bbox">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.image_utils.image_utils.</span></span><span class="sig-name descname"><span class="pre">single_3D_image_expand_bbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expand_pixels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">anisotropy_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/zedprofiler/image_utils/image_utils.html#single_3D_image_expand_bbox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.image_utils.image_utils.single_3D_image_expand_bbox" title="Link to this definition"></a></dt>
+<dd><p>Expand the bbox in a way that keeps the crop within the
+confines of the image volume</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>numpy.ndarray</em>) – 3D image array from which the bbox was derived</p></li>
+<li><p><strong>bbox</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>]</em>) – 3D bbox in the format (zmin, ymin, xmin, zmax, ymax, xmax)</p></li>
+<li><p><strong>expand_pixels</strong> (<em>int</em>) – number of pixels to expand the bbox in each direction (z, y, x)
+the coordinates become isotropic here so the expansion is
+the same across dimensions,
+but the anisotropy factor is used to adjust for the z dimension</p></li>
+<li><p><strong>anisotropy_factor</strong> (<em>int</em>) – The ratio of “pixel” size in um between the z dimension and the x/y dimensions.
+This is used to adjust the expansion of the bbox in the z dimension to account
+for anisotropy in the image volume.
+For example, if the z spacing is 5um and the x/y spacing is 1um,
+then the anisotropy factor would be 5.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Updated bbox in the format (zmin, ymin, xmin, zmax, ymax, xmax)
+after expansion and adjustment for anisotropy</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[int, int, int, int, int, int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.image_utils.image_utils.square_off_xy_crop_bbox">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.image_utils.image_utils.</span></span><span class="sig-name descname"><span class="pre">square_off_xy_crop_bbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/zedprofiler/image_utils/image_utils.html#square_off_xy_crop_bbox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.image_utils.image_utils.square_off_xy_crop_bbox" title="Link to this definition"></a></dt>
+<dd><p>Adjust the bbox to be square in the XY plane.</p>
+<p>The function computes the new bbox from the current X/Y dimensions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bbox</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>]</em>) – <p>The bbox to adjust:
+(z_min, y_min, x_min, z_max, y_max, x_max)</p>
+<p>Each value is an integer pixel coordinate in that dimension.</p>
+</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>The adjusted bbox that is square in the XY plane:
+(z_min, new_y_min, new_x_min, z_max, new_y_max, new_x_max)</p>
+<p>Each value is an integer pixel coordinate in that dimension.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[int, int, int, int, int, int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-zedprofiler.IO.feature_writing_utils">
+<span id="io-utils"></span><h2>IO utils<a class="headerlink" href="#module-zedprofiler.IO.feature_writing_utils" title="Link to this heading"></a></h2>
+<p>Functions for formatting morphology feature names in a consistent way.</p>
+<p>Formats morphology feature names and saves features as parquet files.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="zedprofiler.IO.feature_writing_utils.FeatureMetadata">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">zedprofiler.IO.feature_writing_utils.</span></span><span class="sig-name descname"><span class="pre">FeatureMetadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compartment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpu_or_gpu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/zedprofiler/IO/feature_writing_utils.html#FeatureMetadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.IO.feature_writing_utils.FeatureMetadata" title="Link to this definition"></a></dt>
+<dd><p>Metadata for feature output.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.feature_writing_utils.FeatureMetadata.channel">
+<span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#zedprofiler.IO.feature_writing_utils.FeatureMetadata.channel" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.feature_writing_utils.FeatureMetadata.compartment">
+<span class="sig-name descname"><span class="pre">compartment</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#zedprofiler.IO.feature_writing_utils.FeatureMetadata.compartment" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.feature_writing_utils.FeatureMetadata.cpu_or_gpu">
+<span class="sig-name descname"><span class="pre">cpu_or_gpu</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#zedprofiler.IO.feature_writing_utils.FeatureMetadata.cpu_or_gpu" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.feature_writing_utils.FeatureMetadata.feature_type">
+<span class="sig-name descname"><span class="pre">feature_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#zedprofiler.IO.feature_writing_utils.FeatureMetadata.feature_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.IO.feature_writing_utils.format_morphology_feature_name">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.IO.feature_writing_utils.</span></span><span class="sig-name descname"><span class="pre">format_morphology_feature_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compartment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measurement</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/zedprofiler/IO/feature_writing_utils.html#format_morphology_feature_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.IO.feature_writing_utils.format_morphology_feature_name" title="Link to this definition"></a></dt>
+<dd><p>Format a morphology feature name in a consistent way across all morphology features.
+This format follows specification for the following:
+<a class="reference external" href="https://github.com/WayScience/NF1_3D_organoid_profiling_pipeline/blob/main/docs/RFC-2119-Feature-Naming-Convention.md">https://github.com/WayScience/NF1_3D_organoid_profiling_pipeline/blob/main/docs/RFC-2119-Feature-Naming-Convention.md</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>compartment</strong> (<em>str</em>) – The compartment name.</p></li>
+<li><p><strong>channel</strong> (<em>str</em>) – The channel name.</p></li>
+<li><p><strong>feature_type</strong> (<em>str</em>) – The feature type.</p></li>
+<li><p><strong>measurement</strong> (<em>str</em>) – The measurement name.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The formatted feature name.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.IO.feature_writing_utils.remove_underscores_from_string">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.IO.feature_writing_utils.</span></span><span class="sig-name descname"><span class="pre">remove_underscores_from_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/zedprofiler/IO/feature_writing_utils.html#remove_underscores_from_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.IO.feature_writing_utils.remove_underscores_from_string" title="Link to this definition"></a></dt>
+<dd><p>Remove unwanted delimiters from a string and replace them with hyphens.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>string</strong> (<em>str</em>) – The string to remove unwanted delimiters from.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The string with unwanted delimiters removed and replaced with hyphens.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.IO.feature_writing_utils.save_features_as_parquet">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.IO.feature_writing_utils.</span></span><span class="sig-name descname"><span class="pre">save_features_as_parquet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#zedprofiler.IO.feature_writing_utils.FeatureMetadata" title="zedprofiler.IO.feature_writing_utils.FeatureMetadata"><span class="pre">FeatureMetadata</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="_modules/zedprofiler/IO/feature_writing_utils.html#save_features_as_parquet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.IO.feature_writing_utils.save_features_as_parquet" title="Link to this definition"></a></dt>
+<dd><p>Save features as parquet files in a consistent way.</p>
+<p>Saves features as parquet files with consistent naming across morphology
+features.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parent_path</strong> (<em>pathlib.Path</em>) – The parent path to save the features to.</p></li>
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – The dataframe containing the features to save.</p></li>
+<li><p><strong>metadata</strong> (<a class="reference internal" href="#zedprofiler.IO.feature_writing_utils.FeatureMetadata" title="zedprofiler.IO.feature_writing_utils.FeatureMetadata"><em>FeatureMetadata</em></a>) – Metadata for the feature output (compartment, channel, feature_type,
+cpu_or_gpu).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>pathlib.Path</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p id="module-zedprofiler.IO.loading_classes">Data-loading classes for featurization workflows.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ImageSetConfig">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">zedprofiler.IO.loading_classes.</span></span><span class="sig-name descname"><span class="pre">ImageSetConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_set_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_key_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_image_key_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/zedprofiler/IO/loading_classes.html#ImageSetConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.IO.loading_classes.ImageSetConfig" title="Link to this definition"></a></dt>
+<dd><p>Configuration options for ImageSetLoader.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ImageSetConfig.image_set_name">
+<span class="sig-name descname"><span class="pre">image_set_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#zedprofiler.IO.loading_classes.ImageSetConfig.image_set_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ImageSetConfig.label_key_name">
+<span class="sig-name descname"><span class="pre">label_key_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#zedprofiler.IO.loading_classes.ImageSetConfig.label_key_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ImageSetConfig.raw_image_key_name">
+<span class="sig-name descname"><span class="pre">raw_image_key_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#zedprofiler.IO.loading_classes.ImageSetConfig.raw_image_key_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ImageSetLoader">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">zedprofiler.IO.loading_classes.</span></span><span class="sig-name descname"><span class="pre">ImageSetLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">anisotropy_spacing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_set_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_set_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_set_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_set_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetConfig" title="zedprofiler.IO.loading_classes.ImageSetConfig"><span class="pre">ImageSetConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/zedprofiler/IO/loading_classes.html#ImageSetLoader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.IO.loading_classes.ImageSetLoader" title="Link to this definition"></a></dt>
+<dd><p>ImageSet in this context refers to a set of images that can be
+related to each other via their metadata.
+For example all images coming from the same well, FOV or timepoint
+but different spectral channels and segmentation labels.</p>
+<p>Load an image set consisting of raw z stack images and segmentation labels.</p>
+<p>A class to load an image set consisting of raw z stack images from multiple
+spectral channels and segmentation labels. The images are loaded into a
+dictionary, and various attributes and compartments are extracted from the
+images. The class also provides methods to retrieve images and their attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image_set_path</strong> (<em>pathlib.Path</em>) – Path to the image set directory.</p></li>
+<li><p><strong>label_set_path</strong> (<em>pathlib.Path</em>) – Path to the label set directory.</p></li>
+<li><p><strong>anisotropy_spacing</strong> (<em>tuple</em>) – The anisotropy spacing of the images in format
+(z_spacing, y_spacing, x_spacing).</p></li>
+<li><p><strong>channel_mapping</strong> (<em>dict</em>) – A dictionary mapping channel names to their corresponding image file names.
+Example: <code class="docutils literal notranslate"><span class="pre">{'nuclei':</span> <span class="pre">'nuclei_',</span> <span class="pre">'cell':</span> <span class="pre">'cell_',</span> <span class="pre">'cytoplasm':</span> <span class="pre">'cytoplasm_'}</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ImageSetLoader.image_set_name">
+<span class="sig-name descname"><span class="pre">image_set_name</span></span><a class="headerlink" href="#zedprofiler.IO.loading_classes.ImageSetLoader.image_set_name" title="Link to this definition"></a></dt>
+<dd><p>The name of the image set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ImageSetLoader.anisotropy_spacing">
+<span class="sig-name descname"><span class="pre">anisotropy_spacing</span></span><a class="headerlink" href="#zedprofiler.IO.loading_classes.ImageSetLoader.anisotropy_spacing" title="Link to this definition"></a></dt>
+<dd><p>The anisotropy spacing of the images.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ImageSetLoader.anisotropy_factor">
+<span class="sig-name descname"><span class="pre">anisotropy_factor</span></span><a class="headerlink" href="#zedprofiler.IO.loading_classes.ImageSetLoader.anisotropy_factor" title="Link to this definition"></a></dt>
+<dd><p>The anisotropy factor calculated from the spacing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ImageSetLoader.image_set_dict">
+<span class="sig-name descname"><span class="pre">image_set_dict</span></span><a class="headerlink" href="#zedprofiler.IO.loading_classes.ImageSetLoader.image_set_dict" title="Link to this definition"></a></dt>
+<dd><p>A dictionary containing the loaded images, with keys as channel names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ImageSetLoader.unique_label_objects">
+<span class="sig-name descname"><span class="pre">unique_label_objects</span></span><a class="headerlink" href="#zedprofiler.IO.loading_classes.ImageSetLoader.unique_label_objects" title="Link to this definition"></a></dt>
+<dd><p>A dictionary containing unique object IDs for each label in the image set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ImageSetLoader.unique_compartment_objects">
+<span class="sig-name descname"><span class="pre">unique_compartment_objects</span></span><a class="headerlink" href="#zedprofiler.IO.loading_classes.ImageSetLoader.unique_compartment_objects" title="Link to this definition"></a></dt>
+<dd><p>A dictionary containing unique object IDs for each compartment in the image set.
+A compartment is defined as a segmented region in the image (e.g., Cell,
+Cytoplasm, Nuclei, Organoid). The compartments are bounds for measurements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ImageSetLoader.image_names">
+<span class="sig-name descname"><span class="pre">image_names</span></span><a class="headerlink" href="#zedprofiler.IO.loading_classes.ImageSetLoader.image_names" title="Link to this definition"></a></dt>
+<dd><p>A list of image names in the image set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ImageSetLoader.compartments">
+<span class="sig-name descname"><span class="pre">compartments</span></span><a class="headerlink" href="#zedprofiler.IO.loading_classes.ImageSetLoader.compartments" title="Link to this definition"></a></dt>
+<dd><p>A list of compartment names in the image set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ImageSetLoader.get_anisotropy">
+<span class="sig-name descname"><span class="pre">get_anisotropy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/zedprofiler/IO/loading_classes.html#ImageSetLoader.get_anisotropy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.IO.loading_classes.ImageSetLoader.get_anisotropy" title="Link to this definition"></a></dt>
+<dd><p>Return the anisotropy factor for the image set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Ratio of z-spacing to y-spacing.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ImageSetLoader.get_compartments">
+<span class="sig-name descname"><span class="pre">get_compartments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/zedprofiler/IO/loading_classes.html#ImageSetLoader.get_compartments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.IO.loading_classes.ImageSetLoader.get_compartments" title="Link to this definition"></a></dt>
+<dd><p>Populate compartment names from available keys.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of compartment keys.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ImageSetLoader.get_image">
+<span class="sig-name descname"><span class="pre">get_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/zedprofiler/IO/loading_classes.html#ImageSetLoader.get_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.IO.loading_classes.ImageSetLoader.get_image" title="Link to this definition"></a></dt>
+<dd><p>Return an image array for a given key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>str</em>) – Channel or label key.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Image array for the requested key.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ImageSetLoader.get_image_names">
+<span class="sig-name descname"><span class="pre">get_image_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/zedprofiler/IO/loading_classes.html#ImageSetLoader.get_image_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.IO.loading_classes.ImageSetLoader.get_image_names" title="Link to this definition"></a></dt>
+<dd><p>Populate image (non-compartment) names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of image names excluding compartment labels.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ImageSetLoader.get_unique_objects_in_compartments">
+<span class="sig-name descname"><span class="pre">get_unique_objects_in_compartments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zedprofiler/IO/loading_classes.html#ImageSetLoader.get_unique_objects_in_compartments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.IO.loading_classes.ImageSetLoader.get_unique_objects_in_compartments" title="Link to this definition"></a></dt>
+<dd><p>Populate unique object IDs per compartment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong> – This method does not take any parameters.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ObjectLoader">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">zedprofiler.IO.loading_classes.</span></span><span class="sig-name descname"><span class="pre">ObjectLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_set_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetLoader" title="zedprofiler.IO.loading_classes.ImageSetLoader"><span class="pre">ImageSetLoader</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compartment_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/zedprofiler/IO/loading_classes.html#ObjectLoader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.IO.loading_classes.ObjectLoader" title="Link to this definition"></a></dt>
+<dd><p>A class to load objects from a labeled image and extract their properties.
+Where an object is defined as a segmented region in the image.
+This could be a cell, a nucleus, or any other compartment segmented.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>numpy.ndarray</em>) – The image from which to extract objects. Preferably a 3D image -&gt; z, y, x</p></li>
+<li><p><strong>label_image</strong> (<em>numpy.ndarray</em>) – The labeled image containing the segmented objects.</p></li>
+<li><p><strong>channel_name</strong> (<em>str</em>) – The name of the channel from which the objects are extracted.</p></li>
+<li><p><strong>compartment_name</strong> (<em>str</em>) – The name of the compartment from which the objects are extracted.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ObjectLoader.image_set_loader">
+<span class="sig-name descname"><span class="pre">image_set_loader</span></span><a class="headerlink" href="#zedprofiler.IO.loading_classes.ObjectLoader.image_set_loader" title="Link to this definition"></a></dt>
+<dd><p>An instance of the ImageSetLoader class containing the image set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetLoader" title="zedprofiler.IO.loading_classes.ImageSetLoader">ImageSetLoader</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ObjectLoader.config">
+<span class="sig-name descname"><span class="pre">config</span></span><a class="headerlink" href="#zedprofiler.IO.loading_classes.ObjectLoader.config" title="Link to this definition"></a></dt>
+<dd><p>The configuration object containing image set parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetConfig" title="zedprofiler.IO.loading_classes.ImageSetConfig">ImageSetConfig</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.ObjectLoader.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compartment_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/zedprofiler/IO/loading_classes.html#ObjectLoader.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.IO.loading_classes.ObjectLoader.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initializes the ObjectLoader with the image, label image, channel
+name, and compartment name.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.TwoObjectLoader">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">zedprofiler.IO.loading_classes.</span></span><span class="sig-name descname"><span class="pre">TwoObjectLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_set_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetLoader" title="zedprofiler.IO.loading_classes.ImageSetLoader"><span class="pre">ImageSetLoader</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">compartment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/zedprofiler/IO/loading_classes.html#TwoObjectLoader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.IO.loading_classes.TwoObjectLoader" title="Link to this definition"></a></dt>
+<dd><p>A class to load two images and a label image for a specific compartment.
+This class is primarily used for loading images for two-channel
+analysis like co-localization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image_set_loader</strong> (<a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetLoader" title="zedprofiler.IO.loading_classes.ImageSetLoader"><em>ImageSetLoader</em></a>) – An instance of the ImageSetLoader class containing the image set.</p></li>
+<li><p><strong>compartment</strong> (<em>str</em>) – The name of the compartment for which the label image is loaded.</p></li>
+<li><p><strong>channel1</strong> (<em>str</em>) – The name of the first channel to be loaded.</p></li>
+<li><p><strong>channel2</strong> (<em>str</em>) – The name of the second channel to be loaded.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.TwoObjectLoader.image_set_loader">
+<span class="sig-name descname"><span class="pre">image_set_loader</span></span><a class="headerlink" href="#zedprofiler.IO.loading_classes.TwoObjectLoader.image_set_loader" title="Link to this definition"></a></dt>
+<dd><p>An instance of the ImageSetLoader class containing the image set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#zedprofiler.IO.loading_classes.ImageSetLoader" title="zedprofiler.IO.loading_classes.ImageSetLoader">ImageSetLoader</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.TwoObjectLoader.compartment">
+<span class="sig-name descname"><span class="pre">compartment</span></span><a class="headerlink" href="#zedprofiler.IO.loading_classes.TwoObjectLoader.compartment" title="Link to this definition"></a></dt>
+<dd><p>The name of the compartment for which the label image is loaded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.TwoObjectLoader.label_image">
+<span class="sig-name descname"><span class="pre">label_image</span></span><a class="headerlink" href="#zedprofiler.IO.loading_classes.TwoObjectLoader.label_image" title="Link to this definition"></a></dt>
+<dd><p>The labeled image containing the segmented objects for the
+specified compartment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.TwoObjectLoader.image1">
+<span class="sig-name descname"><span class="pre">image1</span></span><a class="headerlink" href="#zedprofiler.IO.loading_classes.TwoObjectLoader.image1" title="Link to this definition"></a></dt>
+<dd><p>The image corresponding to the first channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.TwoObjectLoader.image2">
+<span class="sig-name descname"><span class="pre">image2</span></span><a class="headerlink" href="#zedprofiler.IO.loading_classes.TwoObjectLoader.image2" title="Link to this definition"></a></dt>
+<dd><p>The image corresponding to the second channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.TwoObjectLoader.object_ids">
+<span class="sig-name descname"><span class="pre">object_ids</span></span><a class="headerlink" href="#zedprofiler.IO.loading_classes.TwoObjectLoader.object_ids" title="Link to this definition"></a></dt>
+<dd><p>The unique object IDs for the segmented objects in the specified compartment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zedprofiler.IO.loading_classes.TwoObjectLoader.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_set_loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compartment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/zedprofiler/IO/loading_classes.html#TwoObjectLoader.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.IO.loading_classes.TwoObjectLoader.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initializes the TwoObjectLoader with the image set loader,
+compartment, and channel names.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="features/texture.html" class="btn btn-neutral float-left" title="Texture" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scalability.html" class="btn btn-neutral float-right" title="ZEDprofiler scalability" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

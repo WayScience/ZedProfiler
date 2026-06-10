@@ -1,0 +1,393 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZEDprofiler &mdash; ZEDprofiler  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=5661ff97" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ZEDprofiler Walkthrough" href="notebooks/walkthrough.html" />
+    <link rel="prev" title="ZEDprofiler" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ZEDprofiler
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ZEDprofiler  </a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#install-environment">Install environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-contract">Data Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quality-gates">Quality Gates</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/walkthrough.html">ZEDprofiler Walkthrough</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#what-this-walkthrough-covers">What this walkthrough covers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#imports">Imports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#define-paths-and-parameters">Define Paths and Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#preview-synthetic-data">Preview Synthetic Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#loading-objects-and-image-sets">Loading Objects and Image Sets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#colocalization">Colocalization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#granularity">Granularity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#intensity">Intensity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#neighbors">Neighbors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#texture">Texture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#volume-size-and-shape">Volume, Size, and Shape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#merging-all-features-into-a-single-profile">Merging All Features into a Single Profile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#normalize-and-feature-select">Normalize and Feature Select</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/walkthrough.html#pairwise-object-correlation">Pairwise Object Correlation</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Feature Schema</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="features/Feature_Naming_Convention.html">Feature schema</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features/Feature_Naming_Convention.html#abstract">Abstract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/Feature_Naming_Convention.html#introduction">1. Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#purpose">1.1 Purpose</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#scope">1.2 Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#key-words">1.3 Key words</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features/Feature_Naming_Convention.html#a-feature-name-format-specification">2A. feature name format specification</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#general-structure">2.1 General structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#component-definitions">2.2 Component definitions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="features/Feature_Naming_Convention.html#compartment-component">2.2.1 Compartment component</a></li>
+<li class="toctree-l4"><a class="reference internal" href="features/Feature_Naming_Convention.html#channel-component">2.2.2 Channel component</a></li>
+<li class="toctree-l4"><a class="reference internal" href="features/Feature_Naming_Convention.html#featuretype-component">2.2.3 Featuretype component</a></li>
+<li class="toctree-l4"><a class="reference internal" href="features/Feature_Naming_Convention.html#measurement-component">2.2.4 Measurement component</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#complete-feature-name-examples">2.3 Complete feature name examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features/Feature_Naming_Convention.html#b-metadata-naming-specification">2B. metadata naming specification</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#id1">2.1 General structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#metadata-category-definitions">2.2 Metadata category definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#complete-metadata-name-examples">2.3 Complete metadata name examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features/Feature_Naming_Convention.html#references">3. References</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#normative-references">3.1 Normative references</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/Feature_Naming_Convention.html#informative-references">3.2 Informative references</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Feature Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="features/areasizeshape.html">Volume.size.shape</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features/areasizeshape.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/areasizeshape.html#features-extracted">Features extracted</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features/areasizeshape.html#volume-size-shape-feature-measurements">Volume.size.shape feature measurements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features/areasizeshape.html#calculation-method">Calculation method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/areasizeshape.html#applications">Applications</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="features/colocalization.html">Colocalization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features/colocalization.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/colocalization.html#features-extracted">Features extracted</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features/colocalization.html#correlation-based-metrics">Correlation-based metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/colocalization.html#manders-coefficients-m1-and-m2">Manders coefficients (M1 and M2)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/colocalization.html#overlap-coefficient">Overlap coefficient</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/colocalization.html#k1-and-k2-coefficients">K1 and K2 coefficients</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features/colocalization.html#use-cases">Use cases</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="features/granularity.html">Granularity</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features/granularity.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/granularity.html#spectrum-approach">Spectrum approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/granularity.html#features-extracted">Features extracted</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/granularity.html#interpretation">Interpretation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features/granularity.html#high-granularity-at-small-scales-1-3">High granularity at small scales (1-3):</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/granularity.html#high-granularity-at-medium-scales-4-8">High granularity at medium scales (4-8):</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/granularity.html#high-granularity-at-large-scales-9-16">High granularity at large scales (9-16):</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/granularity.html#smooth-profile-low-across-all-scales">Smooth profile (low across all scales):</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/granularity.html#as-an-example-if-a-drug-causes-mitochondria-to-fragment-you-d-see">As an example, if a drug causes mitochondria to fragment, you’d see:</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features/granularity.html#applications">Applications</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="features/intensity.html">Intensity</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features/intensity.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/intensity.html#features-extracted">Features extracted</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features/intensity.html#location-based-intensity">Location-based intensity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/intensity.html#statistical-measures">Statistical measures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/intensity.html#edge-based-measurements">Edge-based measurements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features/intensity.html#other-measurements">Other measurements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features/intensity.html#calculation-method">Calculation method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/intensity.html#applications">Applications</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="features/neighbors.html">Neighbors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features/neighbors.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/neighbors.html#current-implementation">Current implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/neighbors.html#total-features">Total features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/neighbors.html#applications">Applications</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="features/texture.html">Texture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features/texture.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/texture.html#calculation-method">Calculation method</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features/texture.html#parameters">Parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features/texture.html#features-extracted">Features extracted</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features/texture.html#texture-feature-measurements">Texture feature measurements</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-zedprofiler.featurization.colocalization">Featurization utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader"><code class="docutils literal notranslate"><span class="pre">SupportsTwoObjectLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.compartment"><code class="docutils literal notranslate"><span class="pre">SupportsTwoObjectLoader.compartment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.image1"><code class="docutils literal notranslate"><span class="pre">SupportsTwoObjectLoader.image1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.image2"><code class="docutils literal notranslate"><span class="pre">SupportsTwoObjectLoader.image2</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.image_set_loader"><code class="docutils literal notranslate"><span class="pre">SupportsTwoObjectLoader.image_set_loader</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.label_image"><code class="docutils literal notranslate"><span class="pre">SupportsTwoObjectLoader.label_image</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.featurization.colocalization.SupportsTwoObjectLoader.object_ids"><code class="docutils literal notranslate"><span class="pre">SupportsTwoObjectLoader.object_ids</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.colocalization.bisection_costes_threshold_calculation"><code class="docutils literal notranslate"><span class="pre">bisection_costes_threshold_calculation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.colocalization.calculate_colocalization"><code class="docutils literal notranslate"><span class="pre">calculate_colocalization()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.colocalization.compute_colocalization"><code class="docutils literal notranslate"><span class="pre">compute_colocalization()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.colocalization.linear_costes_threshold_calculation"><code class="docutils literal notranslate"><span class="pre">linear_costes_threshold_calculation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.colocalization.prepare_two_images_for_colocalization"><code class="docutils literal notranslate"><span class="pre">prepare_two_images_for_colocalization()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.granularity.compute_granularity"><code class="docutils literal notranslate"><span class="pre">compute_granularity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.intensity.compute_intensity"><code class="docutils literal notranslate"><span class="pre">compute_intensity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.intensity.get_outline"><code class="docutils literal notranslate"><span class="pre">get_outline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.neighbors.calculate_centroid"><code class="docutils literal notranslate"><span class="pre">calculate_centroid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.neighbors.classify_cells_into_shells"><code class="docutils literal notranslate"><span class="pre">classify_cells_into_shells()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.neighbors.compute_neighbors"><code class="docutils literal notranslate"><span class="pre">compute_neighbors()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.neighbors.create_results_dataframe"><code class="docutils literal notranslate"><span class="pre">create_results_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.neighbors.crop_3D_image"><code class="docutils literal notranslate"><span class="pre">crop_3D_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.neighbors.euclidean_distance_from_centroid"><code class="docutils literal notranslate"><span class="pre">euclidean_distance_from_centroid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.neighbors.get_coordinates"><code class="docutils literal notranslate"><span class="pre">get_coordinates()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.neighbors.mahalanobis_distance_from_centroid"><code class="docutils literal notranslate"><span class="pre">mahalanobis_distance_from_centroid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.neighbors.neighbors_expand_box"><code class="docutils literal notranslate"><span class="pre">neighbors_expand_box()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.neighbors.plot_distance_distributions"><code class="docutils literal notranslate"><span class="pre">plot_distance_distributions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.neighbors.visualize_organoid_shells"><code class="docutils literal notranslate"><span class="pre">visualize_organoid_shells()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.texture.compute_texture"><code class="docutils literal notranslate"><span class="pre">compute_texture()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.texture.scale_image"><code class="docutils literal notranslate"><span class="pre">scale_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader"><code class="docutils literal notranslate"><span class="pre">SupportsImageSetLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader.anisotropy_spacing"><code class="docutils literal notranslate"><span class="pre">SupportsImageSetLoader.anisotropy_spacing</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.label_image"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.label_image</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.object_ids"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.object_ids</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.volumesizeshape.calculate_surface_area"><code class="docutils literal notranslate"><span class="pre">calculate_surface_area()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.volumesizeshape.compute_volume_size_shape"><code class="docutils literal notranslate"><span class="pre">compute_volume_size_shape()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.volumesizeshape.measure_3D_volume_size_shape"><code class="docutils literal notranslate"><span class="pre">measure_3D_volume_size_shape()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-zedprofiler.image_utils.image_utils">Image utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.image_utils.image_utils.check_for_xy_squareness"><code class="docutils literal notranslate"><span class="pre">check_for_xy_squareness()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.image_utils.image_utils.crop_3D_image"><code class="docutils literal notranslate"><span class="pre">crop_3D_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.image_utils.image_utils.expand_box"><code class="docutils literal notranslate"><span class="pre">expand_box()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.image_utils.image_utils.new_crop_border"><code class="docutils literal notranslate"><span class="pre">new_crop_border()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.image_utils.image_utils.select_objects_from_label"><code class="docutils literal notranslate"><span class="pre">select_objects_from_label()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.image_utils.image_utils.single_3D_image_expand_bbox"><code class="docutils literal notranslate"><span class="pre">single_3D_image_expand_bbox()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.image_utils.image_utils.square_off_xy_crop_bbox"><code class="docutils literal notranslate"><span class="pre">square_off_xy_crop_bbox()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-zedprofiler.IO.feature_writing_utils">IO utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.IO.feature_writing_utils.FeatureMetadata"><code class="docutils literal notranslate"><span class="pre">FeatureMetadata</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.feature_writing_utils.FeatureMetadata.channel"><code class="docutils literal notranslate"><span class="pre">FeatureMetadata.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.feature_writing_utils.FeatureMetadata.compartment"><code class="docutils literal notranslate"><span class="pre">FeatureMetadata.compartment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.feature_writing_utils.FeatureMetadata.cpu_or_gpu"><code class="docutils literal notranslate"><span class="pre">FeatureMetadata.cpu_or_gpu</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.feature_writing_utils.FeatureMetadata.feature_type"><code class="docutils literal notranslate"><span class="pre">FeatureMetadata.feature_type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.IO.feature_writing_utils.format_morphology_feature_name"><code class="docutils literal notranslate"><span class="pre">format_morphology_feature_name()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.IO.feature_writing_utils.remove_underscores_from_string"><code class="docutils literal notranslate"><span class="pre">remove_underscores_from_string()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.IO.feature_writing_utils.save_features_as_parquet"><code class="docutils literal notranslate"><span class="pre">save_features_as_parquet()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.image_set_name"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.image_set_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.label_key_name"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.label_key_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.raw_image_key_name"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.raw_image_key_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.image_set_name"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.image_set_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.anisotropy_spacing"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.anisotropy_spacing</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.anisotropy_factor"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.anisotropy_factor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.image_set_dict"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.image_set_dict</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.unique_label_objects"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.unique_label_objects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.unique_compartment_objects"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.unique_compartment_objects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.image_names"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.image_names</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.compartments"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.compartments</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.get_anisotropy"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.get_anisotropy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.get_compartments"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.get_compartments()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.get_image"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.get_image()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.get_image_names"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.get_image_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.get_unique_objects_in_compartments"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.get_unique_objects_in_compartments()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ObjectLoader"><code class="docutils literal notranslate"><span class="pre">ObjectLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ObjectLoader.image_set_loader"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.image_set_loader</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ObjectLoader.config"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ObjectLoader.__init__"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.TwoObjectLoader"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.TwoObjectLoader.image_set_loader"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader.image_set_loader</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.TwoObjectLoader.compartment"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader.compartment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.TwoObjectLoader.label_image"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader.label_image</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.TwoObjectLoader.image1"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader.image1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.TwoObjectLoader.image2"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader.image2</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.TwoObjectLoader.object_ids"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader.object_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.TwoObjectLoader.__init__"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">A Note on Scalability</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="scalability.html">ZEDprofiler scalability</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ZEDprofiler</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">ZEDprofiler  </li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/readme.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="zedprofiler">
+<h1>ZEDprofiler <a class="reference external" href="https://zedprofiler.readthedocs.io/en/latest/"><img alt="Documentation" src="https://img.shields.io/badge/documentation-available-brightgreen" /></a> <img alt="License" src="https://img.shields.io/badge/license-BSD%203--Clause-blue" /><a class="reference internal" href="#quality-gates"><img alt="Coverage" src="https://img.shields.io/badge/coverage-92%25-brightgreen" /></a><a class="headerlink" href="#zedprofiler" title="Link to this heading"></a></h1>
+<p><a class="reference external" href="https://github.com/WayScience/ZEDprofiler"><img alt="ZEDprofiler" src="https://github.com/WayScience/ZEDprofiler/raw/main/logo/with-text-for-dark-bg.png" /></a></p>
+<p>CPU-first 3D image feature extraction toolkit for high-content and high-throughput image-based profiling.</p>
+<p>This repository is used for image-based feature extraction of objects in 3D microscopy images.
+In this use case we extract features from single cells in 3D volumetric microscopy images.
+We developed ZEDprofiler to be used on high-content and high-throughput microscopy images, which are often large in size and require efficient processing.
+ZEDprofiler is extensible to any fluorescence microscopy image modality, and is designed to be modular.</p>
+<section id="install-environment">
+<h2>Install environment<a class="headerlink" href="#install-environment" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>just<span class="w"> </span>env
+</pre></div>
+</div>
+</section>
+<section id="data-contract">
+<h2>Data Contract<a class="headerlink" href="#data-contract" title="Link to this heading"></a></h2>
+<p>Where:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">x</span></code> is the width of the image in pixels</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">y</span></code> is the height of the image in pixels</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">z</span></code> is the depth of the image in pixels</p></li>
+</ul>
+<p>Though I have reservations about width, height, and depth being used to describe the dimensions of an image.
+Different fields use different dimensions for different meanings.
+We use <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> to refer to the same dimensions captured in a 2D image, and <code class="docutils literal notranslate"><span class="pre">z</span></code> to refer to the “depth” dimension in a 3D image if looking down into the image stack.
+The <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>, and <code class="docutils literal notranslate"><span class="pre">z</span></code> dimensions are less description and more absolute while <code class="docutils literal notranslate"><span class="pre">depth</span></code> is relative to angle of observation.</p>
+<p>Accepted image formats (order matters):</p>
+<ul class="simple">
+<li><p>Single channel: <code class="docutils literal notranslate"><span class="pre">(z,</span> <span class="pre">y,</span> <span class="pre">x)</span></code></p></li>
+</ul>
+</section>
+<section id="quality-gates">
+<h2>Quality Gates<a class="headerlink" href="#quality-gates" title="Link to this heading"></a></h2>
+<p>We lint and format code with our pre-commit configuration.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="ZEDprofiler" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="notebooks/walkthrough.html" class="btn btn-neutral float-right" title="ZEDprofiler Walkthrough" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
+    "@react-three/postprocessing": "^3.0.4",
+    "@reactuses/core": "^6.3.1",
+    "@types/three": "^0.184.1",
+    "canvas-record": "^5.5.1",
+    "gsap": "^3.15.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "three": "^0.184.0",
+    "valtio": "^2.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^25.7.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.12"
+  }
+}
