@@ -6,11 +6,17 @@ requires = [ "setuptools>=82.0.1", "setuptools-scm>=10.0.5" ]
 name = "zedprofiler"
 description = "CPU-first handcrafted 3D featurization toolkit for high-throughput profiling"
 readme = "README.md"
+license = { file = "LICENSE" }
 authors = [
-  { name = "Your NameWay Lab" },
+  { name = "Mike Lippincott" },
+  { name = "Dave Bunten" },
+  { name = "Jenna Tomkinson" },
+  { name = "Vincent Rubinetti" },
+  { name = "Gregory Way" },
 ]
 requires-python = ">=3.9"
 classifiers = [
+  "License :: OSI Approved :: BSD License",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
@@ -33,10 +39,10 @@ dependencies = [
   "pyarrow>=23.0.1",
   "pydantic>=2.10",
   "scikit-image>=0.26",
-  "sphinx-conestack-theme>=1.1.1",
-  "sphinx-rtd-theme>=3.1",
   "tomli>=2.4.1",
 ]
+urls.Homepage = "https://zedprofiler.readthedocs.io"
+urls.Repository = "https://github.com/WayScience/ZedProfiler"
 scripts.ZedProfiler = "ZedProfiler.cli:trigger"
 
 [dependency-groups]
@@ -70,7 +76,7 @@ local_scheme = "no-local-version"
 root = "."
 
 [tool.ruff]
-target-version = "py311"
+target-version = "py39"
 line-length = 88
 fix = true
 lint.select = [
