@@ -12,6 +12,9 @@
 #
 import pathlib
 import sys
+import warnings
+
+warnings.filterwarnings("ignore", category=SyntaxWarning, module="mahotas")
 
 basedir = str(pathlib.Path(__file__).parent.parent.parent.resolve())
 
