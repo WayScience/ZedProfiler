@@ -56,7 +56,6 @@ docs = [
   "myst-nb>=1.4",
   "plotly>=6.8",
   "pycytominer>=1.6",
-  "pydata-sphinx-theme>=0.17",
   "sphinx>=7",
   "sphinx-rtd-theme>=3.1",
 ]
