@@ -151,6 +151,7 @@ def compute_texture(  # noqa: C901
         )
     # loop through each label and get the bounding box
     # to compute features for the object
+    features = numpy.empty((n_directions, 13, max(labels)))
     for _, label in enumerate(labels):
         if int(label) == 0:
             continue
@@ -167,7 +168,6 @@ def compute_texture(  # noqa: C901
         if not numpy.any(object_mask):
             continue
         image_object[~object_mask] = 0
-        features = numpy.empty((n_directions, 13, max(labels)))
         image_object = scale_image(image_object, num_gray_levels=grayscale)
         try:
             # calculates 13 Haralick features for each direction (13)

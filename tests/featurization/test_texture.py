@@ -3,12 +3,16 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 import pytest
+import skimage.measure
 from beartype import beartype
 from pydantic import BaseModel, ConfigDict, field_validator
 
 mahotas = pytest.importorskip("mahotas")
 
-from zedprofiler.featurization.texture import compute_texture  # noqa: E402
+from zedprofiler.featurization.texture import compute_texture, scale_image  # noqa: E402
+
+LABEL_OBJ_1 = 1
+LABEL_OBJ_2 = 2
 
 
 class ImageSetLoaderModel(BaseModel):
@@ -56,3 +60,97 @@ def test_compute_texture_basic(
     df = compute_texture(loader, distance=1, grayscale=256)
     assert isinstance(df, pd.DataFrame)
     assert "Metadata_Object_ObjectID" in df.columns
+
+
+def test_texture_values_correct_per_object() -> None:
+    """Each object must receive its own Haralick values, not another object's.
+
+    Regression test for a bug where features = numpy.empty(...) was called
+    inside the per-object loop, resetting the array on every iteration so only
+    the last object's values survived. All prior objects received uninitialized
+    memory from numpy.empty.
+
+    Two objects with distinct pixel intensities are profiled. The test
+    independently computes expected Haralick values per object using mahotas
+    directly and asserts the pipeline output matches. It fails on the buggy code
+    because object 1 gets garbage values instead of its own.
+    """
+    # Object 1: bright uniform region (intensity 200)
+    # Object 2: dim uniform region (intensity 50)
+    # AngularSecondMoment for a uniform region is 1.0; if the array is reset
+    # inside the loop, object 1 gets uninitialized values instead.
+    shape = (20, 20, 20)
+    image = np.zeros(shape, dtype=np.uint8)
+    label = np.zeros(shape, dtype=np.int32)
+
+    image[1:5, 1:5, 1:5] = 200
+    label[1:5, 1:5, 1:5] = LABEL_OBJ_1
+
+    image[14:18, 14:18, 14:18] = 50
+    label[14:18, 14:18, 14:18] = LABEL_OBJ_2
+
+    imgset = ImageSetLoaderModel()
+    loader = ObjectLoaderModel(
+        image=image,
+        label_image=label,
+        object_ids=[LABEL_OBJ_1, LABEL_OBJ_2],
+        image_set_loader=imgset,
+    )
+
+    df = compute_texture(loader, distance=1, grayscale=256)
+
+    # Build per-object lookup: {object_id: {feature_col: value}}
+    obj_textures: dict[int, dict[str, float]] = {}
+    for _, row in df.iterrows():
+        obj_id = int(row["Metadata_Object_ObjectID"])
+        obj_textures.setdefault(obj_id, {})
+        for col in df.columns:
+            if col != "Metadata_Object_ObjectID":
+                obj_textures[obj_id][col] = row[col]
+
+    assert LABEL_OBJ_1 in obj_textures, "Object 1 missing from texture output"
+    assert LABEL_OBJ_2 in obj_textures, "Object 2 missing from texture output"
+
+    for obj_id in [LABEL_OBJ_1, LABEL_OBJ_2]:
+        mask = label == obj_id
+        crop_img = image.copy()
+        crop_img[~mask] = 0
+
+        props = skimage.measure.regionprops_table(
+            mask.astype(np.uint8), properties=["bbox"]
+        )
+        z0, y0, x0 = (
+            int(props["bbox-0"][0]),
+            int(props["bbox-1"][0]),
+            int(props["bbox-2"][0]),
+        )
+        z1, y1, x1 = (
+            int(props["bbox-3"][0]),
+            int(props["bbox-4"][0]),
+            int(props["bbox-5"][0]),
+        )
+        crop_scaled = scale_image(crop_img[z0:z1, y0:y1, x0:x1], num_gray_levels=256)
+
+        expected = mahotas.features.haralick(
+            ignore_zeros=True,
+            f=crop_scaled,
+            distance=1,
+            compute_14th_feature=False,
+        )
+        expected_asm = expected[0, 0]
+
+        asm_cols = [
+            c
+            for c in obj_textures[obj_id]
+            if "AngularSecondMoment" in c and "-00-" in c
+        ]
+        assert asm_cols, (
+            f"No AngularSecondMoment-direction-00 column for object {obj_id}"
+        )
+        actual_asm = obj_textures[obj_id][asm_cols[0]]
+
+        assert np.isclose(actual_asm, expected_asm, rtol=1e-5), (
+            f"Object {obj_id} AngularSecondMoment: "
+            f"got {actual_asm}, expected {expected_asm}. "
+            f"Likely caused by numpy.empty reset inside the per-object loop."
+        )
