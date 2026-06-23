@@ -117,8 +117,6 @@ def linear_costes_threshold_calculation(
     first_image_max = first_image.max()
     second_image_max = second_image.max()
 
-    # Initialize without a threshold
-    costReg, _ = scipy.stats.pearsonr(first_image, second_image)
     thr_first_image_c = i
     thr_second_image_c = (a * i) + b
     while i > first_image_max and (a * i) + b > second_image_max:
@@ -361,6 +359,9 @@ def calculate_colocalization(  # noqa: PLR0912, PLR0915
     ################################################################################################
 
     # Threshold as percentage of maximum intensity of objects in each channel
+    # Initialise before the try block so combined_thresh is always bound even
+    # when the except branch fires (numpy.max raises ValueError on empty arrays).
+    combined_thresh = numpy.zeros_like(cropped_image_1, dtype=bool)
     try:
         tff = (thr / 100) * numpy.max(cropped_image_1)
         tss = (thr / 100) * numpy.max(cropped_image_2)
@@ -394,28 +395,30 @@ def calculate_colocalization(  # noqa: PLR0912, PLR0915
     # Calculate the overlap coefficient
     ################################################################################################
 
-    fpsq = scipy.ndimage.sum(
-        cropped_image_1[combined_thresh] ** 2,
-    )
-    spsq = scipy.ndimage.sum(
-        cropped_image_2[combined_thresh] ** 2,
-    )
-    pdt = numpy.sqrt(numpy.array(fpsq) * numpy.array(spsq))
-    overlap = (
-        scipy.ndimage.sum(
-            cropped_image_1[combined_thresh] * cropped_image_2[combined_thresh],
+    if numpy.any(combined_thresh):
+        fpsq = scipy.ndimage.sum(
+            cropped_image_1[combined_thresh] ** 2,
         )
-        / pdt
-    )
-    # leave in for now given they are not exported but still calculated
-    K1 = scipy.ndimage.sum(
-        cropped_image_1[combined_thresh] * cropped_image_2[combined_thresh],
-    ) / (numpy.array(fpsq))
-    K2 = scipy.ndimage.sum(
-        cropped_image_1[combined_thresh] * cropped_image_2[combined_thresh],
-    ) / (numpy.array(spsq))
-    if K1 == K2:
-        pass
+        spsq = scipy.ndimage.sum(
+            cropped_image_2[combined_thresh] ** 2,
+        )
+        pdt = numpy.sqrt(numpy.array(fpsq) * numpy.array(spsq))
+        overlap = (
+            scipy.ndimage.sum(
+                cropped_image_1[combined_thresh] * cropped_image_2[combined_thresh],
+            )
+            / pdt
+        )
+        K1 = scipy.ndimage.sum(
+            cropped_image_1[combined_thresh] * cropped_image_2[combined_thresh],
+        ) / (numpy.array(fpsq))
+        K2 = scipy.ndimage.sum(
+            cropped_image_1[combined_thresh] * cropped_image_2[combined_thresh],
+        ) / (numpy.array(spsq))
+        if K1 == K2:
+            pass
+    else:
+        overlap, K1, K2 = 0.0, 0.0, 0.0
 
     # first_pixels, second_pixels = flattened image arrays
     # combined_thresh = boolean mask of pixels above threshold in both channels
@@ -475,12 +478,12 @@ def calculate_colocalization(  # noqa: PLR0912, PLR0915
         scale = UINT8_MAX
 
     if fast_costes == "Accurate":
-        thr_first_image_c, thr_second_image_c = bisection_costes_threshold_calculation(
-            cropped_image_1, cropped_image_2, scale
-        )
-    else:
         thr_first_image_c, thr_second_image_c = linear_costes_threshold_calculation(
             cropped_image_1, cropped_image_2, scale, fast_costes
+        )
+    else:
+        thr_first_image_c, thr_second_image_c = bisection_costes_threshold_calculation(
+            cropped_image_1, cropped_image_2, scale
         )
 
     # Costes' thershold for entire image is applied to each object
@@ -566,8 +569,8 @@ def compute_colocalization(  # noqa: C901, PLR0912
         colocalization_features = calculate_colocalization(
             cropped_image_1=cropped_image1,
             cropped_image_2=cropped_image2,
-            thr=15,
-            fast_costes="Accurate",
+            thr=thr,
+            fast_costes=fast_costes,
         )
 
         # Build a simple dict row (avoid pandas dependency)

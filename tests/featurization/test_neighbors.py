@@ -128,6 +128,44 @@ def test_mahalanobis_small_and_regularized_and_singular() -> None:
     assert np.allclose(md_sing, 0.0)
 
 
+def test_neighbors_count_adjacent_detects_touching_cells() -> None:
+    """NeighborsCountAdjacent must be > 0 for two directly touching objects (Bug 5).
+
+    Before the fix, adjacency was detected by cropping to the regionprops bbox
+    of each object and counting unique labels inside. Because regionprops uses
+    exclusive-max indices (Python slice convention), the boundary voxel of the
+    touching neighbour was excluded from the crop, making the count always 0.
+
+    The fix replaces the bbox-crop approach with a 1-voxel morphological dilation
+    of the object mask; any label in the dilated region that is not the object
+    itself is a true neighbour.
+    """
+    shape = (10, 10, 10)
+    lab = np.zeros(shape, dtype=int)
+    # Object 1 occupies [2:5, 2:5, 2:5]; Object 2 occupies [5:8, 2:5, 2:5].
+    # They share the plane at z=5, so they are face-adjacent (touching).
+    lab[2:5, 2:5, 2:5] = 1
+    lab[5:8, 2:5, 2:5] = 2
+
+    imgset = ImageSetLoaderModel()
+    loader = ObjectLoaderModel(
+        label_image=lab,
+        object_ids=[1, 2],
+        image_set_loader=imgset,
+    )
+
+    df = compute_neighbors(loader, distance_threshold=5, anisotropy_factor=1)
+    obj1_row = df[df["Metadata_Object_ObjectID"] == 1]
+    adjacent_col = [c for c in df.columns if "NeighborsCountAdjacent" in c]
+    assert adjacent_col, "NeighborsCountAdjacent column not found in output"
+
+    n_adj = int(obj1_row[adjacent_col[0]].values[0])
+    assert n_adj > 0, (
+        "NeighborsCountAdjacent is 0 for two touching cells — "
+        "likely caused by bbox-crop excluding the shared boundary voxel"
+    )
+
+
 def test_create_results_dataframe_and_errors_and_plots() -> None:
     # create a simple classification results dict
     results = {

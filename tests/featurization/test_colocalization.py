@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import unittest.mock
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -100,6 +102,87 @@ def test_prepare_two_images_for_colocalization_crops() -> None:
     assert cropped1.size > 0 and cropped2.size > 0
     assert cropped1.max() >= expected_peak_im1
     assert cropped2.max() >= expected_peak_im2
+
+
+def test_combined_thresh_does_not_raise_unbound_local_error() -> None:
+    """combined_thresh must be bound even when images are empty (Bug 2).
+
+    Before the fix, combined_thresh was only assigned inside the try-else block,
+    so when numpy.max raised ValueError on an empty crop, the subsequent
+    ``if numpy.any(combined_thresh)`` reference raised UnboundLocalError.
+    """
+    empty = np.zeros((0,), dtype=float)
+    try:
+        calculate_colocalization(empty, empty, thr=15, fast_costes="Accurate")
+    except UnboundLocalError as e:
+        pytest.fail(f"UnboundLocalError raised — combined_thresh not initialised: {e}")
+    except Exception:
+        pass  # any other exception (ValueError, ZeroDivisionError) is acceptable
+
+
+def test_accurate_mode_calls_linear_not_bisection() -> None:
+    """fast_costes='Accurate' must route to linear_costes, not bisection (Bug 3).
+
+    The two algorithms can converge to the same threshold for some inputs, so
+    the test uses unittest.mock.patch to spy on which function is actually called
+    rather than comparing numeric results.
+    """
+    rng = np.random.default_rng(42)
+    img = rng.uniform(0, 255, (8, 8, 8)).astype(float)
+
+    with (
+        unittest.mock.patch(
+            "zedprofiler.featurization.colocalization.linear_costes_threshold_calculation",
+            wraps=linear_costes_threshold_calculation,
+        ) as mock_linear,
+        unittest.mock.patch(
+            "zedprofiler.featurization.colocalization.bisection_costes_threshold_calculation",
+            wraps=bisection_costes_threshold_calculation,
+        ) as mock_bisection,
+    ):
+        calculate_colocalization(img, img, thr=15, fast_costes="Accurate")
+
+    assert mock_linear.called, (
+        "linear_costes_threshold_calculation was not called for fast_costes='Accurate'"
+    )
+    assert not mock_bisection.called, (
+        "bisection_costes_threshold_calculation was called for fast_costes='Accurate'"
+    )
+
+
+def test_compute_colocalization_respects_fast_costes_parameter() -> None:
+    """compute_colocalization must forward fast_costes to calculate_colocalization.
+
+    Bug B (ZedProfiler-specific):
+
+    Before the fix, the inner call hard-coded fast_costes='Accurate', so the
+    caller's value was silently ignored. The test passes fast_costes='Fast' and
+    checks via mock that the right algorithm (bisection) is invoked.
+    """
+    imgset = ImageSetLoaderModel()
+    shape = (7, 7, 7)
+    center = (3, 3, 3)
+    label, im1, im2 = make_pair(shape, center)
+    loader = TwoObjectLoaderModel(
+        image_set_loader=imgset,
+        compartment="Cell",
+        image1=im1,
+        image2=im2,
+        label_image=label,
+        object_ids=[1],
+    )
+
+    with unittest.mock.patch(
+        "zedprofiler.featurization.colocalization.bisection_costes_threshold_calculation",
+        wraps=bisection_costes_threshold_calculation,
+    ) as mock_bisection:
+        compute_colocalization(loader, channel1="A", channel2="B", fast_costes="Fast")
+
+    assert mock_bisection.called, (
+        "bisection_costes_threshold_calculation was not called for "
+        "fast_costes='Fast' — compute_colocalization may still be "
+        "hard-coding fast_costes='Accurate'"
+    )
 
 
 def test_calculate_colocalization_identical_images() -> None:

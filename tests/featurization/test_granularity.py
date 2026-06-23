@@ -159,6 +159,50 @@ def test_compute_granularity_mask_handling_and_zero_volume_skips() -> None:
     assert isinstance(df, pd.DataFrame)
 
 
+def test_upsample_3d_no_division_by_zero_when_dim_is_one() -> None:
+    """_upsample_3d must not raise ZeroDivisionError when any dim has size 1 (Bug 7).
+
+    Before the fix, the per-axis scale factor was always computed as
+    ``(subsampled_shape[k] - 1) / (original_shape[k] - 1)`` without guarding
+    against ``original_shape[k] == 1``, which produces a zero denominator.
+    """
+    data = np.ones((1, 4, 4), dtype=float)
+    try:
+        result = _upsample_3d(data, data.shape, (1, 8, 8))
+    except ZeroDivisionError as e:
+        pytest.fail(f"ZeroDivisionError in _upsample_3d with dim-1 axis: {e}")
+    assert result.shape == (1, 8, 8)
+
+
+def test_granularity_no_crash_on_single_z_slice() -> None:
+    """compute_granularity must not crash when the input has only one Z slice (Bug 7).
+
+    The division-by-zero guard must also protect the background upsampling block
+    inside compute_granularity, not just _upsample_3d.
+    """
+    shape = (1, 12, 12)
+    img = np.zeros(shape, dtype=float)
+    lab = np.zeros(shape, dtype=int)
+    img[0, 5, 5] = 10.0
+    lab[0, 5, 5] = 1
+
+    class Dummy:
+        image = img
+        label_image = lab
+        object_ids: ClassVar[list[int]] = [1]
+        image_set_loader = type("ISL", (), {"image_set_name": "s"})()
+        compartment = "Cell"
+        channel = "Ch1"
+
+    try:
+        df = compute_granularity(Dummy(), radius=1, granular_spectrum_length=3)
+    except ZeroDivisionError as e:
+        pytest.fail(
+            f"ZeroDivisionError in compute_granularity with single-Z image: {e}"
+        )
+    assert isinstance(df, pd.DataFrame)
+
+
 def test_compute_granularity_preserves_sparse_label_ids() -> None:
     # Sparse labels should not be renumbered to 1..n internally.
     shape = (8, 8, 8)
