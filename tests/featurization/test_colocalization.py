@@ -156,8 +156,8 @@ def test_compute_colocalization_respects_fast_costes_parameter() -> None:
     Bug B (ZedProfiler-specific):
 
     Before the fix, the inner call hard-coded fast_costes='Accurate', so the
-    caller's value was silently ignored. The test passes fast_costes='Fast' and
-    checks via mock that the right algorithm (bisection) is invoked.
+    caller's value was silently ignored. The test passes fast_costes='Faster' and
+    checks via mock that bisection is invoked (the only mode that reaches bisection).
     """
     imgset = ImageSetLoaderModel()
     shape = (7, 7, 7)
@@ -176,12 +176,141 @@ def test_compute_colocalization_respects_fast_costes_parameter() -> None:
         "zedprofiler.featurization.colocalization.bisection_costes_threshold_calculation",
         wraps=bisection_costes_threshold_calculation,
     ) as mock_bisection:
-        compute_colocalization(loader, channel1="A", channel2="B", fast_costes="Fast")
+        compute_colocalization(loader, channel1="A", channel2="B", fast_costes="Faster")
 
     assert mock_bisection.called, (
         "bisection_costes_threshold_calculation was not called for "
-        "fast_costes='Fast' — compute_colocalization may still be "
+        "fast_costes='Faster' — compute_colocalization may still be "
         "hard-coding fast_costes='Accurate'"
+    )
+
+
+@pytest.fixture()
+def high_contrast_images() -> tuple[np.ndarray, np.ndarray]:
+    """Two 1-D images with a bright correlated signal well above background."""
+    rng = np.random.default_rng(0)
+    background = rng.uniform(0, 50, 300)
+    signal_mask = np.zeros(300, dtype=bool)
+    signal_mask[100:150] = True
+    img1 = background.copy()
+    img1[signal_mask] = 200.0
+    img2 = background.copy()
+    img2[signal_mask] = 180.0
+    return img1, img2
+
+
+def test_all_costes_modes_converge_on_same_threshold(
+    high_contrast_images: tuple[np.ndarray, np.ndarray],
+) -> None:
+    """All three modes must agree to within 15 pixel units on realistic images."""
+    img1, img2 = high_contrast_images
+    thr_accurate, _ = linear_costes_threshold_calculation(
+        first_image=img1, second_image=img2, scale_max=255, fast_costes="Accurate"
+    )
+    thr_fast, _ = linear_costes_threshold_calculation(
+        first_image=img1, second_image=img2, scale_max=255, fast_costes="Fast"
+    )
+    thr_faster, _ = bisection_costes_threshold_calculation(
+        first_image=img1, second_image=img2, scale_max=255
+    )
+    tolerance = 15
+    assert abs(thr_accurate - thr_fast) <= tolerance, (
+        f"Accurate ({thr_accurate:.1f}) and Fast ({thr_fast:.1f}) diverged "
+        f"by more than {tolerance}"
+    )
+    assert abs(thr_accurate - thr_faster) <= tolerance, (
+        f"Accurate ({thr_accurate:.1f}) and Faster ({thr_faster:.1f}) diverged "
+        f"by more than {tolerance}"
+    )
+
+
+def test_costes_threshold_low_for_perfectly_correlated_images() -> None:
+    """All three modes must return a low threshold for perfectly correlated images."""
+    img = np.linspace(10, 200, 300)
+    thr_accurate, _ = linear_costes_threshold_calculation(
+        first_image=img, second_image=img, scale_max=255, fast_costes="Accurate"
+    )
+    thr_fast, _ = linear_costes_threshold_calculation(
+        first_image=img, second_image=img, scale_max=255, fast_costes="Fast"
+    )
+    thr_faster, _ = bisection_costes_threshold_calculation(
+        first_image=img, second_image=img, scale_max=255
+    )
+    max_expected = 15  # near zero in 0-255 space
+    assert thr_accurate < max_expected, (
+        f"Expected threshold near 0 for fully correlated images, got {thr_accurate:.3f}"
+    )
+    assert thr_fast < max_expected, (
+        f"Expected threshold near 0 for fully correlated images, got {thr_fast:.3f}"
+    )
+    assert thr_faster < max_expected, (
+        f"Expected threshold near 0 for fully correlated images, got {thr_faster:.3f}"
+    )
+
+
+def test_costes_threshold_high_for_anticorrelated_images_linear() -> None:
+    """Linear modes must return a threshold near max for anti-correlated images.
+
+    Note: the bisection algorithm's degenerate behaviour for purely anti-correlated
+    inputs (returns 0 rather than scale_max) is documented separately in
+    test_bisection_degenerate_anticorrelation_returns_zero.
+    """
+    img1 = np.linspace(0, 255, 300)
+    img2 = np.linspace(255, 0, 300)
+    thr_accurate, _ = linear_costes_threshold_calculation(
+        first_image=img1, second_image=img2, scale_max=255, fast_costes="Accurate"
+    )
+    thr_fast, _ = linear_costes_threshold_calculation(
+        first_image=img1, second_image=img2, scale_max=255, fast_costes="Fast"
+    )
+    min_expected = 200
+    assert thr_accurate > min_expected, (
+        "Expected threshold near max for anti-correlated images, "
+        f"got {thr_accurate:.3f}"
+    )
+    assert thr_fast > min_expected, (
+        f"Expected threshold near max for anti-correlated images, got {thr_fast:.3f}"
+    )
+
+
+def test_bisection_degenerate_anticorrelation_returns_zero() -> None:
+    """Document bisection's edge-case behaviour for purely anti-correlated images.
+
+    When Pearson R is negative for every candidate threshold, valid is never updated
+    from its initial value of 1, so the return is valid - 1 = 0. This matches
+    CellProfiler's library behaviour and is a known limitation for this degenerate case.
+    """
+    img1 = np.linspace(0, 255, 300)
+    img2 = np.linspace(255, 0, 300)
+    thr, _ = bisection_costes_threshold_calculation(
+        first_image=img1, second_image=img2, scale_max=255
+    )
+    assert thr == 0.0, (
+        f"Expected bisection to return 0 for fully anti-correlated images "
+        f"(degenerate case), got {thr}"
+    )
+
+
+def test_faster_mode_calls_bisection_not_linear() -> None:
+    """fast_costes='Faster' must route to bisection, not linear."""
+    rng = np.random.default_rng(42)
+    img = rng.uniform(0, 255, (8, 8, 8)).astype(float)
+    with (
+        unittest.mock.patch(
+            "zedprofiler.featurization.colocalization.linear_costes_threshold_calculation",
+            wraps=linear_costes_threshold_calculation,
+        ) as mock_linear,
+        unittest.mock.patch(
+            "zedprofiler.featurization.colocalization.bisection_costes_threshold_calculation",
+            wraps=bisection_costes_threshold_calculation,
+        ) as mock_bisection,
+    ):
+        calculate_colocalization(img, img, thr=15, fast_costes="Faster")
+    assert mock_bisection.called, (
+        "bisection_costes_threshold_calculation was not called for fast_costes='Faster'"
+    )
+    assert not mock_linear.called, (
+        "linear_costes_threshold_calculation was called for fast_costes='Faster'"
     )
 
 
