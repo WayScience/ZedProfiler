@@ -46,8 +46,9 @@ jobs:
         uses: astral-sh/setup-uv@v7
       - name: Run pytest with coverage
         run: uv run --frozen pytest --cov=zedprofiler --cov-report=xml
-      - name: Upload coverage to Codecov
+      - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage.xml
           flags: ${{ matrix.os }}-py${{ matrix.python_version }}
