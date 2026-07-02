@@ -151,7 +151,7 @@ def compute_texture(  # noqa: C901
         )
     # loop through each label and get the bounding box
     # to compute features for the object
-    features = numpy.empty((n_directions, 13, max(labels)))
+    features = numpy.full((n_directions, 13, max(labels)), numpy.nan)
     for _, label in enumerate(labels):
         if int(label) == 0:
             continue
