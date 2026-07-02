@@ -179,7 +179,7 @@ def compute_texture(  # noqa: C901
                 compute_14th_feature=False,
             )
         except ValueError:
-            features = numpy.full(len(feature_names), numpy.nan, dtype=float)
+            features[:, :, label - 1] = numpy.nan
     # iterate through the direction, feature, and object dimensions
     # of the features array to populate the output dictionary
     for direction, direction_features in enumerate(features):

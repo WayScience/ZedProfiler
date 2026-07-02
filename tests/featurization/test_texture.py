@@ -62,6 +62,58 @@ def test_compute_texture_basic(
     assert "Metadata_Object_ObjectID" in df.columns
 
 
+def test_value_error_in_one_object_does_not_corrupt_others() -> None:
+    """When mahotas raises ValueError for one object, other objects must be unaffected.
+
+    Regression test for a bug where the except-ValueError branch executed:
+        features = numpy.full(len(feature_names), numpy.nan, dtype=float)
+    This replaced the entire 3D features array with a 1D array, destroying all
+    previously-computed labels and corrupting the iteration that follows.
+
+    A single-pixel object has no valid pixel pairs at any distance when
+    ignore_zeros=True, so it reliably triggers ValueError. Object 1 (a normal
+    4x4x4 cube) is processed first and must retain its Haralick values even
+    after object 2 (single pixel) raises ValueError.
+    """
+    shape = (20, 20, 20)
+    image = np.zeros(shape, dtype=np.uint8)
+    label = np.zeros(shape, dtype=np.int32)
+
+    image[1:5, 1:5, 1:5] = 200
+    label[1:5, 1:5, 1:5] = LABEL_OBJ_1
+
+    # single pixel — no neighbour pairs → ValueError from mahotas
+    image[15, 15, 15] = 100
+    label[15, 15, 15] = LABEL_OBJ_2
+
+    imgset = ImageSetLoaderModel()
+    loader = ObjectLoaderModel(
+        image=image,
+        label_image=label,
+        object_ids=[LABEL_OBJ_1, LABEL_OBJ_2],
+        image_set_loader=imgset,
+    )
+
+    df = compute_texture(loader, distance=1, grayscale=256)
+
+    obj1_rows = df[df["Metadata_Object_ObjectID"] == LABEL_OBJ_1]
+    assert not obj1_rows.empty, "Object 1 missing from output after object 2 ValueError"
+
+    asm_cols = [c for c in df.columns if "AngularSecondMoment" in c and "-00-" in c]
+    assert asm_cols, "No AngularSecondMoment direction-00 column found"
+
+    obj1_asm = obj1_rows[asm_cols[0]].iloc[0]
+    assert not np.isnan(obj1_asm), (
+        "Object 1 AngularSecondMoment is NaN after object 2 raised ValueError. "
+        "The except branch corrupted the shared features array."
+    )
+
+    obj2_rows = df[df["Metadata_Object_ObjectID"] == LABEL_OBJ_2]
+    assert not obj2_rows.empty, "Object 2 missing from output"
+    obj2_asm = obj2_rows[asm_cols[0]].iloc[0]
+    assert np.isnan(obj2_asm), "Object 2 (single pixel) should have NaN texture values"
+
+
 def test_texture_values_correct_per_object() -> None:
     """Each object must receive its own Haralick values, not another object's.
 
