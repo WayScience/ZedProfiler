@@ -92,7 +92,12 @@ def test_prepare_two_images_for_colocalization_crops() -> None:
     im2[3, 3, 3] = expected_peak_im2
 
     cropped1, cropped2 = prepare_two_images_for_colocalization(
-        label, label, im1, im2, 1, 1
+        label_object1=label,
+        label_object2=label,
+        image_object1=im1,
+        image_object2=im2,
+        object_id1=1,
+        object_id2=1,
     )
 
     assert isinstance(cropped1, np.ndarray) and isinstance(cropped2, np.ndarray)

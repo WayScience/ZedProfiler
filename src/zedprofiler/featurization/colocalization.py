@@ -241,6 +241,7 @@ def bisection_costes_threshold_calculation(
 
 
 def prepare_two_images_for_colocalization(  # noqa: PLR0913
+    *,
     label_object1: numpy.ndarray,
     label_object2: numpy.ndarray,
     image_object1: numpy.ndarray,

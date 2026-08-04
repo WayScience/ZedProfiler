@@ -112,6 +112,7 @@ def _upsample_3d(
 
 def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
     object_loader: ObjectLoader,
+    *,
     radius: int = 10,
     granular_spectrum_length: int = 16,
     subsample_size: float = 0.25,

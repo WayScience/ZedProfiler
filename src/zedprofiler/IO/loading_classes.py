@@ -140,6 +140,7 @@ class ImageSetLoader:
 
     def __init__(  # noqa: PLR0913
         self,
+        *,
         anisotropy_spacing: tuple[float, float, float],
         channel_mapping: dict[str, str],
         image_set_path: pathlib.Path | None,
