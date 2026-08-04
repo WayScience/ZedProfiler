@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       # checks out the repo
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       # run pre-commit
       - name: Python setup
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - name: Install the latest version of uv
@@ -37,9 +37,9 @@ jobs:
       OS: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Python setup
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python_version }}
       - name: Install the latest version of uv
@@ -50,9 +50,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Python setup
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - name: Install the latest version of uv
@@ -60,7 +60,7 @@ jobs:
       - name: Run pytest with coverage
         run: uv run --frozen pytest --cov=zedprofiler --cov-report=xml
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage.xml
