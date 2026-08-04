@@ -217,6 +217,9 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.channel"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.compartment"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.compartment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.image_set_loader"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.image_set_loader</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.label_image"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.label_image</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.object_ids"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.object_ids</span></code></a></li>
 </ul>
@@ -273,6 +276,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.image_set_loader"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.image_set_loader</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.config"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.config</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.__init__"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.object_ids"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.object_ids</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.TwoObjectLoader"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader</span></code></a><ul>
@@ -322,7 +326,7 @@
   <h1>Source code for zedprofiler.featurization.neighbors</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Neighbors featurization module.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
@@ -334,22 +338,21 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">zedprofiler.IO.feature_writing_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">format_morphology_feature_name</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">zedprofiler.IO.loading_classes</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObjectLoader</span>
 
-<span class="n">BBoxCoord</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
-<span class="n">BBox3D</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">BBoxCoord</span><span class="p">,</span> <span class="n">BBoxCoord</span><span class="p">,</span> <span class="n">BBoxCoord</span><span class="p">,</span> <span class="n">BBoxCoord</span><span class="p">,</span> <span class="n">BBoxCoord</span><span class="p">,</span> <span class="n">BBoxCoord</span><span class="p">]</span>
+<span class="n">BBoxCoord</span> <span class="o">=</span> <span class="nb">int</span>
+<span class="n">BBox3D</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">BBoxCoord</span><span class="p">,</span> <span class="n">BBoxCoord</span><span class="p">,</span> <span class="n">BBoxCoord</span><span class="p">,</span> <span class="n">BBoxCoord</span><span class="p">,</span> <span class="n">BBoxCoord</span><span class="p">,</span> <span class="n">BBoxCoord</span><span class="p">]</span>
 <span class="n">SMALL_SAMPLE_THRESHOLD</span> <span class="o">=</span> <span class="mi">20</span>
 
 
 <div class="viewcode-block" id="neighbors_expand_box">
 <a class="viewcode-back" href="../../../api.html#zedprofiler.featurization.neighbors.neighbors_expand_box">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">neighbors_expand_box</span><span class="p">(</span>
-    <span class="n">min_coor</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-    <span class="n">max_coord</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-    <span class="n">current_min</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-    <span class="n">current_max</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">min_coor</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">max_coord</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">current_min</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">current_max</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">expand_by</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Expand the bounding box of the object by a specified distance in each direction.</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Expand the bounding box of the object by a specified distance in each direction.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -368,6 +371,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    Tuple[Union[int, float], Union[int, float]]</span>
 <span class="sd">        The new minimum and maximum coordinates of the bounding box.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">current_min</span> <span class="o">-</span> <span class="n">expand_by</span> <span class="o">&lt;</span> <span class="n">min_coor</span><span class="p">:</span>
         <span class="n">current_min</span> <span class="o">=</span> <span class="n">min_coor</span>
@@ -388,8 +392,7 @@
     <span class="n">image</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">bbox</span><span class="p">:</span> <span class="n">BBox3D</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Crop the 3D image to the bounding box of the object.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Crop the 3D image to the bounding box of the object.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -402,6 +405,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    numpy.ndarray</span>
 <span class="sd">        The cropped 3D image.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">z1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">z2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">x2</span> <span class="o">=</span> <span class="n">bbox</span>
     <span class="k">return</span> <span class="n">image</span><span class="p">[</span><span class="n">z1</span><span class="p">:</span><span class="n">z2</span><span class="p">,</span> <span class="n">y1</span><span class="p">:</span><span class="n">y2</span><span class="p">,</span> <span class="n">x1</span><span class="p">:</span><span class="n">x2</span><span class="p">]</span></div>
@@ -414,9 +418,8 @@
     <span class="n">object_loader</span><span class="p">:</span> <span class="n">ObjectLoader</span><span class="p">,</span>
     <span class="n">distance_threshold</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
     <span class="n">anisotropy_factor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This function calculates the number of neighbors for each object in a 3D image.</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This function calculates the number of neighbors for each object in a 3D image.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -431,10 +434,13 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    Dict[str, list]</span>
-<span class="sd">        A dictionary containing the object ID and the number of neighbors for</span>
-<span class="sd">        each object.</span>
+<span class="sd">    pandas.DataFrame</span>
+<span class="sd">        Wide-format DataFrame with one row per object and columns for</span>
+<span class="sd">        NeighborsCountAdjacent and NeighborsCountByDistance, plus Metadata columns.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">label_image</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
     <span class="n">label_object</span> <span class="o">=</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">label_image</span>
     <span class="n">labels</span> <span class="o">=</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">object_ids</span>
     <span class="c1"># set image global min and max coordinates</span>
@@ -445,16 +451,15 @@
     <span class="n">image_global_max_coord_y</span> <span class="o">=</span> <span class="n">label_object</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">image_global_max_coord_x</span> <span class="o">=</span> <span class="n">label_object</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
-    <span class="n">neighbors_out_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">neighbors_out_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">:</span> <span class="p">[],</span>
         <span class="s2">&quot;NeighborsCountAdjacent&quot;</span><span class="p">:</span> <span class="p">[],</span>
         <span class="sa">f</span><span class="s2">&quot;NeighborsCountByDistance-</span><span class="si">{</span><span class="n">distance_threshold</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="p">[],</span>
     <span class="p">}</span>
     <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
-        <span class="n">selected_label_object</span> <span class="o">=</span> <span class="n">label_object</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">selected_label_object</span><span class="p">[</span><span class="n">selected_label_object</span> <span class="o">!=</span> <span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">props_label</span> <span class="o">=</span> <span class="n">skimage</span><span class="o">.</span><span class="n">measure</span><span class="o">.</span><span class="n">regionprops_table</span><span class="p">(</span>
-            <span class="n">selected_label_object</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;bbox&quot;</span><span class="p">]</span>
+            <span class="p">(</span><span class="n">label_object</span> <span class="o">==</span> <span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span>
+            <span class="n">properties</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;bbox&quot;</span><span class="p">],</span>
         <span class="p">)</span>
         <span class="c1"># get the number of neighbors for each object</span>
         <span class="n">distance_x_y</span> <span class="o">=</span> <span class="n">distance_threshold</span>
@@ -509,7 +514,7 @@
         <span class="n">neighbors_out_dict</span><span class="p">[</span><span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
         <span class="n">neighbors_out_dict</span><span class="p">[</span><span class="s2">&quot;NeighborsCountAdjacent&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n_neighbors_adjacent</span><span class="p">)</span>
         <span class="n">neighbors_out_dict</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;NeighborsCountByDistance-</span><span class="si">{</span><span class="n">distance_threshold</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="n">n_neighbors_by_distance</span>
+            <span class="n">n_neighbors_by_distance</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="n">final_df</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">neighbors_out_dict</span><span class="p">)</span>
     <span class="c1"># rename</span>
@@ -553,10 +558,10 @@
 <div class="viewcode-block" id="get_coordinates">
 <a class="viewcode-back" href="../../../api.html#zedprofiler.featurization.neighbors.get_coordinates">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_coordinates</span><span class="p">(</span>
-    <span class="n">nuclei_mask</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">object_ids</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">nuclei_mask</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">object_ids</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Extract coordinates from a labeled mask.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract coordinates from a labeled mask.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -569,10 +574,16 @@
 <span class="sd">    -------</span>
 <span class="sd">    coords : pandas.DataFrame</span>
 <span class="sd">        DataFrame with columns: object_id, x, y, z</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">object_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">object_ids</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">coords</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="n">coords</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="p">}</span>
 
     <span class="k">for</span> <span class="n">obj_id</span> <span class="ow">in</span> <span class="n">object_ids</span><span class="p">:</span>
         <span class="n">z</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">nuclei_mask</span> <span class="o">==</span> <span class="n">obj_id</span><span class="p">)</span>
@@ -597,7 +608,8 @@
 <div class="viewcode-block" id="euclidean_distance_from_centroid">
 <a class="viewcode-back" href="../../../api.html#zedprofiler.featurization.neighbors.euclidean_distance_from_centroid">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">euclidean_distance_from_centroid</span><span class="p">(</span>
-    <span class="n">coords</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">centroid</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">coords</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">centroid</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate Euclidean distance from centroid for each cell.&quot;&quot;&quot;</span>
     <span class="n">coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -609,10 +621,11 @@
 <div class="viewcode-block" id="mahalanobis_distance_from_centroid">
 <a class="viewcode-back" href="../../../api.html#zedprofiler.featurization.neighbors.mahalanobis_distance_from_centroid">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mahalanobis_distance_from_centroid</span><span class="p">(</span>
-    <span class="n">coords</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">centroid</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">min_cells_threshold</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="n">coords</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">centroid</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">min_cells_threshold</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate Mahalanobis distance from centroid for each cell.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate Mahalanobis distance from centroid for each cell.</span>
 <span class="sd">    This accounts for the covariance structure (shape) of the organoid.</span>
 
 <span class="sd">    For small sample sizes (&lt;50 cells), uses regularization or falls back to Euclidean.</span>
@@ -630,6 +643,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    distances : ndarray</span>
 <span class="sd">        Mahalanobis distances for each cell</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">centroid</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">centroid</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -638,9 +652,9 @@
 
     <span class="c1"># For very small samples, use Euclidean distance instead</span>
     <span class="k">if</span> <span class="n">n_cells</span> <span class="o">&lt;</span> <span class="n">SMALL_SAMPLE_THRESHOLD</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;  WARNING: Only </span><span class="si">{</span><span class="n">n_cells</span><span class="si">}</span><span class="s2"> cells. Using Euclidean distance &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;instead of Mahalanobis.&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Only </span><span class="si">{</span><span class="n">n_cells</span><span class="si">}</span><span class="s2"> cells. Using Euclidean distance instead of Mahalanobis.&quot;</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">euclidean_distance_from_centroid</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">centroid</span><span class="p">)</span>
 
@@ -652,9 +666,10 @@
         <span class="c1"># Regularization strength inversely proportional to sample size</span>
         <span class="n">reg_strength</span> <span class="o">=</span> <span class="p">(</span><span class="n">min_cells_threshold</span> <span class="o">-</span> <span class="n">n_cells</span><span class="p">)</span> <span class="o">/</span> <span class="n">min_cells_threshold</span> <span class="o">*</span> <span class="mf">0.1</span>
         <span class="n">cov_matrix</span> <span class="o">+=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">reg_strength</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">cov_matrix</span><span class="p">)</span> <span class="o">/</span> <span class="mi">3</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;  WARNING: Only </span><span class="si">{</span><span class="n">n_cells</span><span class="si">}</span><span class="s2"> cells. Using regularized covariance &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;(λ=</span><span class="si">{</span><span class="n">reg_strength</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Only </span><span class="si">{</span><span class="n">n_cells</span><span class="si">}</span><span class="s2"> cells. Using regularized covariance &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(λ=</span><span class="si">{</span><span class="n">reg_strength</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Standard small regularization for numerical stability</span>
@@ -664,8 +679,7 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">inv_cov</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">cov_matrix</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinAlgError</span><span class="p">:</span>
-        <span class="c1"># Fallback to pseudo-inverse if singular</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  WARNING: Singular covariance matrix. Using pseudo-inverse.&quot;</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Singular covariance matrix. Using pseudo-inverse.&quot;</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">inv_cov</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">cov_matrix</span><span class="p">)</span>
 
     <span class="c1"># Calculate Mahalanobis distance for each point</span>
@@ -683,10 +697,9 @@
     <span class="n">n_shells</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
     <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mahalanobis&quot;</span><span class="p">,</span>
     <span class="n">min_cells_per_shell</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="n">centroid</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Classify cells into radial shells based on distance from centroid.</span>
+    <span class="n">centroid</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Classify cells into radial shells based on distance from centroid.</span>
 
 <span class="sd">    Automatically adjusts n_shells for small organoids to ensure meaningful statistics.</span>
 
@@ -711,6 +724,7 @@
 <span class="sd">        - &#39;DistancesFromCenter&#39;: Distance from centroid for each cell</span>
 <span class="sd">        - &#39;DistancesFromExterior&#39;: Distance from exterior for each cell</span>
 <span class="sd">        - &#39;NormalizedDistancesFromCenter&#39;: Normalized distances (0-1)</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Handle both DataFrame and dict input</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
@@ -720,16 +734,15 @@
         <span class="n">object_ids</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">])</span>
         <span class="n">coords_array</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">coords</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="n">coords</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">]])</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords_array</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">results</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;ShellAssignments&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;DistancesFromCenter&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;DistancesFromExterior&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;NormalizedDistancesFromCenter&quot;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s2">&quot;MaxShellsUsed&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;ShellsUsed&quot;</span><span class="p">:</span> <span class="p">[],</span>
         <span class="p">}</span>
-        <span class="n">centroid</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">centroid</span>
+        <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="kc">None</span>
     <span class="n">n_cells</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords_array</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">centroid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">centroid</span> <span class="o">=</span> <span class="n">calculate_centroid</span><span class="p">(</span><span class="n">coords_array</span><span class="p">)</span>
@@ -737,11 +750,11 @@
     <span class="c1"># Adjust number of shells for small organoids</span>
     <span class="n">max_shells</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_cells</span> <span class="o">//</span> <span class="n">min_cells_per_shell</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">n_shells</span> <span class="o">&gt;</span> <span class="n">max_shells</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;  WARNING: </span><span class="si">{</span><span class="n">n_cells</span><span class="si">}</span><span class="s2"> cells with </span><span class="si">{</span><span class="n">n_shells</span><span class="si">}</span><span class="s2"> shells = &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n_cells</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">n_shells</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> cells/shell&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n_cells</span><span class="si">}</span><span class="s2"> cells with </span><span class="si">{</span><span class="n">n_shells</span><span class="si">}</span><span class="s2"> shells = </span><span class="si">{</span><span class="n">n_cells</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">n_shells</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;cells/shell; reducing to </span><span class="si">{</span><span class="n">max_shells</span><span class="si">}</span><span class="s2"> shells for statistical reliability&quot;</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;           Reducing to </span><span class="si">{</span><span class="n">max_shells</span><span class="si">}</span><span class="s2"> shells for statistical reliability&quot;</span><span class="p">)</span>
         <span class="n">n_shells</span> <span class="o">=</span> <span class="n">max_shells</span>
 
     <span class="c1"># Calculate distances based on method</span>
@@ -752,7 +765,8 @@
 
     <span class="c1"># Normalize distances to 0-1 range</span>
     <span class="n">max_distance</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span>
-        <span class="n">distances</span><span class="p">,</span> <span class="mi">95</span>
+        <span class="n">distances</span><span class="p">,</span>
+        <span class="mi">95</span><span class="p">,</span>
     <span class="p">)</span>  <span class="c1"># Use 95 percentile to avoid outliers</span>
     <span class="k">if</span> <span class="n">max_distance</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="c1"># All cells are at the same location; assign all to shell 0</span>
@@ -785,8 +799,7 @@
 <div class="viewcode-block" id="create_results_dataframe">
 <a class="viewcode-back" href="../../../api.html#zedprofiler.featurization.neighbors.create_results_dataframe">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_results_dataframe</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create a pandas DataFrame with all cell information.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a pandas DataFrame with all cell information.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -797,13 +810,14 @@
 <span class="sd">    -------</span>
 <span class="sd">    df : pandas.DataFrame</span>
 <span class="sd">        DataFrame with cell information</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Handle both DataFrame and dict input</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;Input must be a results dictionary from classify_cells_into_shells.&quot;</span>
+            <span class="s2">&quot;Input must be a results dictionary from classify_cells_into_shells.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">df</span></div>
@@ -816,10 +830,9 @@
     <span class="n">coords</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">classification_results</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Organoid Shell Classification&quot;</span><span class="p">,</span>
-    <span class="n">centroid</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create 3D visualization of organoid with shell coloring.</span>
+    <span class="n">centroid</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create 3D visualization of organoid with shell coloring.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -829,6 +842,7 @@
 <span class="sd">        Results from classify_cells_into_shells</span>
 <span class="sd">    title : str</span>
 <span class="sd">        Plot title</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Handle both DataFrame and dict input</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
@@ -847,16 +861,17 @@
 
     <span class="n">shell_assignments</span> <span class="o">=</span> <span class="n">classification_results</span><span class="p">[</span><span class="s2">&quot;ShellAssignments&quot;</span><span class="p">]</span>
     <span class="n">n_shells</span> <span class="o">=</span> <span class="n">classification_results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-        <span class="s2">&quot;ShellsUsed&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">shell_assignments</span><span class="p">))</span>
+        <span class="s2">&quot;ShellsUsed&quot;</span><span class="p">,</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">shell_assignments</span><span class="p">)),</span>
     <span class="p">)</span>
 
     <span class="c1"># Red to blue color gradient</span>
-    <span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">RdYlBu_r</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_shells</span><span class="p">))</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">RdYlBu_r</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_shells</span><span class="p">))</span>  <span class="c1"># type: ignore[attr-defined]</span>
 
     <span class="k">for</span> <span class="n">shell</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_shells</span><span class="p">):</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="n">shell_assignments</span> <span class="o">==</span> <span class="n">shell</span>
         <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Only plot if shell has cells</span>
-            <span class="n">ax1</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>  <span class="c1"># type: ignore[misc]</span>
                 <span class="n">x_coords</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span>
                 <span class="n">y_coords</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span>
                 <span class="n">z_coords</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span>
@@ -869,7 +884,7 @@
             <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">centroid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">ax1</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>  <span class="c1"># type: ignore[misc]</span>
             <span class="o">*</span><span class="n">centroid</span><span class="p">,</span>
             <span class="n">c</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
             <span class="n">s</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
@@ -881,7 +896,7 @@
 
     <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
     <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">)</span>
-    <span class="n">ax1</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore[attr-defined]</span>
     <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
     <span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
 
@@ -889,7 +904,11 @@
     <span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
     <span class="n">shell_counts</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">shell_assignments</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_shells</span><span class="p">)]</span>
     <span class="n">bars</span> <span class="o">=</span> <span class="n">ax2</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
-        <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_shells</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">shell_counts</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span>
+        <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_shells</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="n">shell_counts</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Shell Number&quot;</span><span class="p">)</span>
     <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Number of Cells&quot;</span><span class="p">)</span>
@@ -929,10 +948,10 @@
 <div class="viewcode-block" id="plot_distance_distributions">
 <a class="viewcode-back" href="../../../api.html#zedprofiler.featurization.neighbors.plot_distance_distributions">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_distance_distributions</span><span class="p">(</span>
-    <span class="n">classification_results</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">n_shells</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Plot distance distributions for each shell.</span>
+    <span class="n">classification_results</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">n_shells</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot distance distributions for each shell.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -940,6 +959,7 @@
 <span class="sd">        Results from classify_cells_into_shells</span>
 <span class="sd">    n_shells : int, optional</span>
 <span class="sd">        Number of shells (will use ShellsUsed from results if not provided)</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">n_shells</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">n_shells</span> <span class="o">=</span> <span class="n">classification_results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
@@ -953,7 +973,7 @@
     <span class="n">distances_from_center</span> <span class="o">=</span> <span class="n">classification_results</span><span class="p">[</span><span class="s2">&quot;DistancesFromCenter&quot;</span><span class="p">]</span>
     <span class="n">distances_from_exterior</span> <span class="o">=</span> <span class="n">classification_results</span><span class="p">[</span><span class="s2">&quot;DistancesFromExterior&quot;</span><span class="p">]</span>
 
-    <span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">RdYlBu_r</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_shells</span><span class="p">))</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">RdYlBu_r</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_shells</span><span class="p">))</span>  <span class="c1"># type: ignore[attr-defined]</span>
 
     <span class="c1"># Distance from center</span>
     <span class="k">for</span> <span class="n">shell</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_shells</span><span class="p">):</span>

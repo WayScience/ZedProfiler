@@ -217,6 +217,9 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.channel"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.compartment"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.compartment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.image_set_loader"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.image_set_loader</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.label_image"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.label_image</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.object_ids"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.object_ids</span></code></a></li>
 </ul>
@@ -273,6 +276,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.image_set_loader"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.image_set_loader</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.config"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.config</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.__init__"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.object_ids"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.object_ids</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.TwoObjectLoader"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader</span></code></a><ul>
@@ -320,21 +324,19 @@
            <div itemprop="articleBody">
              
   <h1>Source code for zedprofiler.image_utils.image_utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
-
-<span class="n">BBoxCoord</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+<span class="n">BBoxCoord</span> <span class="o">=</span> <span class="nb">int</span>
 <span class="n">BBox3D</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">BBoxCoord</span><span class="p">,</span> <span class="n">BBoxCoord</span><span class="p">,</span> <span class="n">BBoxCoord</span><span class="p">,</span> <span class="n">BBoxCoord</span><span class="p">,</span> <span class="n">BBoxCoord</span><span class="p">,</span> <span class="n">BBoxCoord</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="select_objects_from_label">
 <a class="viewcode-back" href="../../../api.html#zedprofiler.image_utils.image_utils.select_objects_from_label">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">select_objects_from_label</span><span class="p">(</span>
-    <span class="n">label_image</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">object_ids</span><span class="p">:</span> <span class="nb">list</span>
+    <span class="n">label_image</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">object_ids</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Selects objects from a label image based on the provided object IDs.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Selects objects from a label image based on the provided object IDs.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -347,9 +349,13 @@
 <span class="sd">    -------</span>
 <span class="sd">    numpy.ndarray</span>
 <span class="sd">        The label image with only the selected objects.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">label_image</span> <span class="o">=</span> <span class="n">label_image</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">label_image</span><span class="p">[</span><span class="n">label_image</span> <span class="o">!=</span> <span class="n">object_ids</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">object_ids</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+        <span class="n">label_image</span><span class="p">[</span><span class="o">~</span><span class="n">numpy</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">label_image</span><span class="p">,</span> <span class="n">object_ids</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">label_image</span><span class="p">[</span><span class="n">label_image</span> <span class="o">!=</span> <span class="n">object_ids</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">return</span> <span class="n">label_image</span></div>
 
 
@@ -357,10 +363,13 @@
 <div class="viewcode-block" id="expand_box">
 <a class="viewcode-back" href="../../../api.html#zedprofiler.image_utils.image_utils.expand_box">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">expand_box</span><span class="p">(</span>
-    <span class="n">min_coor</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">max_coord</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">current_min</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">current_max</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">expand_by</span><span class="p">:</span> <span class="nb">int</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="ne">ValueError</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Expand the bounding box of an object in a 3D image.</span>
+    <span class="n">min_coor</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">max_coord</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">current_min</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">current_max</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">expand_by</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Expand the bounding box of an object in a 3D image.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -379,13 +388,17 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    Union[Tuple[int, int], ValueError]</span>
+<span class="sd">    Tuple[int, int]</span>
 <span class="sd">        The new minimum and maximum coordinates of the bounding box.</span>
-<span class="sd">        Raises ValueError if the expansion is not possible.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
 
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the expansion is not possible.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">max_coord</span> <span class="o">-</span> <span class="n">min_coor</span> <span class="o">-</span> <span class="p">(</span><span class="n">current_max</span> <span class="o">-</span> <span class="n">current_min</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">expand_by</span><span class="p">:</span>
-        <span class="k">return</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot expand box by the requested amount&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot expand box by the requested amount&quot;</span><span class="p">)</span>
     <span class="k">while</span> <span class="n">expand_by</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">current_min</span> <span class="o">&gt;</span> <span class="n">min_coor</span><span class="p">:</span>
             <span class="n">current_min</span> <span class="o">-=</span> <span class="mi">1</span>
@@ -405,8 +418,7 @@
     <span class="n">bbox2</span><span class="p">:</span> <span class="n">BBox3D</span><span class="p">,</span>
     <span class="n">image</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">BBox3D</span><span class="p">,</span> <span class="n">BBox3D</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Expand the bounding boxes of two objects in a 3D image to match their sizes.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Expand the bounding boxes of two objects in a 3D image to match their sizes.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -421,9 +433,12 @@
 <span class="sd">    -------</span>
 <span class="sd">    tuple[BBox3D, BBox3D]</span>
 <span class="sd">        The new bounding boxes of the two objects.</span>
+
 <span class="sd">    Raises</span>
+<span class="sd">    ------</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If the expansion is not possible.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">i1z1</span><span class="p">,</span> <span class="n">i1y1</span><span class="p">,</span> <span class="n">i1x1</span><span class="p">,</span> <span class="n">i1z2</span><span class="p">,</span> <span class="n">i1y2</span><span class="p">,</span> <span class="n">i1x2</span> <span class="o">=</span> <span class="n">bbox1</span>
     <span class="n">i2z1</span><span class="p">,</span> <span class="n">i2y1</span><span class="p">,</span> <span class="n">i2x1</span><span class="p">,</span> <span class="n">i2z2</span><span class="p">,</span> <span class="n">i2y2</span><span class="p">,</span> <span class="n">i2x2</span> <span class="o">=</span> <span class="n">bbox2</span>
@@ -501,8 +516,7 @@
     <span class="n">image</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">bbox</span><span class="p">:</span> <span class="n">BBox3D</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Crop a 3D image to the bounding box of a mask.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Crop a 3D image to the bounding box of a mask.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -515,6 +529,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    numpy.ndarray</span>
 <span class="sd">        The cropped image.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">z1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">z2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">x2</span> <span class="o">=</span> <span class="n">bbox</span>
     <span class="k">return</span> <span class="n">image</span><span class="p">[</span><span class="n">z1</span><span class="p">:</span><span class="n">z2</span><span class="p">,</span> <span class="n">y1</span><span class="p">:</span><span class="n">y2</span><span class="p">,</span> <span class="n">x1</span><span class="p">:</span><span class="n">x2</span><span class="p">]</span></div>
@@ -529,8 +544,7 @@
     <span class="n">expand_pixels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">anisotropy_factor</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Expand the bbox in a way that keeps the crop within the</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Expand the bbox in a way that keeps the crop within the</span>
 <span class="sd">    confines of the image volume</span>
 
 <span class="sd">    Parameters</span>
@@ -556,6 +570,7 @@
 <span class="sd">    tuple[int, int, int, int, int, int]</span>
 <span class="sd">        Updated bbox in the format (zmin, ymin, xmin, zmax, ymax, xmax)</span>
 <span class="sd">        after expansion and adjustment for anisotropy</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">z1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">z2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">x2</span> <span class="o">=</span> <span class="n">bbox</span>
     <span class="n">zmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
@@ -595,8 +610,7 @@
 <div class="viewcode-block" id="check_for_xy_squareness">
 <a class="viewcode-back" href="../../../api.html#zedprofiler.image_utils.image_utils.check_for_xy_squareness">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_for_xy_squareness</span><span class="p">(</span><span class="n">bbox</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This function returns the ratio of the x length to the y length</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This function returns the ratio of the x length to the y length</span>
 <span class="sd">    A value of 1 indicates a square bbox is present</span>
 
 <span class="sd">    Parameters</span>
@@ -611,13 +625,14 @@
 <span class="sd">    float</span>
 <span class="sd">        The ratio of the y length to the x length of the bbox.</span>
 <span class="sd">        A value of 1 indicates a square bbox.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_z_min</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">_z_max</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">=</span> <span class="n">bbox</span>
     <span class="n">x_length</span> <span class="o">=</span> <span class="n">x_max</span> <span class="o">-</span> <span class="n">x_min</span>
     <span class="k">if</span> <span class="n">x_length</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;Cannot compute xy squareness for bbox with zero width in x dimension &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;(bbox=</span><span class="si">{</span><span class="n">bbox</span><span class="si">}</span><span class="s2">).&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(bbox=</span><span class="si">{</span><span class="n">bbox</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="n">xy_squareness</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_max</span> <span class="o">-</span> <span class="n">y_min</span><span class="p">)</span> <span class="o">/</span> <span class="n">x_length</span>
     <span class="k">return</span> <span class="n">xy_squareness</span></div>
@@ -629,8 +644,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">square_off_xy_crop_bbox</span><span class="p">(</span>
     <span class="n">bbox</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Adjust the bbox to be square in the XY plane.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adjust the bbox to be square in the XY plane.</span>
 
 <span class="sd">    The function computes the new bbox from the current X/Y dimensions.</span>
 
@@ -649,6 +663,7 @@
 <span class="sd">        (z_min, new_y_min, new_x_min, z_max, new_y_max, new_x_max)</span>
 
 <span class="sd">        Each value is an integer pixel coordinate in that dimension.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">zmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">zmax</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">xmax</span> <span class="o">=</span> <span class="n">bbox</span>
     <span class="c1"># first find the larger dimension between x and y</span>
@@ -659,14 +674,13 @@
         <span class="n">new_ymin</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ymin</span> <span class="o">-</span> <span class="p">(</span><span class="n">x_size</span> <span class="o">-</span> <span class="n">y_size</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">new_ymax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ymax</span> <span class="o">+</span> <span class="p">(</span><span class="n">x_size</span> <span class="o">-</span> <span class="n">y_size</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">zmin</span><span class="p">,</span> <span class="n">new_ymin</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">zmax</span><span class="p">,</span> <span class="n">new_ymax</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">y_size</span> <span class="o">&gt;</span> <span class="n">x_size</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">y_size</span> <span class="o">&gt;</span> <span class="n">x_size</span><span class="p">:</span>
         <span class="c1"># need to expand x dimension</span>
         <span class="n">new_xmin</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">xmin</span> <span class="o">-</span> <span class="p">(</span><span class="n">y_size</span> <span class="o">-</span> <span class="n">x_size</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">new_xmax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">xmax</span> <span class="o">+</span> <span class="p">(</span><span class="n">y_size</span> <span class="o">-</span> <span class="n">x_size</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">zmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">new_xmin</span><span class="p">,</span> <span class="n">zmax</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">new_xmax</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># already square</span>
-        <span class="k">return</span> <span class="n">bbox</span></div>
+    <span class="c1"># already square</span>
+    <span class="k">return</span> <span class="n">bbox</span></div>
 
 </pre></div>
 

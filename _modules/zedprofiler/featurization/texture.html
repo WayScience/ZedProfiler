@@ -217,6 +217,9 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.channel"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.compartment"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.compartment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.image_set_loader"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.image_set_loader</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.label_image"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.label_image</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.object_ids"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.object_ids</span></code></a></li>
 </ul>
@@ -273,6 +276,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.image_set_loader"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.image_set_loader</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.config"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.config</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.__init__"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.object_ids"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.object_ids</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.TwoObjectLoader"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader</span></code></a><ul>
@@ -329,6 +333,8 @@
 <span class="sd">We want this module to be python api callable and scalable.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">mahotas</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span>
@@ -343,8 +349,7 @@
 <div class="viewcode-block" id="scale_image">
 <a class="viewcode-back" href="../../../api.html#zedprofiler.featurization.texture.scale_image">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">scale_image</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">num_gray_levels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Scale the image to a specified number of gray levels.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scale the image to a specified number of gray levels.</span>
 <span class="sd">    Example: 1024 gray levels will be scaled to 256 gray levels if</span>
 <span class="sd">    num_gray_levels=256.</span>
 <span class="sd">    An image with a pixel value of 0 will be scaled to 0 and a pixel value</span>
@@ -361,6 +366,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    numpy.ndarray</span>
 <span class="sd">        The gray level scaled image of any shape.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">outrange_mapping</span> <span class="o">=</span> <span class="p">{</span>
         <span class="mi">256</span><span class="p">:</span> <span class="s2">&quot;uint8&quot;</span><span class="p">,</span>
@@ -373,7 +379,7 @@
     <span class="k">if</span> <span class="n">out_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Unsupported num_gray_levels: </span><span class="si">{</span><span class="n">num_gray_levels</span><span class="si">}</span><span class="s2">. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Supported values are: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">outrange_mapping</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Supported values are: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">outrange_mapping</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="c1"># scale the image to the requested gray levels</span>
     <span class="k">return</span> <span class="n">skimage</span><span class="o">.</span><span class="n">exposure</span><span class="o">.</span><span class="n">rescale_intensity</span><span class="p">(</span>
@@ -390,9 +396,8 @@
     <span class="n">object_loader</span><span class="p">:</span> <span class="n">ObjectLoader</span><span class="p">,</span>
     <span class="n">distance</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="n">grayscale</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate texture features for each object in the image using Haralick features.</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate texture features for each object in the image using Haralick features.</span>
 
 <span class="sd">    The features are calculated for each object separately and the mean value</span>
 <span class="sd">    is returned.</span>
@@ -408,32 +413,21 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        A dictionary containing the object ID, texture name, and texture value</span>
-<span class="sd">        with keys:</span>
-<span class="sd">        - object_id</span>
-<span class="sd">        - texture_name</span>
-<span class="sd">        - texture_value</span>
+<span class="sd">    pandas.DataFrame</span>
+<span class="sd">        Wide-format DataFrame with one row per object and one column per</span>
+<span class="sd">        Haralick texture feature (direction x feature_name x distance x grayscale),</span>
+<span class="sd">        plus Metadata columns. Feature names follow the pattern:</span>
+<span class="sd">        ``&lt;compartment&gt;_&lt;channel&gt;_Texture_&lt;feature&gt;-&lt;distance&gt;-&lt;direction&gt;-&lt;grayscale&gt;``</span>
 
-<span class="sd">        Texture names include: Angular Second Moment, Contrast, Correlation,</span>
-<span class="sd">        Variance, Inverse Difference Moment, Sum Average, Sum Variance,</span>
-<span class="sd">        Sum Entropy, Entropy, and related texture measures.</span>
-
-<span class="sd">        - AngularSecondMoment</span>
-<span class="sd">        - Contrast</span>
-<span class="sd">        - Correlation</span>
-<span class="sd">        - Variance</span>
-<span class="sd">        - InverseDifferenceMoment</span>
-<span class="sd">        - SumAverage</span>
-<span class="sd">        - SumVariance</span>
-<span class="sd">        - SumEntropy</span>
-<span class="sd">        - Entropy</span>
-<span class="sd">        - DifferenceVariance</span>
-<span class="sd">        - DifferenceEntropy</span>
-<span class="sd">        - InformationMeasureOfCorrelation1</span>
-<span class="sd">        - InformationMeasureOfCorrelation2</span>
+<span class="sd">        Haralick features measured per direction:</span>
+<span class="sd">        AngularSecondMoment, Contrast, Correlation, Variance,</span>
+<span class="sd">        InverseDifferenceMoment, SumAverage, SumVariance, SumEntropy,</span>
+<span class="sd">        Entropy, DifferenceVariance, DifferenceEntropy,</span>
+<span class="sd">        InformationMeasureOfCorrelation1, InformationMeasureOfCorrelation2</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">label_image</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
     <span class="n">label_object</span> <span class="o">=</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">label_image</span>
     <span class="n">labels</span> <span class="o">=</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">object_ids</span>
     <span class="n">feature_names</span> <span class="o">=</span> <span class="p">[</span>
@@ -454,7 +448,7 @@
     <span class="c1"># set the number of directions based on the dimensionality of the image</span>
     <span class="n">n_directions</span> <span class="o">=</span> <span class="mi">13</span>
 
-    <span class="n">output_texture_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">output_texture_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">:</span> <span class="p">[],</span>
         <span class="s2">&quot;texture_name&quot;</span><span class="p">:</span> <span class="p">[],</span>
         <span class="s2">&quot;texture_value&quot;</span><span class="p">:</span> <span class="p">[],</span>
@@ -479,7 +473,10 @@
     <span class="c1"># loop through each label and get the bounding box</span>
     <span class="c1"># to compute features for the object</span>
     <span class="n">label_to_idx</span> <span class="o">=</span> <span class="p">{</span><span class="nb">int</span><span class="p">(</span><span class="n">lbl</span><span class="p">):</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labels</span><span class="p">)}</span>
+
+    <span class="c1"># Allocate once before the loop so each label&#39;s slot persists</span>
     <span class="n">features</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n_directions</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
     <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">continue</span>
@@ -498,7 +495,7 @@
             <span class="k">continue</span>
         <span class="n">image_object</span><span class="p">[</span><span class="o">~</span><span class="n">object_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">image_object</span> <span class="o">=</span> <span class="n">scale_image</span><span class="p">(</span><span class="n">image_object</span><span class="p">,</span> <span class="n">num_gray_levels</span><span class="o">=</span><span class="n">grayscale</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
             <span class="c1"># calculates 13 Haralick features for each direction (13)</span>
             <span class="c1">#  and each object, and stores them in a 3D array</span>
             <span class="n">features</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">mahotas</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">haralick</span><span class="p">(</span>
@@ -507,20 +504,18 @@
                 <span class="n">distance</span><span class="o">=</span><span class="n">distance</span><span class="p">,</span>
                 <span class="n">compute_14th_feature</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="n">features</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span>
     <span class="c1"># iterate through the direction, feature, and object dimensions</span>
     <span class="c1"># of the features array to populate the output dictionary</span>
     <span class="k">for</span> <span class="n">direction</span><span class="p">,</span> <span class="n">direction_features</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">features</span><span class="p">):</span>
         <span class="n">direction_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">direction</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">for</span> <span class="n">feature_name</span><span class="p">,</span> <span class="n">feature</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">feature_names</span><span class="p">,</span> <span class="n">direction_features</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
-                <span class="n">output_texture_dict</span><span class="p">[</span><span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">object_id</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+                <span class="n">output_texture_dict</span><span class="p">[</span><span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">object_id</span><span class="p">)</span>
                 <span class="n">output_texture_dict</span><span class="p">[</span><span class="s2">&quot;texture_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">distance</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">direction_str</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">grayscale</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">distance</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">direction_str</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">grayscale</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">output_texture_dict</span><span class="p">[</span><span class="s2">&quot;texture_value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="n">feature</span><span class="p">[</span><span class="n">label_to_idx</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">label</span><span class="p">)]]</span>
+                    <span class="n">feature</span><span class="p">[</span><span class="n">label_to_idx</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">object_id</span><span class="p">)]]</span>
                 <span class="p">)</span>
     <span class="n">final_df</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">output_texture_dict</span><span class="p">)</span>
 

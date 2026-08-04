@@ -217,6 +217,9 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.channel"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.compartment"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.compartment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.image_set_loader"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.image_set_loader</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.label_image"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.label_image</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.object_ids"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.object_ids</span></code></a></li>
 </ul>
@@ -273,6 +276,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.image_set_loader"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.image_set_loader</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.config"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.config</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.__init__"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.object_ids"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.object_ids</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.TwoObjectLoader"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader</span></code></a><ul>
@@ -334,28 +338,22 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandera.pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pa</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">beartype</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartype</span>
 
-<span class="n">FEATURE_NAME_COMPONENT_COLUMNS</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="s2">&quot;compartment&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;channel&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;feature_type&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;measurement&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_coerce_dataframe_column_names_to_strings</span><span class="p">(</span>
     <span class="n">dataframe</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Ensure DataFrame column labels are string-typed before writing.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ensure DataFrame column labels are string-typed before writing.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    dataframe : pandas.DataFrame</span>
 <span class="sd">        The DataFrame whose column names should be coerced to strings.</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    pandas.DataFrame</span>
 <span class="sd">        A copy of the input DataFrame with all column names coerced to strings.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">parsed_dataframe</span> <span class="o">=</span> <span class="n">dataframe</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">parsed_dataframe</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">column</span><span class="p">)</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">parsed_dataframe</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
@@ -366,8 +364,7 @@
 <a class="viewcode-back" href="../../../api.html#zedprofiler.IO.feature_writing_utils.remove_underscores_from_string">[docs]</a>
 <span class="nd">@beartype</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">remove_underscores_from_string</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Remove unwanted delimiters from a string and replace them with hyphens.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove unwanted delimiters from a string and replace them with hyphens.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -378,6 +375,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    str</span>
 <span class="sd">        The string with unwanted delimiters removed and replaced with hyphens.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
@@ -388,16 +386,7 @@
                 <span class="sa">f</span><span class="s2">&quot;Received input: </span><span class="si">{</span><span class="n">string</span><span class="si">!r}</span><span class="s2"> of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">string</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
-    <span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span>
-        <span class="nb">str</span><span class="o">.</span><span class="n">maketrans</span><span class="p">(</span>
-            <span class="p">{</span>
-                <span class="s2">&quot;_&quot;</span><span class="p">:</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;.&quot;</span><span class="p">:</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
-                <span class="s2">&quot; &quot;</span><span class="p">:</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;/&quot;</span><span class="p">:</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
-            <span class="p">}</span>
-        <span class="p">)</span>
-    <span class="p">)</span>
+    <span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">maketrans</span><span class="p">(</span><span class="s2">&quot;_. /&quot;</span><span class="p">,</span> <span class="s2">&quot;----&quot;</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">string</span></div>
 
@@ -406,25 +395,26 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_coerce_feature_name_components</span><span class="p">(</span>
     <span class="n">dataframe</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Normalize feature-name components using shared delimiter cleanup.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize feature-name components using shared delimiter cleanup.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    dataframe : pandas.DataFrame</span>
 <span class="sd">        The DataFrame containing feature name components to be normalized.</span>
 <span class="sd">        Expected to have columns corresponding to FEATURE NAME COMPONENT COLUMNS.</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    pandas.DataFrame</span>
 <span class="sd">        A copy of the input DataFrame with feature name components normalized by</span>
 <span class="sd">        removing unwanted delimiters and replacing them with hyphens.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">parsed_dataframe</span> <span class="o">=</span> <span class="n">dataframe</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">FEATURE_NAME_COMPONENT_COLUMNS</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">parsed_dataframe</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="n">parsed_dataframe</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">parsed_dataframe</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
-                <span class="n">remove_underscores_from_string</span>
+                <span class="n">remove_underscores_from_string</span><span class="p">,</span>
             <span class="p">)</span>
     <span class="k">return</span> <span class="n">parsed_dataframe</span>
 
@@ -462,10 +452,12 @@
 <a class="viewcode-back" href="../../../api.html#zedprofiler.IO.feature_writing_utils.format_morphology_feature_name">[docs]</a>
 <span class="nd">@beartype</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">format_morphology_feature_name</span><span class="p">(</span>
-    <span class="n">compartment</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">channel</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">feature_type</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">measurement</span><span class="p">:</span> <span class="nb">object</span>
+    <span class="n">compartment</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
+    <span class="n">channel</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
+    <span class="n">feature_type</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
+    <span class="n">measurement</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Format a morphology feature name in a consistent way across all morphology features.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Format a morphology feature name consistently across all morphology features.</span>
 <span class="sd">    This format follows specification for the following:</span>
 <span class="sd">    https://github.com/WayScience/NF1_3D_organoid_profiling_pipeline/blob/main/docs/RFC-2119-Feature-Naming-Convention.md</span>
 
@@ -484,8 +476,8 @@
 <span class="sd">    -------</span>
 <span class="sd">    str</span>
 <span class="sd">        The formatted feature name.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
 
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">component_frame</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
         <span class="p">[</span>
             <span class="p">{</span>
@@ -493,8 +485,8 @@
                 <span class="s2">&quot;channel&quot;</span><span class="p">:</span> <span class="n">channel</span><span class="p">,</span>
                 <span class="s2">&quot;feature_type&quot;</span><span class="p">:</span> <span class="n">feature_type</span><span class="p">,</span>
                 <span class="s2">&quot;measurement&quot;</span><span class="p">:</span> <span class="n">measurement</span><span class="p">,</span>
-            <span class="p">}</span>
-        <span class="p">]</span>
+            <span class="p">},</span>
+        <span class="p">],</span>
     <span class="p">)</span>
     <span class="n">coerced_components</span> <span class="o">=</span> <span class="n">FEATURE_NAME_COMPONENT_SCHEMA</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">component_frame</span><span class="p">)</span>
     <span class="n">parsed_row</span> <span class="o">=</span> <span class="n">coerced_components</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -545,6 +537,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    pathlib.Path</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">validated_df</span> <span class="o">=</span> <span class="n">FEATURE_OUTPUT_SCHEMA</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
     <span class="n">output_prefix</span> <span class="o">=</span> <span class="n">format_morphology_feature_name</span><span class="p">(</span>

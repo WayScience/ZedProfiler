@@ -217,6 +217,9 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.channel"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.compartment"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.compartment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.image_set_loader"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.image_set_loader</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.label_image"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.label_image</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.object_ids"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.object_ids</span></code></a></li>
 </ul>
@@ -273,6 +276,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.image_set_loader"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.image_set_loader</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.config"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.config</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.__init__"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.object_ids"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.object_ids</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.TwoObjectLoader"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader</span></code></a><ul>
@@ -326,6 +330,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">importlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">import_module</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModuleType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Protocol</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -346,6 +351,12 @@
 
 
 
+<span class="k">class</span><span class="w"> </span><span class="nc">_SupportsImageSetName</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Minimal image-set-loader interface for name access.&quot;&quot;&quot;</span>
+
+    <span class="n">image_set_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+
+
 <div class="viewcode-block" id="SupportsObjectLoader">
 <a class="viewcode-back" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SupportsObjectLoader</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
@@ -355,7 +366,10 @@
     <span class="c1"># where each object is represented by a unique integer label</span>
     <span class="c1"># (0 is typically reserved for background)</span>
     <span class="n">label_image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
-    <span class="n">object_ids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span></div>
+    <span class="n">object_ids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">compartment</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">channel</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">image_set_loader</span><span class="p">:</span> <span class="n">_SupportsImageSetName</span></div>
 
 
 
@@ -386,7 +400,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_volume_size_shape</span><span class="p">(</span>
     <span class="n">image_set_loader</span><span class="p">:</span> <span class="n">SupportsImageSetLoader</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">object_loader</span><span class="p">:</span> <span class="n">SupportsObjectLoader</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute volume/size/shape features for one object loader.</span>
 
 <span class="sd">    Supports two invocation modes:</span>
@@ -400,7 +414,7 @@
     <span class="k">if</span> <span class="n">image_set_loader</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">object_loader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">ZedProfilerError</span><span class="p">(</span>
             <span class="s2">&quot;volumesizeshape.compute requires both image_set_loader and &quot;</span>
-            <span class="s2">&quot;object_loader for execution.&quot;</span>
+            <span class="s2">&quot;object_loader for execution.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">measure_3D_volume_size_shape</span><span class="p">(</span>
@@ -410,13 +424,13 @@
 
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_get_skimage_measure</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_skimage_measure</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ModuleType</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return `skimage.measure` or raise a user-facing dependency error.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;skimage.measure&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">ZedProfilerError</span><span class="p">(</span>
-            <span class="s2">&quot;volumesizeshape requires scikit-image for area/size/shape computation.&quot;</span>
+            <span class="s2">&quot;volumesizeshape requires scikit-image for area/size/shape computation.&quot;</span><span class="p">,</span>
         <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 
 
@@ -451,7 +465,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">measure_3D_volume_size_shape</span><span class="p">(</span>
     <span class="n">image_set_loader</span><span class="p">:</span> <span class="n">SupportsImageSetLoader</span><span class="p">,</span>
     <span class="n">object_loader</span><span class="p">:</span> <span class="n">SupportsObjectLoader</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Measure volume/size/shape features for each non-zero label object.&quot;&quot;&quot;</span>
     <span class="n">measure</span> <span class="o">=</span> <span class="n">_get_skimage_measure</span><span class="p">()</span>
 
@@ -500,16 +514,16 @@
         <span class="n">features_to_record</span><span class="p">[</span><span class="s2">&quot;Extent&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="s2">&quot;extent&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
         <span class="n">features_to_record</span><span class="p">[</span><span class="s2">&quot;EulerNumber&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="s2">&quot;euler_number&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
         <span class="n">features_to_record</span><span class="p">[</span><span class="s2">&quot;EquivalentDiameter&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="n">props</span><span class="p">[</span><span class="s2">&quot;equivalent_diameter&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="n">props</span><span class="p">[</span><span class="s2">&quot;equivalent_diameter&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
         <span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">features_to_record</span><span class="p">[</span><span class="s2">&quot;SurfaceArea&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">calculate_surface_area</span><span class="p">(</span>
-                    <span class="n">label_object</span><span class="o">=</span><span class="n">label_object</span><span class="p">,</span>
+                    <span class="n">label_object</span><span class="o">=</span><span class="n">subset_lab_object</span><span class="p">,</span>
                     <span class="n">props</span><span class="o">=</span><span class="n">props</span><span class="p">,</span>
                     <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">,</span>
-                <span class="p">)</span>
+                <span class="p">),</span>
             <span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
             <span class="n">features_to_record</span><span class="p">[</span><span class="s2">&quot;SurfaceArea&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>

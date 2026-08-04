@@ -217,6 +217,9 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.channel"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.compartment"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.compartment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.image_set_loader"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.image_set_loader</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.label_image"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.label_image</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsObjectLoader.object_ids"><code class="docutils literal notranslate"><span class="pre">SupportsObjectLoader.object_ids</span></code></a></li>
 </ul>
@@ -273,6 +276,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.image_set_loader"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.image_set_loader</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.config"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.config</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.__init__"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ObjectLoader.object_ids"><code class="docutils literal notranslate"><span class="pre">ObjectLoader.object_ids</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.TwoObjectLoader"><code class="docutils literal notranslate"><span class="pre">TwoObjectLoader</span></code></a><ul>
@@ -340,8 +344,7 @@
 <div class="viewcode-block" id="get_outline">
 <a class="viewcode-back" href="../../../api.html#zedprofiler.featurization.intensity.get_outline">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_outline</span><span class="p">(</span><span class="n">mask</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get the outline of a 3D mask.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the outline of a 3D mask.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -352,6 +355,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    numpy.ndarray</span>
 <span class="sd">        The outline of the mask.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">outline</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
@@ -365,8 +369,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_intensity</span><span class="p">(</span>  <span class="c1"># noqa: PLR0915</span>
     <span class="n">object_loader</span><span class="p">:</span> <span class="n">ObjectLoader</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Measure the intensity of objects in a 3D image.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Measure the intensity of objects in a 3D image.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -375,15 +378,18 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        A dictionary containing the measurements for each object.</span>
-<span class="sd">        The keys are the measurement names and the values are the corresponding values.</span>
+<span class="sd">    pandas.DataFrame</span>
+<span class="sd">        Wide-format DataFrame with one row per object and one column per</span>
+<span class="sd">        intensity measurement, plus Metadata columns.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">label_image</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
     <span class="n">image_object</span> <span class="o">=</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">image</span>
     <span class="n">label_object</span> <span class="o">=</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">label_image</span>
     <span class="n">labels</span> <span class="o">=</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">object_ids</span>
 
-    <span class="n">output_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">output_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">:</span> <span class="p">[],</span>
         <span class="s2">&quot;feature_name&quot;</span><span class="p">:</span> <span class="p">[],</span>
         <span class="s2">&quot;channel&quot;</span><span class="p">:</span> <span class="p">[],</span>
@@ -518,10 +524,7 @@
         <span class="p">}</span>
 
         <span class="k">for</span> <span class="n">feature_name</span><span class="p">,</span> <span class="n">measurement_value</span> <span class="ow">in</span> <span class="n">measurements_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">measurement_value</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float32</span><span class="p">:</span>
-                <span class="n">coerced_value</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">measurement_value</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">coerced_value</span> <span class="o">=</span> <span class="n">measurement_value</span>
+            <span class="n">coerced_value</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">measurement_value</span><span class="p">)</span>
             <span class="n">output_dict</span><span class="p">[</span><span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
             <span class="n">output_dict</span><span class="p">[</span><span class="s2">&quot;feature_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feature_name</span><span class="p">)</span>
             <span class="n">output_dict</span><span class="p">[</span><span class="s2">&quot;channel&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">object_loader</span><span class="o">.</span><span class="n">channel</span><span class="p">)</span>
