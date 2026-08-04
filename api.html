@@ -407,9 +407,13 @@ and Costes’ coefficients. The results are returned as a dictionary.</p>
 <li><p><strong>cropped_image_2</strong> (<em>numpy.ndarray</em>) – The second cropped image.</p></li>
 <li><p><strong>thr</strong> (<em>int</em><em>, </em><em>optional</em>) – The threshold for the Manders’ coefficients, by default 15</p></li>
 <li><p><strong>fast_costes</strong> (<em>str</em><em>, </em><em>optional</em>) – The mode for Costes’ threshold calculation, by default “Accurate”.
-Options are “Accurate” or “Fast”.
-“Accurate” uses a linear algorithm, while “Fast” uses a bisection algorithm.
-The “Fast” mode is faster but less accurate.</p></li>
+Options are “Accurate”, “Fast”, or “Faster” (matching CellProfiler’s
+three Costes methods). “Accurate” tests every threshold value using a
+linear scan (slowest, most precise). “Fast” uses the same linear scan
+but skips candidate thresholds when the Pearson R is far from the
+crossing point (faster, slightly less precise). “Faster” uses a
+bisection algorithm and is substantially faster for 16-bit images
+(least precise).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -432,9 +436,13 @@ The “Fast” mode is faster but less accurate.</p></li>
 corresponding labels.</p></li>
 <li><p><strong>thr</strong> (<em>int</em><em>, </em><em>optional</em>) – The threshold for the Manders’ coefficients, by default 15</p></li>
 <li><p><strong>fast_costes</strong> (<em>str</em><em>, </em><em>optional</em>) – The mode for Costes’ threshold calculation, by default “Accurate”.
-Options are “Accurate” or “Fast”.
-“Accurate” uses a linear algorithm, while “Fast” uses a bisection algorithm.
-The “Fast” mode is faster but less accurate.</p></li>
+Options are “Accurate”, “Fast”, or “Faster” (matching CellProfiler’s
+three Costes methods). “Accurate” tests every threshold value using a
+linear scan (slowest, most precise). “Fast” uses the same linear scan
+but skips candidate thresholds when the Pearson R is far from the
+crossing point (faster, slightly less precise). “Faster” uses a
+bisection algorithm and is substantially faster for 16-bit images
+(least precise).</p></li>
 <li><p><strong>channel1</strong> (<em>str</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – The name of the first channel, used for feature naming, by default None</p></li>
 <li><p><strong>channel2</strong> (<em>str</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – The name of the second channel, used for feature naming, by default None</p></li>
 </ul>

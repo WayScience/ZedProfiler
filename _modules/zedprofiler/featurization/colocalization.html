@@ -444,8 +444,6 @@
     <span class="n">first_image_max</span> <span class="o">=</span> <span class="n">first_image</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
     <span class="n">second_image_max</span> <span class="o">=</span> <span class="n">second_image</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
 
-    <span class="c1"># Initialize without a threshold</span>
-    <span class="n">costReg</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">pearsonr</span><span class="p">(</span><span class="n">first_image</span><span class="p">,</span> <span class="n">second_image</span><span class="p">)</span>
     <span class="n">thr_first_image_c</span> <span class="o">=</span> <span class="n">i</span>
     <span class="n">thr_second_image_c</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
     <span class="k">while</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">first_image_max</span> <span class="ow">and</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="n">second_image_max</span><span class="p">:</span>
@@ -539,7 +537,11 @@
     <span class="n">valid</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">while</span> <span class="n">lastmid</span> <span class="o">!=</span> <span class="n">mid</span><span class="p">:</span>
-        <span class="n">thr_first_image_c</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">/</span> <span class="n">scale_max</span>
+        <span class="c1"># Use raw pixel units (not normalised) so the threshold is comparable</span>
+        <span class="c1"># with linear_costes_threshold_calculation and with the outer dispatch&#39;s</span>
+        <span class="c1"># `image &gt; thr` comparison. CellProfiler&#39;s library has the same</span>
+        <span class="c1"># mid/scale_max normalisation bug; this is an intentional divergence.</span>
+        <span class="n">thr_first_image_c</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">mid</span><span class="p">)</span>
         <span class="n">thr_second_image_c</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">thr_first_image_c</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
         <span class="n">combt</span> <span class="o">=</span> <span class="p">(</span><span class="n">first_image</span> <span class="o">&lt;</span> <span class="n">thr_first_image_c</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">second_image</span> <span class="o">&lt;</span> <span class="n">thr_second_image_c</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">combt</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">MIN_PEARSON_POINTS</span><span class="p">:</span>
@@ -564,7 +566,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">mid</span> <span class="o">=</span> <span class="p">((</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">left</span>
 
-    <span class="n">thr_first_image_c</span> <span class="o">=</span> <span class="p">(</span><span class="n">valid</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">scale_max</span>
+    <span class="n">thr_first_image_c</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">valid</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">thr_second_image_c</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">thr_first_image_c</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
 
     <span class="k">return</span> <span class="n">thr_first_image_c</span><span class="p">,</span> <span class="n">thr_second_image_c</span></div>
@@ -640,7 +642,7 @@
 
 <div class="viewcode-block" id="calculate_colocalization">
 <a class="viewcode-back" href="../../../api.html#zedprofiler.featurization.colocalization.calculate_colocalization">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">calculate_colocalization</span><span class="p">(</span>  <span class="c1"># noqa: PLR0912, PLR0915</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_colocalization</span><span class="p">(</span>  <span class="c1"># noqa: PLR0912, PLR0915, C901</span>
     <span class="n">cropped_image_1</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">cropped_image_2</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">thr</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span>
@@ -661,9 +663,13 @@
 <span class="sd">        The threshold for the Manders&#39; coefficients, by default 15</span>
 <span class="sd">    fast_costes : str, optional</span>
 <span class="sd">        The mode for Costes&#39; threshold calculation, by default &quot;Accurate&quot;.</span>
-<span class="sd">        Options are &quot;Accurate&quot; or &quot;Fast&quot;.</span>
-<span class="sd">        &quot;Accurate&quot; uses a linear algorithm, while &quot;Fast&quot; uses a bisection algorithm.</span>
-<span class="sd">        The &quot;Fast&quot; mode is faster but less accurate.</span>
+<span class="sd">        Options are &quot;Accurate&quot;, &quot;Fast&quot;, or &quot;Faster&quot; (matching CellProfiler&#39;s</span>
+<span class="sd">        three Costes methods). &quot;Accurate&quot; tests every threshold value using a</span>
+<span class="sd">        linear scan (slowest, most precise). &quot;Fast&quot; uses the same linear scan</span>
+<span class="sd">        but skips candidate thresholds when the Pearson R is far from the</span>
+<span class="sd">        crossing point (faster, slightly less precise). &quot;Faster&quot; uses a</span>
+<span class="sd">        bisection algorithm and is substantially faster for 16-bit images</span>
+<span class="sd">        (least precise).</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -697,6 +703,9 @@
     <span class="c1">################################################################################################</span>
 
     <span class="c1"># Threshold as percentage of maximum intensity of objects in each channel</span>
+    <span class="c1"># Initialise before the try block so combined_thresh is always bound even</span>
+    <span class="c1"># when the except branch fires (numpy.max raises ValueError on empty arrays).</span>
+    <span class="n">combined_thresh</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">cropped_image_1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">tff</span> <span class="o">=</span> <span class="p">(</span><span class="n">thr</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cropped_image_1</span><span class="p">)</span>
         <span class="n">tss</span> <span class="o">=</span> <span class="p">(</span><span class="n">thr</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cropped_image_2</span><span class="p">)</span>
@@ -730,28 +739,30 @@
     <span class="c1"># Calculate the overlap coefficient</span>
     <span class="c1">################################################################################################</span>
 
-    <span class="n">fpsq</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
-        <span class="n">cropped_image_1</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">spsq</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
-        <span class="n">cropped_image_2</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">pdt</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fpsq</span><span class="p">)</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spsq</span><span class="p">))</span>
-    <span class="n">overlap</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
-            <span class="n">cropped_image_1</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">]</span> <span class="o">*</span> <span class="n">cropped_image_2</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">],</span>
+    <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">combined_thresh</span><span class="p">):</span>
+        <span class="n">fpsq</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+            <span class="n">cropped_image_1</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="o">/</span> <span class="n">pdt</span>
-    <span class="p">)</span>
-    <span class="c1"># leave in for now given they are not exported but still calculated</span>
-    <span class="n">K1</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
-        <span class="n">cropped_image_1</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">]</span> <span class="o">*</span> <span class="n">cropped_image_2</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">],</span>
-    <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fpsq</span><span class="p">))</span>
-    <span class="n">K2</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
-        <span class="n">cropped_image_1</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">]</span> <span class="o">*</span> <span class="n">cropped_image_2</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">],</span>
-    <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spsq</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">K1</span> <span class="o">==</span> <span class="n">K2</span><span class="p">:</span>
-        <span class="k">pass</span>
+        <span class="n">spsq</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+            <span class="n">cropped_image_2</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">pdt</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fpsq</span><span class="p">)</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spsq</span><span class="p">))</span>
+        <span class="n">overlap</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                <span class="n">cropped_image_1</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">]</span> <span class="o">*</span> <span class="n">cropped_image_2</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="o">/</span> <span class="n">pdt</span>
+        <span class="p">)</span>
+        <span class="n">K1</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+            <span class="n">cropped_image_1</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">]</span> <span class="o">*</span> <span class="n">cropped_image_2</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">],</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fpsq</span><span class="p">))</span>
+        <span class="n">K2</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+            <span class="n">cropped_image_1</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">]</span> <span class="o">*</span> <span class="n">cropped_image_2</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">],</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spsq</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">K1</span> <span class="o">==</span> <span class="n">K2</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">overlap</span><span class="p">,</span> <span class="n">K1</span><span class="p">,</span> <span class="n">K2</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
 
     <span class="c1"># first_pixels, second_pixels = flattened image arrays</span>
     <span class="c1"># combined_thresh = boolean mask of pixels above threshold in both channels</span>
@@ -811,12 +822,24 @@
         <span class="n">scale</span> <span class="o">=</span> <span class="n">UINT8_MAX</span>
 
     <span class="k">if</span> <span class="n">fast_costes</span> <span class="o">==</span> <span class="s2">&quot;Accurate&quot;</span><span class="p">:</span>
-        <span class="n">thr_first_image_c</span><span class="p">,</span> <span class="n">thr_second_image_c</span> <span class="o">=</span> <span class="n">bisection_costes_threshold_calculation</span><span class="p">(</span>
-            <span class="n">cropped_image_1</span><span class="p">,</span> <span class="n">cropped_image_2</span><span class="p">,</span> <span class="n">scale</span>
-        <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
         <span class="n">thr_first_image_c</span><span class="p">,</span> <span class="n">thr_second_image_c</span> <span class="o">=</span> <span class="n">linear_costes_threshold_calculation</span><span class="p">(</span>
-            <span class="n">cropped_image_1</span><span class="p">,</span> <span class="n">cropped_image_2</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">fast_costes</span>
+            <span class="n">first_image</span><span class="o">=</span><span class="n">cropped_image_1</span><span class="p">,</span>
+            <span class="n">second_image</span><span class="o">=</span><span class="n">cropped_image_2</span><span class="p">,</span>
+            <span class="n">scale_max</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span>
+            <span class="n">fast_costes</span><span class="o">=</span><span class="s2">&quot;Accurate&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">fast_costes</span> <span class="o">==</span> <span class="s2">&quot;Fast&quot;</span><span class="p">:</span>
+        <span class="n">thr_first_image_c</span><span class="p">,</span> <span class="n">thr_second_image_c</span> <span class="o">=</span> <span class="n">linear_costes_threshold_calculation</span><span class="p">(</span>
+            <span class="n">first_image</span><span class="o">=</span><span class="n">cropped_image_1</span><span class="p">,</span>
+            <span class="n">second_image</span><span class="o">=</span><span class="n">cropped_image_2</span><span class="p">,</span>
+            <span class="n">scale_max</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span>
+            <span class="n">fast_costes</span><span class="o">=</span><span class="s2">&quot;Fast&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># &quot;Faster&quot;</span>
+        <span class="n">thr_first_image_c</span><span class="p">,</span> <span class="n">thr_second_image_c</span> <span class="o">=</span> <span class="n">bisection_costes_threshold_calculation</span><span class="p">(</span>
+            <span class="n">first_image</span><span class="o">=</span><span class="n">cropped_image_1</span><span class="p">,</span>
+            <span class="n">second_image</span><span class="o">=</span><span class="n">cropped_image_2</span><span class="p">,</span>
+            <span class="n">scale_max</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="c1"># Costes&#39; thershold for entire image is applied to each object</span>
@@ -876,9 +899,13 @@
 <span class="sd">        The threshold for the Manders&#39; coefficients, by default 15</span>
 <span class="sd">    fast_costes : str, optional</span>
 <span class="sd">        The mode for Costes&#39; threshold calculation, by default &quot;Accurate&quot;.</span>
-<span class="sd">        Options are &quot;Accurate&quot; or &quot;Fast&quot;.</span>
-<span class="sd">        &quot;Accurate&quot; uses a linear algorithm, while &quot;Fast&quot; uses a bisection algorithm.</span>
-<span class="sd">        The &quot;Fast&quot; mode is faster but less accurate.</span>
+<span class="sd">        Options are &quot;Accurate&quot;, &quot;Fast&quot;, or &quot;Faster&quot; (matching CellProfiler&#39;s</span>
+<span class="sd">        three Costes methods). &quot;Accurate&quot; tests every threshold value using a</span>
+<span class="sd">        linear scan (slowest, most precise). &quot;Fast&quot; uses the same linear scan</span>
+<span class="sd">        but skips candidate thresholds when the Pearson R is far from the</span>
+<span class="sd">        crossing point (faster, slightly less precise). &quot;Faster&quot; uses a</span>
+<span class="sd">        bisection algorithm and is substantially faster for 16-bit images</span>
+<span class="sd">        (least precise).</span>
 <span class="sd">    channel1 : str | None, optional</span>
 <span class="sd">        The name of the first channel, used for feature naming, by default None</span>
 <span class="sd">    channel2 : str | None, optional</span>
@@ -905,8 +932,8 @@
         <span class="n">colocalization_features</span> <span class="o">=</span> <span class="n">calculate_colocalization</span><span class="p">(</span>
             <span class="n">cropped_image_1</span><span class="o">=</span><span class="n">cropped_image1</span><span class="p">,</span>
             <span class="n">cropped_image_2</span><span class="o">=</span><span class="n">cropped_image2</span><span class="p">,</span>
-            <span class="n">thr</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
-            <span class="n">fast_costes</span><span class="o">=</span><span class="s2">&quot;Accurate&quot;</span><span class="p">,</span>
+            <span class="n">thr</span><span class="o">=</span><span class="n">thr</span><span class="p">,</span>
+            <span class="n">fast_costes</span><span class="o">=</span><span class="n">fast_costes</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Build a simple dict row (avoid pandas dependency)</span>

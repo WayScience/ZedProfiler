@@ -478,9 +478,12 @@
         <span class="p">)</span>
     <span class="c1"># loop through each label and get the bounding box</span>
     <span class="c1"># to compute features for the object</span>
-    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
+    <span class="n">label_to_idx</span> <span class="o">=</span> <span class="p">{</span><span class="nb">int</span><span class="p">(</span><span class="n">lbl</span><span class="p">):</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labels</span><span class="p">)}</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n_directions</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">continue</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">label_to_idx</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">label</span><span class="p">)]</span>
         <span class="n">bbox</span> <span class="o">=</span> <span class="n">label_to_bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">bbox</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">continue</span>
@@ -494,30 +497,31 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">object_mask</span><span class="p">):</span>
             <span class="k">continue</span>
         <span class="n">image_object</span><span class="p">[</span><span class="o">~</span><span class="n">object_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">features</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_directions</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">labels</span><span class="p">)))</span>
         <span class="n">image_object</span> <span class="o">=</span> <span class="n">scale_image</span><span class="p">(</span><span class="n">image_object</span><span class="p">,</span> <span class="n">num_gray_levels</span><span class="o">=</span><span class="n">grayscale</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># calculates 13 Haralick features for each direction (13)</span>
             <span class="c1">#  and each object, and stores them in a 3D array</span>
-            <span class="n">features</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">label</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">mahotas</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">haralick</span><span class="p">(</span>
+            <span class="n">features</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">mahotas</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">haralick</span><span class="p">(</span>
                 <span class="n">ignore_zeros</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="n">f</span><span class="o">=</span><span class="n">image_object</span><span class="p">,</span>
                 <span class="n">distance</span><span class="o">=</span><span class="n">distance</span><span class="p">,</span>
                 <span class="n">compute_14th_feature</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="n">features</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">feature_names</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">features</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span>
     <span class="c1"># iterate through the direction, feature, and object dimensions</span>
     <span class="c1"># of the features array to populate the output dictionary</span>
     <span class="k">for</span> <span class="n">direction</span><span class="p">,</span> <span class="n">direction_features</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">features</span><span class="p">):</span>
         <span class="n">direction_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">direction</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">for</span> <span class="n">feature_name</span><span class="p">,</span> <span class="n">feature</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">feature_names</span><span class="p">,</span> <span class="n">direction_features</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">object_id</span><span class="p">,</span> <span class="n">feature_value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">feature</span><span class="p">):</span>
-                <span class="n">output_texture_dict</span><span class="p">[</span><span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">object_id</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+                <span class="n">output_texture_dict</span><span class="p">[</span><span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
                 <span class="n">output_texture_dict</span><span class="p">[</span><span class="s2">&quot;texture_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">distance</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">direction_str</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">grayscale</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
-                <span class="n">output_texture_dict</span><span class="p">[</span><span class="s2">&quot;texture_value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feature_value</span><span class="p">)</span>
+                <span class="n">output_texture_dict</span><span class="p">[</span><span class="s2">&quot;texture_value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">feature</span><span class="p">[</span><span class="n">label_to_idx</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">label</span><span class="p">)]]</span>
+                <span class="p">)</span>
     <span class="n">final_df</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">output_texture_dict</span><span class="p">)</span>
 
     <span class="n">final_df</span> <span class="o">=</span> <span class="n">final_df</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span>

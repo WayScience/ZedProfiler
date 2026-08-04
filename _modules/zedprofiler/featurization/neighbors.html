@@ -328,6 +328,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">skimage.measure</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">skimage.morphology</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">zedprofiler.contracts</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_column_name_schema</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">zedprofiler.IO.feature_writing_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">format_morphology_feature_name</span>
@@ -468,8 +469,6 @@
             <span class="n">props_label</span><span class="p">[</span><span class="s2">&quot;bbox-4&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
             <span class="n">props_label</span><span class="p">[</span><span class="s2">&quot;bbox-5&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
         <span class="p">)</span>
-        <span class="n">original_bbox</span> <span class="o">=</span> <span class="p">(</span><span class="n">z_min</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">z_max</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">x_max</span><span class="p">)</span>
-
         <span class="n">new_z_min</span><span class="p">,</span> <span class="n">new_z_max</span> <span class="o">=</span> <span class="n">neighbors_expand_box</span><span class="p">(</span>
             <span class="n">min_coor</span><span class="o">=</span><span class="n">image_global_min_coord_z</span><span class="p">,</span>
             <span class="n">max_coord</span><span class="o">=</span><span class="n">image_global_max_coord_z</span><span class="p">,</span>
@@ -493,18 +492,12 @@
         <span class="p">)</span>
         <span class="n">bbox</span> <span class="o">=</span> <span class="p">(</span><span class="n">new_z_min</span><span class="p">,</span> <span class="n">new_y_min</span><span class="p">,</span> <span class="n">new_x_min</span><span class="p">,</span> <span class="n">new_z_max</span><span class="p">,</span> <span class="n">new_y_max</span><span class="p">,</span> <span class="n">new_x_max</span><span class="p">)</span>
         <span class="n">croppped_neighbor_image</span> <span class="o">=</span> <span class="n">crop_3D_image</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">label_object</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="n">bbox</span><span class="p">)</span>
-        <span class="n">self_cropped_neighbor_image</span> <span class="o">=</span> <span class="n">crop_3D_image</span><span class="p">(</span>
-            <span class="n">image</span><span class="o">=</span><span class="n">label_object</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="n">original_bbox</span>
-        <span class="p">)</span>
-        <span class="c1"># find all the unique values in the cropped image of the object of interest</span>
-        <span class="c1"># this is the number of neighbors in the cropped image</span>
-        <span class="n">n_neighbors_adjacent</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="nb">len</span><span class="p">(</span>
-                <span class="n">numpy</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
-                    <span class="n">self_cropped_neighbor_image</span><span class="p">[</span><span class="n">self_cropped_neighbor_image</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
-            <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">binary_mask</span> <span class="o">=</span> <span class="n">label_object</span> <span class="o">==</span> <span class="n">label</span>
+        <span class="n">dilated_mask</span> <span class="o">=</span> <span class="n">skimage</span><span class="o">.</span><span class="n">morphology</span><span class="o">.</span><span class="n">dilation</span><span class="p">(</span><span class="n">binary_mask</span><span class="p">)</span>
+        <span class="n">labels_in_dilation</span> <span class="o">=</span> <span class="n">label_object</span><span class="p">[</span><span class="n">dilated_mask</span><span class="p">]</span>
+        <span class="n">adjacent_labels</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels_in_dilation</span><span class="p">)</span>
+        <span class="n">n_neighbors_adjacent</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+            <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">adjacent_labels</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">adjacent_labels</span> <span class="o">!=</span> <span class="n">label</span><span class="p">))</span>
         <span class="p">)</span>
 
         <span class="c1"># find all the unique values in the expanded cropped image of the</span>
