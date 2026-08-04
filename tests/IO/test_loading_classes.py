@@ -102,7 +102,7 @@ class TestImageSetLoaderMethods:
         assert result.shape == (2, 2, 2)
 
     def test_image_loading_requires_path_type(self) -> None:
-        """beartype should reject non-Path inputs for _image_loading."""
+        """Beartype should reject non-Path inputs for _image_loading."""
         with pytest.raises(BeartypeCallHintParamViolation):
             _image_loading("/tmp/fake-image.tif")
 
@@ -189,14 +189,14 @@ class TestImageSetLoaderMethods:
             TWO_LABEL,
         ]
 
-    def test_get_unique_objects_empty_compartments_raises_type_error(self) -> None:
-        """Current behavior sets compartments to None then iterates and raises."""
+    def test_get_unique_objects_empty_compartments_returns_empty(self) -> None:
+        """Empty compartments list returns early."""
         loader = ImageSetLoader.__new__(ImageSetLoader)
         loader.image_set_dict = {}
         loader.compartments = []
 
-        with pytest.raises(TypeError):
-            loader.get_unique_objects_in_compartments()
+        loader.get_unique_objects_in_compartments()
+        assert loader.unique_compartment_objects == {}
 
     def test_get_image_and_get_anisotropy(self) -> None:
         """Simple accessors return the expected image and anisotropy ratio."""

@@ -18,8 +18,7 @@ logging.basicConfig(level=logging.INFO)
 
 @beartype
 def _image_loading(image_path: pathlib.Path) -> numpy.ndarray:
-    """
-    Internal loader using bioio as a backend
+    """Internal loader using bioio as a backend
 
     Parameters
     ----------
@@ -30,6 +29,7 @@ def _image_loading(image_path: pathlib.Path) -> numpy.ndarray:
     -------
     numpy.ndarray
         Image returned
+
     """
     image = bioio.BioImage(str(image_path))  # selects the first scene found
     return image.get_image_data("ZYX")
@@ -46,7 +46,6 @@ class ImageSetConfig:
     # validate the arg types
     def __post_init__(self) -> None:
         """Initialize default values for None fields."""
-
         if not isinstance(self.image_set_name, (str, type(None))):
             raise TypeError("image_set_name must be a string or None")
         if not isinstance(self.label_key_name, (list, type(None))):
@@ -60,7 +59,7 @@ class ImageSetConfig:
             self.raw_image_key_name = []
 
 
-class _LazyImageSetDict(dict[str, pathlib.Path | numpy.ndarray]):
+class _LazyImageSetDict(dict):  # type: ignore[type-arg]
     """Dictionary that loads image arrays on first access."""
 
     def __getitem__(self, key: str) -> numpy.ndarray:
@@ -70,7 +69,7 @@ class _LazyImageSetDict(dict[str, pathlib.Path | numpy.ndarray]):
             super().__setitem__(key, value)
         return value
 
-    def get(
+    def get(  # type: ignore[override]
         self,
         key: str,
         default: pathlib.Path | numpy.ndarray | None = None,
@@ -79,18 +78,17 @@ class _LazyImageSetDict(dict[str, pathlib.Path | numpy.ndarray]):
             return self[key]
         return default
 
-    def items(self) -> Iterator[tuple[str, numpy.ndarray]]:
+    def items(self) -> Iterator[tuple[str, numpy.ndarray]]:  # type: ignore[override]
         for key in dict.__iter__(self):
             yield key, self[key]
 
-    def values(self) -> Iterator[numpy.ndarray]:
+    def values(self) -> Iterator[numpy.ndarray]:  # type: ignore[override]
         for key in dict.__iter__(self):
             yield self[key]
 
 
 class ImageSetLoader:
-    """
-    ImageSet in this context refers to a set of images that can be
+    """ImageSet in this context refers to a set of images that can be
     related to each other via their metadata.
     For example all images coming from the same well, FOV or timepoint
     but different spectral channels and segmentation labels.
@@ -165,6 +163,7 @@ class ImageSetLoader:
         config : ImageSetConfig | None
             Optional configuration object with image_set_name, label_key_name,
             and raw_image_key_name. If None, defaults are used.
+
         """
         config = config or ImageSetConfig()
         self._validate_input_sources(
@@ -202,8 +201,7 @@ class ImageSetLoader:
         image_set_array: numpy.ndarray | None,
         label_set_array: numpy.ndarray | None,
     ) -> None:
-        """
-        Validate the input sources such that either the image path or the
+        """Validate the input sources such that either the image path or the
         array is passed through but not neither and not both.
 
         Parameters
@@ -225,24 +223,25 @@ class ImageSetLoader:
         ValueError
             If both image_set_array and image_set_path are provided, or if
             both label_set_array and label_set_path are provided.
+
         """
         if image_set_array is None and image_set_path is None:
             raise ValueError(
-                "Either image_set_array or image_set_path must be provided."
+                "Either image_set_array or image_set_path must be provided.",
             )
         if label_set_array is None and label_set_path is None:
             raise ValueError(
-                "Either label_set_array or label_set_path must be provided."
+                "Either label_set_array or label_set_path must be provided.",
             )
         if image_set_array is not None and image_set_path is not None:
             raise ValueError(
                 "Only one of image_set_array or image_set_path should be "
-                "provided, not both."
+                "provided, not both.",
             )
         if label_set_array is not None and label_set_path is not None:
             raise ValueError(
                 "Only one of label_set_array or label_set_path should be "
-                "provided, not both."
+                "provided, not both.",
             )
 
     def _load_path_based_images(
@@ -252,8 +251,7 @@ class ImageSetLoader:
         image_set_path: pathlib.Path | None,
         label_set_path: pathlib.Path | None,
     ) -> None:
-        """
-        Load the images if a path is given.
+        """Load the images if a path is given.
         Note that currently we only load tiffs...
 
         Parameters
@@ -266,6 +264,7 @@ class ImageSetLoader:
             Path to the image set directory.
         label_set_path : pathlib.Path | None
             Path to the label set directory.
+
         """
         if image_set_path is None:
             return
@@ -301,8 +300,7 @@ class ImageSetLoader:
         image_set_array: numpy.ndarray | None,
         label_set_array: numpy.ndarray | None,
     ) -> None:
-        """
-        Load the array based images.
+        """Load the array based images.
         These are already in memory and stored as numpy arrays.
 
         Parameters
@@ -313,33 +311,34 @@ class ImageSetLoader:
             Array containing the image data.
         label_set_array : numpy.ndarray | None
             Array containing the label data.
+
         """
         if image_set_array is not None:
-            for key in config.raw_image_key_name:
+            for key in config.raw_image_key_name or []:
                 # Run through pydantic validation to ensure the array is valid.
                 validated_array = ImageArrayModel(array=image_set_array).array
                 self.image_set_dict[key] = validated_array
         if label_set_array is not None:
-            for key in config.label_key_name:
+            for key in config.label_key_name or []:
                 # Run through pydantic validation to ensure the array is valid.
                 validated_array = ImageArrayModel(array=label_set_array).array
                 self.image_set_dict[key] = validated_array
 
     def get_unique_objects_in_compartments(self) -> None:
-        """
-        Populate unique object IDs per compartment.
+        """Populate unique object IDs per compartment.
 
         Parameters
         ----------
         None
             This method does not take any parameters.
+
         """
         self.unique_compartment_objects = {}
         if len(self.compartments) == 0:
-            self.compartments = None
+            return
         for compartment in self.compartments:
             self.unique_compartment_objects[compartment] = numpy.unique(
-                self.get_image(compartment)
+                self.get_image(compartment),
             )
             # remove the 0 label
             self.unique_compartment_objects[compartment] = [
@@ -358,6 +357,7 @@ class ImageSetLoader:
         -------
         numpy.ndarray
             Image array for the requested key.
+
         """
         return self.image_set_dict[key]
 
@@ -368,6 +368,7 @@ class ImageSetLoader:
         -------
         list[str]
             List of image names excluding compartment labels.
+
         """
         compartments = (
             self.compartments
@@ -384,6 +385,7 @@ class ImageSetLoader:
         -------
         list[str]
             List of compartment keys.
+
         """
         self.compartments = [
             x
@@ -401,13 +403,13 @@ class ImageSetLoader:
         -------
         float
             Ratio of z-spacing to y-spacing.
+
         """
         return self.anisotropy_spacing[0] / self.anisotropy_spacing[1]
 
 
 class ObjectLoader:
-    """
-    A class to load objects from a labeled image and extract their properties.
+    """A class to load objects from a labeled image and extract their properties.
     Where an object is defined as a segmented region in the image.
     This could be a cell, a nucleus, or any other compartment segmented.
 
@@ -434,6 +436,7 @@ class ObjectLoader:
     __init__(image, label_image, channel_name, compartment_name)
         Initializes the ObjectLoader with the image, label image, channel
         name, and compartment name.
+
     """
 
     def __init__(
@@ -452,8 +455,8 @@ class ObjectLoader:
             The name of the channel from which the objects are extracted.
         compartment_name : str
             The name of the compartment from which the objects are extracted.
-        """
 
+        """
         self.channel = channel_name
         self.compartment = compartment_name
         self.image = image_set_loader.get_image(self.channel) if self.channel else None
@@ -461,16 +464,18 @@ class ObjectLoader:
             image_set_loader.get_image(self.compartment) if self.compartment else None
         )
         # get the labeled image objects
-        self.object_ids = numpy.unique(self.label_image)
-        # drop the 0 label
-        self.object_ids = [x for x in self.object_ids if x != 0]
+        if self.label_image is not None:
+            self.object_ids: list[int] = [
+                int(x) for x in numpy.unique(self.label_image) if x != 0
+            ]
+        else:
+            self.object_ids = []
         # inherit the image set loader
         self.image_set_loader = image_set_loader
 
 
 class TwoObjectLoader:
-    """
-    A class to load two images and a label image for a specific compartment.
+    """A class to load two images and a label image for a specific compartment.
     This class is primarily used for loading images for two-channel
     analysis like co-localization.
 
@@ -506,6 +511,7 @@ class TwoObjectLoader:
     __init__(image_set_loader, compartment, channel1, channel2)
         Initializes the TwoObjectLoader with the image set loader,
         compartment, and channel names.
+
     """
 
     def __init__(
@@ -527,6 +533,7 @@ class TwoObjectLoader:
             First channel name to load.
         channel2 : str
             Second channel name to load.
+
         """
         self.image_set_loader = image_set_loader
         self.compartment = compartment

@@ -86,22 +86,22 @@ class ImageArrayModel(BaseModel):
         if len(arr_shape) == TWO_DIMENSIONAL:
             raise ValueError(
                 f"Input array has shape {arr_shape} with {TWO_DIMENSIONAL} "
-                f"dimensions. Expected {EXPECTED_SPATIAL_DIMS} dimensions."
+                f"dimensions. Expected {EXPECTED_SPATIAL_DIMS} dimensions.",
             )
-        elif len(arr_shape) == FOUR_DIMENSIONAL and arr_shape[0] > 1:
+        if len(arr_shape) == FOUR_DIMENSIONAL and arr_shape[0] > 1:
             raise ValueError(
                 f"Input array has shape {arr_shape} with {FOUR_DIMENSIONAL} "
                 "dimensions, but the first dimension (channels) has size "
-                f"{arr_shape[0]}. Expected a single-channel 3D array."
+                f"{arr_shape[0]}. Expected a single-channel 3D array.",
             )
-        elif (
+        if (
             len(arr_shape) >= FIVE_OR_MORE_DIMENSIONS
             and arr_shape[0] > 1
             and arr_shape[1] > 1
         ):
             raise ValueError(
                 f"Input array has shape {arr_shape} with {len(arr_shape)} "
-                f"dimensions. Expected {EXPECTED_SPATIAL_DIMS} dimensions."
+                f"dimensions. Expected {EXPECTED_SPATIAL_DIMS} dimensions.",
             )
 
         # Check all dimensions are positive
@@ -109,23 +109,22 @@ class ImageArrayModel(BaseModel):
             if dim_size <= 0:
                 raise ValueError(
                     f"Input array has shape {arr_shape} with non-positive "
-                    "dimension size. All dimensions must have size greater than 0."
+                    "dimension size. All dimensions must have size greater than 0.",
                 )
 
-        # Check not all dimensions are 1
+        # Check that the array is not a degenerate single-voxel volume
         if sum(arr_shape) == len(arr_shape):
             raise ValueError(
-                f"Input array has shape {arr_shape} with one or more "
-                "dimensions of size 1. Expected all three dimensions to "
-                "have size greater than 1."
+                f"Input array has shape {arr_shape} with all dimensions equal to 1. "
+                "Expected all three dimensions to have size greater than 1.",
             )
         if not validate_image_array_shape_contracts(arr):
             raise ValueError(
-                f"Input array with shape {arr_shape} failed shape contract validation."
+                f"Input array with shape {arr_shape} failed shape contract validation.",
             )
         if not validate_image_array_type_contracts(arr):
             raise ValueError(
-                f"Input array with dtype {arr.dtype} failed type contract validation."
+                f"Input array with dtype {arr.dtype} failed type contract validation.",
             )
         return arr
 
@@ -181,23 +180,23 @@ class ReturnSchemaModel(BaseModel):
         if actual_keys != REQUIRED_RETURN_KEYS:
             raise ValueError(
                 "Return result keys must match required deterministic order "
-                f"{REQUIRED_RETURN_KEYS}, got {actual_keys}."
+                f"{REQUIRED_RETURN_KEYS}, got {actual_keys}.",
             )
 
         if not isinstance(result["image_array"], np.ndarray):
             raise ValueError(
                 f"Return result key 'image_array' must be a numpy array, "
-                f"got {type(result['image_array'])}"
+                f"got {type(result['image_array'])}",
             )
         if not isinstance(result["features"], dict):
             raise ValueError(
                 f"Return result key 'features' must be a dict, "
-                f"got {type(result['features'])}"
+                f"got {type(result['features'])}",
             )
         if not isinstance(result["metadata"], dict):
             raise ValueError(
                 f"Return result key 'metadata' must be a dict, "
-                f"got {type(result['metadata'])}"
+                f"got {type(result['metadata'])}",
             )
 
         return result
@@ -230,7 +229,7 @@ class ColumnNameModel(BaseModel):
                     "Metadata column name must have at least "
                     f"{METADATA_UNDERSCORE_SEPARATED_PARTS} "
                     "parts separated by underscores, "
-                    f"got {len(parts)} parts in '{self.column_name}'"
+                    f"got {len(parts)} parts in '{self.column_name}'",
                 )
             # Don't parse compartment/channel/feature for metadata columns
             return self
@@ -240,7 +239,7 @@ class ColumnNameModel(BaseModel):
                 "Column name must have at least "
                 f"{NON_METADATA_UNDERSCORE_SEPARATED_PARTS} "
                 "parts separated by underscores, "
-                f"got {len(parts)} parts in '{self.column_name}'"
+                f"got {len(parts)} parts in '{self.column_name}'",
             )
 
         self.compartment = parts[0]
@@ -254,8 +253,7 @@ class ColumnNameModel(BaseModel):
 def validate_image_array_shape_contracts(
     arr: np.ndarray,
 ) -> bool:
-    """
-    Validate the input array for dimensionality
+    """Validate the input array for dimensionality
 
     Parameters
     ----------
@@ -271,40 +269,40 @@ def validate_image_array_shape_contracts(
     ------
     ContractError
         If the input array does not meet the expected contract
-    """
 
+    """
     arr_shape = arr.shape
     if len(arr_shape) == TWO_DIMENSIONAL:
         raise ContractError(
             f"Input array has shape {arr_shape} with {TWO_DIMENSIONAL} dimensions. "
-            f"Expected {EXPECTED_SPATIAL_DIMS} dimensions."
+            f"Expected {EXPECTED_SPATIAL_DIMS} dimensions.",
         )
-    elif len(arr_shape) == FOUR_DIMENSIONAL and arr_shape[0] > 1:
+    if len(arr_shape) == FOUR_DIMENSIONAL and arr_shape[0] > 1:
         raise ContractError(
             f"Input array has shape {arr_shape} with {FOUR_DIMENSIONAL} dimensions, "
             "but the first dimension (channels) has size "
-            f"{arr_shape[0]}. Expected a single-channel 3D array."
+            f"{arr_shape[0]}. Expected a single-channel 3D array.",
         )
-    elif (
+    if (
         len(arr_shape) >= FIVE_OR_MORE_DIMENSIONS
         and arr_shape[0] > 1
         and arr_shape[1] > 1
     ):
         raise ContractError(
             f"Input array has shape {arr_shape} with {len(arr_shape)} dimensions. "
-            f"Expected {EXPECTED_SPATIAL_DIMS} dimensions."
+            f"Expected {EXPECTED_SPATIAL_DIMS} dimensions.",
         )
 
     for dim_size in arr_shape:
         if dim_size <= 0:
             raise ContractError(
                 f"Input array has shape {arr_shape} with non-positive dimension size. "
-                "All dimensions must have size greater than 0."
+                "All dimensions must have size greater than 0.",
             )
     if sum(arr_shape) == len(arr_shape):
         raise ContractError(
-            f"Input array has shape {arr_shape} with one or more dimensions of size 1. "
-            "Expected all three dimensions to have size greater than 1."
+            f"Input array has shape {arr_shape} with all dimensions equal to 1. "
+            "Expected all three dimensions to have size greater than 1.",
         )
     return True
 
@@ -313,8 +311,7 @@ def validate_image_array_shape_contracts(
 def validate_image_array_type_contracts(
     arr: np.ndarray,
 ) -> bool:
-    """
-    Validate the input array for type
+    """Validate the input array for type
 
     Parameters
     ----------
@@ -330,6 +327,7 @@ def validate_image_array_type_contracts(
     ------
     ContractError
         If the input array does not meet the expected contract
+
     """
     if not isinstance(arr, np.ndarray):
         raise ContractError(f"Input is of type {type(arr)}, expected a numpy array.")
@@ -337,7 +335,7 @@ def validate_image_array_type_contracts(
     if not np.issubdtype(arr.dtype, np.number):
         raise ContractError(
             f"Input array has dtype {arr.dtype}, expected a numeric dtype "
-            "(int or float)."
+            "(int or float).",
         )
     return True
 
@@ -346,8 +344,7 @@ def validate_image_array_type_contracts(
 def validate_return_with_pydantic(
     result: dict[str, object],
 ) -> ReturnSchemaModel:
-    """
-    Validate return schema using Pydantic model.
+    """Validate return schema using Pydantic model.
 
     Parameters
     ----------
@@ -363,6 +360,7 @@ def validate_return_with_pydantic(
     ------
     ContractError
         If validation fails
+
     """
     try:
         return ReturnSchemaModel(result=result)
@@ -375,8 +373,7 @@ def validate_return_with_pydantic(
 
 
 def validate_image_with_pydantic(arr: np.ndarray) -> ImageArrayModel:
-    """
-    Validate the input image array using Pydantic model.
+    """Validate the input image array using Pydantic model.
 
     Parameters
     ----------
@@ -392,6 +389,7 @@ def validate_image_with_pydantic(arr: np.ndarray) -> ImageArrayModel:
     ------
     ContractError
         If validation fails
+
     """
     try:
         return ImageArrayModel(array=arr)
@@ -405,8 +403,7 @@ def validate_image_with_pydantic(arr: np.ndarray) -> ImageArrayModel:
 
 @beartype
 def validate_column_name_with_pydantic(column_name: str) -> ColumnNameModel:
-    """
-    Validate column name using Pydantic model.
+    """Validate column name using Pydantic model.
 
     Parameters
     ----------
@@ -422,6 +419,7 @@ def validate_column_name_with_pydantic(column_name: str) -> ColumnNameModel:
     ------
     ContractError
         If validation fails
+
     """
     try:
         return ColumnNameModel(column_name=column_name)
@@ -430,13 +428,13 @@ def validate_column_name_with_pydantic(column_name: str) -> ColumnNameModel:
 
 
 def create_image_array_schema() -> pa.SeriesSchema:
-    """
-    Create a Pandera schema for image array validation.
+    """Create a Pandera schema for image array validation.
 
     Returns
     -------
     pa.SeriesSchema
         Pandera schema for numeric arrays
+
     """
     # Use a single numeric dtype for the series schema; Pandera dtype
     # objects should be instantiated rather than combined with `|`.
@@ -459,7 +457,7 @@ def validate_return_schema_contract(
     if actual_keys != REQUIRED_RETURN_KEYS:
         raise ContractError(
             "Return result keys must match required deterministic order "
-            f"{REQUIRED_RETURN_KEYS}, got {actual_keys}."
+            f"{REQUIRED_RETURN_KEYS}, got {actual_keys}.",
         )
 
     try:
@@ -478,7 +476,6 @@ class ExpectedFeatureNameValues(BaseModel):
     features: list[str] | None = Field(default_factory=list)
     expected_values_dict: dict[str, list[str]] = Field(default_factory=dict)
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    print(features)
 
     def __init__(self, **data: object) -> None:
         super().__init__(**data)
@@ -510,8 +507,7 @@ def validate_column_name_schema(
     compartments: list[str],
     features: list[str] | None = None,
 ) -> bool:
-    """
-    Validate the column name schema for required fields and types
+    """Validate the column name schema for required fields and types
 
     Parameters
     ----------
@@ -523,20 +519,25 @@ def validate_column_name_schema(
         List of valid compartments for feature naming
     features : list[str] | None, optional
         List of valid features for feature naming, by default None
+
     Returns
     -------
     bool
         The status of the validation
+
     Raises
     ------
     ContractError
         If the column name does not meet the expected schema
+
     """
     non_metadata_underscore_separated_parts = NON_METADATA_UNDERSCORE_SEPARATED_PARTS
     metadata_underscore_separated_parts = METADATA_UNDERSCORE_SEPARATED_PARTS
 
     expected_values = ExpectedFeatureNameValues(
-        channels=channels, compartments=compartments, features=None
+        channels=channels,
+        compartments=compartments,
+        features=None,
     ).expected_values_dict
 
     # check if the column name is a string
@@ -563,7 +564,7 @@ def validate_column_name_schema(
                 "Metadata column name must have at least "
                 f"{metadata_underscore_separated_parts} "
                 "parts separated by "
-                f"underscores, got {len(parts)} parts in '{column_name}'"
+                f"underscores, got {len(parts)} parts in '{column_name}'",
             )
         return True
     feature_components = pd.DataFrame(
@@ -572,8 +573,8 @@ def validate_column_name_schema(
                 "compartment": parts[0],
                 "channel": parts[1],
                 "feature": parts[2],
-            }
-        ]
+            },
+        ],
     )
 
     feature_component_schema = pa.DataFrameSchema(

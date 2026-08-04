@@ -124,7 +124,8 @@ class ProfileFixtures:
         assert sizes == sorted(sizes)
 
     def test_all_feature_type_profiles(
-        self, all_feature_type_profiles: list[Profile]
+        self,
+        all_feature_type_profiles: list[Profile],
     ) -> None:
         """Verify feature type collection has all feature types."""
         assert len(all_feature_type_profiles) == EXPECTED_FEATURE_TYPE_PROFILES_COUNT

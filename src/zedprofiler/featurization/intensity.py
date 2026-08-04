@@ -16,8 +16,7 @@ from zedprofiler.IO.loading_classes import ObjectLoader
 
 
 def get_outline(mask: numpy.ndarray) -> numpy.ndarray:
-    """
-    Get the outline of a 3D mask.
+    """Get the outline of a 3D mask.
 
     Parameters
     ----------
@@ -28,18 +27,18 @@ def get_outline(mask: numpy.ndarray) -> numpy.ndarray:
     -------
     numpy.ndarray
         The outline of the mask.
+
     """
     outline = numpy.zeros_like(mask)
     for z in range(mask.shape[0]):
-        outline[z] = skimage.segmentation.find_boundaries(mask[z])
+        outline[z] = skimage.segmentation.find_boundaries(mask[z], mode="inner")
     return outline
 
 
 def compute_intensity(  # noqa: PLR0915
     object_loader: ObjectLoader,
 ) -> pandas.DataFrame:
-    """
-    Measure the intensity of objects in a 3D image.
+    """Measure the intensity of objects in a 3D image.
 
     Parameters
     ----------
@@ -48,15 +47,18 @@ def compute_intensity(  # noqa: PLR0915
 
     Returns
     -------
-    dict
-        A dictionary containing the measurements for each object.
-        The keys are the measurement names and the values are the corresponding values.
+    pandas.DataFrame
+        Wide-format DataFrame with one row per object and one column per
+        intensity measurement, plus Metadata columns.
+
     """
+    if object_loader.label_image is None or object_loader.image is None:
+        return pandas.DataFrame()
     image_object = object_loader.image
     label_object = object_loader.label_image
     labels = object_loader.object_ids
 
-    output_dict = {
+    output_dict: dict[str, list] = {
         "Metadata_Object_ObjectID": [],
         "feature_name": [],
         "channel": [],
@@ -80,29 +82,34 @@ def compute_intensity(  # noqa: PLR0915
 
         # Extract only coordinates where object exists
         z_indices, y_indices, x_indices = numpy.where(selected_label_object > 0)
-        min_z, max_z = numpy.min(z_indices), numpy.max(z_indices)
-        min_y, max_y = numpy.min(y_indices), numpy.max(y_indices)
-        min_x, max_x = numpy.min(x_indices), numpy.max(x_indices)
+        bbox_min_z, bbox_max_z = numpy.min(z_indices), numpy.max(z_indices)
+        bbox_min_y, bbox_max_y = numpy.min(y_indices), numpy.max(y_indices)
+        bbox_min_x, bbox_max_x = numpy.min(x_indices), numpy.max(x_indices)
 
         # Crop to bounding box for efficiency
         cropped_label = selected_label_object[
-            min_z : max_z + 1, min_y : max_y + 1, min_x : max_x + 1
+            bbox_min_z : bbox_max_z + 1,
+            bbox_min_y : bbox_max_y + 1,
+            bbox_min_x : bbox_max_x + 1,
         ]
         cropped_image = selected_image_object[
-            min_z : max_z + 1, min_y : max_y + 1, min_x : max_x + 1
+            bbox_min_z : bbox_max_z + 1,
+            bbox_min_y : bbox_max_y + 1,
+            bbox_min_x : bbox_max_x + 1,
         ]
 
         # Create coordinate grids for the bounding box
         mesh_z, mesh_y, mesh_x = numpy.mgrid[
-            min_z : max_z + 1,  # + 1 to include the max index
-            min_y : max_y + 1,
-            min_x : max_x + 1,
+            bbox_min_z : bbox_max_z + 1,  # + 1 to include the max index
+            bbox_min_y : bbox_max_y + 1,
+            bbox_min_x : bbox_max_x + 1,
         ]
 
         # calculate the integrated intensity
         integrated_intensity = scipy.ndimage.sum(
             selected_image_object,
             selected_label_object,
+            index=1,
         )
         # calculate the volume
         volume = numpy.sum(selected_label_object)
@@ -125,10 +132,10 @@ def compute_intensity(  # noqa: PLR0915
         upper_quartile_intensity = numpy.percentile(non_zero_pixels_object, 75)
         # median intensity
         median_intensity = numpy.median(non_zero_pixels_object)
-        # max intensity location
-        max_z, max_y, max_x = scipy.ndimage.maximum_position(
-            selected_image_object,
-        )  # z, y, x
+        # location of maximum intensity pixel (z, y, x)
+        max_intensity_z, max_intensity_y, max_intensity_x = (
+            scipy.ndimage.maximum_position(selected_image_object)
+        )
 
         # Calculate center of mass (geometric center) using cropped arrays
         object_mask = cropped_label > 0
@@ -177,19 +184,16 @@ def compute_intensity(  # noqa: PLR0915
             "StdIntensityEdge": std_intensity_edge,
             "MinIntensityEdge": min_intensity_edge,
             "MaxIntensityEdge": max_intensity_edge,
-            "MaxZ": max_z,
-            "MaxY": max_y,
-            "MaxX": max_x,
+            "MaxZ": max_intensity_z,
+            "MaxY": max_intensity_y,
+            "MaxX": max_intensity_x,
             "CMI.X": cmi_x,
             "CMI.Y": cmi_y,
             "CMI.Z": cmi_z,
         }
 
         for feature_name, measurement_value in measurements_dict.items():
-            if measurement_value.dtype != numpy.float32:
-                coerced_value = numpy.float32(measurement_value)
-            else:
-                coerced_value = measurement_value
+            coerced_value = numpy.float32(measurement_value)
             output_dict["Metadata_Object_ObjectID"].append(numpy.int32(label))
             output_dict["feature_name"].append(feature_name)
             output_dict["channel"].append(object_loader.channel)

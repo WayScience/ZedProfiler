@@ -26,7 +26,10 @@ class TestRobustness:
     def test_format_name_with_all_delimiters(self) -> None:
         """Test formatting with all types of delimiters."""
         result = format_morphology_feature_name(
-            "cell_part", "channel.name", "feature type", "measurement/value"
+            "cell_part",
+            "channel.name",
+            "feature type",
+            "measurement/value",
         )
         assert isinstance(result, str)
         assert "_" in result
@@ -45,7 +48,7 @@ class TestRobustness:
                     "float_col": [1.1, 2.2, 3.3],
                     "str_col": ["a", "b", "c"],
                     "bool_col": [True, False, True],
-                }
+                },
             )
 
             metadata = FeatureMetadata(
@@ -72,7 +75,7 @@ class TestRobustness:
                 {
                     f"feature_{i}": range(LARGE_DATAFRAME_ROWS)
                     for i in range(LARGE_DATAFRAME_COLUMNS)
-                }
+                },
             )
 
             metadata = FeatureMetadata(

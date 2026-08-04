@@ -12,10 +12,10 @@ def rng() -> np.random.Generator:
 
 @beartype
 def make_pair(
-    shape: tuple[int, int, int], center: tuple[int, int, int]
+    shape: tuple[int, int, int],
+    center: tuple[int, int, int],
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """
-    Make pairs of images to use for testing
+    """Make pairs of images to use for testing
     This is a support function for coloaclization
     Featurization testing
 
@@ -30,6 +30,7 @@ def make_pair(
     -------
     tuple[np.ndarray, np.ndarray, np.ndarray]
         A tuple containing the label image, image 1, and image 2.
+
     """
     label = np.zeros(shape, dtype=int)
     z, y, x = center

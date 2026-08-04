@@ -49,7 +49,7 @@ def expected_values_config_path(tmp_path: Path) -> Path:
 [expected_values]
 compartments = ["Nuclei", "Cytoplasm", "Cell", "Organoid"]
 channels = ["DNA", "AGP", "ER", "Mito"]
-""".strip()
+""".strip(),
     )
     return config_path
 

@@ -37,6 +37,7 @@ dependencies = [
   "pyarrow>=23.0.1",
   "pydantic>=2.10",
   "scikit-image>=0.26",
+  "scipy>=1.14",
   "tomli>=2.4.1",
 ]
 urls.Homepage = "https://zedprofiler.readthedocs.io"
@@ -110,6 +111,10 @@ ignore-words-list = "inout"
 [tool.vulture]
 paths = [ "src/zedprofiler", "tests" ]
 min_confidence = 90
+
+[tool.mypy]
+ignore_missing_imports = true
+python_version = "3.11"
 
 [tool.pytest]
 ini_options.pythonpath = [ "." ]

@@ -7,6 +7,8 @@ and objects.
 We want this module to be python api callable and scalable.
 """
 
+import contextlib
+
 import mahotas
 import numpy
 import pandas
@@ -19,8 +21,7 @@ from zedprofiler.IO.loading_classes import ObjectLoader
 
 
 def scale_image(image: numpy.ndarray, num_gray_levels: int = 256) -> numpy.ndarray:
-    """
-    Scale the image to a specified number of gray levels.
+    """Scale the image to a specified number of gray levels.
     Example: 1024 gray levels will be scaled to 256 gray levels if
     num_gray_levels=256.
     An image with a pixel value of 0 will be scaled to 0 and a pixel value
@@ -37,6 +38,7 @@ def scale_image(image: numpy.ndarray, num_gray_levels: int = 256) -> numpy.ndarr
     -------
     numpy.ndarray
         The gray level scaled image of any shape.
+
     """
     outrange_mapping = {
         256: "uint8",
@@ -49,7 +51,7 @@ def scale_image(image: numpy.ndarray, num_gray_levels: int = 256) -> numpy.ndarr
     if out_range is None:
         raise ValueError(
             f"Unsupported num_gray_levels: {num_gray_levels}. "
-            f"Supported values are: {list(outrange_mapping.keys())}"
+            f"Supported values are: {list(outrange_mapping.keys())}",
         )
     # scale the image to the requested gray levels
     return skimage.exposure.rescale_intensity(
@@ -63,9 +65,8 @@ def compute_texture(  # noqa: C901
     object_loader: ObjectLoader,
     distance: int = 1,
     grayscale: int = 256,
-) -> dict:
-    """
-    Calculate texture features for each object in the image using Haralick features.
+) -> pandas.DataFrame:
+    """Calculate texture features for each object in the image using Haralick features.
 
     The features are calculated for each object separately and the mean value
     is returned.
@@ -81,32 +82,21 @@ def compute_texture(  # noqa: C901
 
     Returns
     -------
-    dict
-        A dictionary containing the object ID, texture name, and texture value
-        with keys:
-        - object_id
-        - texture_name
-        - texture_value
+    pandas.DataFrame
+        Wide-format DataFrame with one row per object and one column per
+        Haralick texture feature (direction x feature_name x distance x grayscale),
+        plus Metadata columns. Feature names follow the pattern:
+        ``<compartment>_<channel>_Texture_<feature>-<distance>-<direction>-<grayscale>``
 
-        Texture names include: Angular Second Moment, Contrast, Correlation,
-        Variance, Inverse Difference Moment, Sum Average, Sum Variance,
-        Sum Entropy, Entropy, and related texture measures.
-
-        - AngularSecondMoment
-        - Contrast
-        - Correlation
-        - Variance
-        - InverseDifferenceMoment
-        - SumAverage
-        - SumVariance
-        - SumEntropy
-        - Entropy
-        - DifferenceVariance
-        - DifferenceEntropy
-        - InformationMeasureOfCorrelation1
-        - InformationMeasureOfCorrelation2
+        Haralick features measured per direction:
+        AngularSecondMoment, Contrast, Correlation, Variance,
+        InverseDifferenceMoment, SumAverage, SumVariance, SumEntropy,
+        Entropy, DifferenceVariance, DifferenceEntropy,
+        InformationMeasureOfCorrelation1, InformationMeasureOfCorrelation2
 
     """
+    if object_loader.label_image is None or object_loader.image is None:
+        return pandas.DataFrame()
     label_object = object_loader.label_image
     labels = object_loader.object_ids
     feature_names = [
@@ -127,7 +117,7 @@ def compute_texture(  # noqa: C901
     # set the number of directions based on the dimensionality of the image
     n_directions = 13
 
-    output_texture_dict = {
+    output_texture_dict: dict[str, list] = {
         "Metadata_Object_ObjectID": [],
         "texture_name": [],
         "texture_value": [],
@@ -151,9 +141,15 @@ def compute_texture(  # noqa: C901
         )
     # loop through each label and get the bounding box
     # to compute features for the object
-    for _, label in enumerate(labels):
+    label_to_idx = {int(lbl): i for i, lbl in enumerate(labels)}
+
+    # Allocate once before the loop so each label's slot persists
+    features = numpy.full((n_directions, 13, len(labels)), numpy.nan)
+
+    for label in labels:
         if int(label) == 0:
             continue
+        idx = label_to_idx[int(label)]
         bbox = label_to_bbox.get(int(label))
         if bbox is None:
             continue
@@ -167,30 +163,29 @@ def compute_texture(  # noqa: C901
         if not numpy.any(object_mask):
             continue
         image_object[~object_mask] = 0
-        features = numpy.empty((n_directions, 13, max(labels)))
         image_object = scale_image(image_object, num_gray_levels=grayscale)
-        try:
+        with contextlib.suppress(ValueError):
             # calculates 13 Haralick features for each direction (13)
             #  and each object, and stores them in a 3D array
-            features[:, :, label - 1] = mahotas.features.haralick(
+            features[:, :, idx] = mahotas.features.haralick(
                 ignore_zeros=True,
                 f=image_object,
                 distance=distance,
                 compute_14th_feature=False,
             )
-        except ValueError:
-            features = numpy.full(len(feature_names), numpy.nan, dtype=float)
     # iterate through the direction, feature, and object dimensions
     # of the features array to populate the output dictionary
     for direction, direction_features in enumerate(features):
         direction_str = f"{direction:02d}"
         for feature_name, feature in zip(feature_names, direction_features):
-            for object_id, feature_value in zip(labels, feature):
+            for object_id in labels:
                 output_texture_dict["Metadata_Object_ObjectID"].append(object_id)
                 output_texture_dict["texture_name"].append(
-                    f"{feature_name}-{distance}-{direction_str}-{grayscale}"
+                    f"{feature_name}-{distance}-{direction_str}-{grayscale}",
                 )
-                output_texture_dict["texture_value"].append(feature_value)
+                output_texture_dict["texture_value"].append(
+                    feature[label_to_idx[int(object_id)]]
+                )
     final_df = pandas.DataFrame(output_texture_dict)
 
     final_df = final_df.pivot(

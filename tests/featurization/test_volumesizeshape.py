@@ -33,7 +33,8 @@ class ObjectLoaderModel(BaseModel):
 
 @beartype
 def make_label_image(
-    shape: tuple[int, int, int], centers: list[tuple[int, int, int]]
+    shape: tuple[int, int, int],
+    centers: list[tuple[int, int, int]],
 ) -> np.ndarray:
     lab = np.zeros(shape, dtype=int)
     for i, (z0, y0, x0) in enumerate(centers, start=1):
@@ -53,7 +54,8 @@ def make_label_image(
     ],
 )
 def test_compute_volume_size_shape_returns_dataframe(
-    shape: tuple[int, int, int], centers: list[tuple[int, int, int]]
+    shape: tuple[int, int, int],
+    centers: list[tuple[int, int, int]],
 ) -> None:
     imgset = ImageSetLoaderModel(anisotropy_spacing=(1.0, 1.0, 1.0))
     label = make_label_image(shape, centers)

@@ -1,16 +1,14 @@
-from typing import Tuple, Union
-
 import numpy
 
-BBoxCoord = Union[int, float]
+BBoxCoord = int
 BBox3D = tuple[BBoxCoord, BBoxCoord, BBoxCoord, BBoxCoord, BBoxCoord, BBoxCoord]
 
 
 def select_objects_from_label(
-    label_image: numpy.ndarray, object_ids: list
+    label_image: numpy.ndarray,
+    object_ids: list | numpy.ndarray | int,
 ) -> numpy.ndarray:
-    """
-    Selects objects from a label image based on the provided object IDs.
+    """Selects objects from a label image based on the provided object IDs.
 
     Parameters
     ----------
@@ -23,17 +21,24 @@ def select_objects_from_label(
     -------
     numpy.ndarray
         The label image with only the selected objects.
+
     """
     label_image = label_image.copy()
-    label_image[label_image != object_ids] = 0
+    if isinstance(object_ids, (list, numpy.ndarray)):
+        label_image[~numpy.isin(label_image, object_ids)] = 0
+    else:
+        label_image[label_image != object_ids] = 0
     return label_image
 
 
 def expand_box(
-    min_coor: int, max_coord: int, current_min: int, current_max: int, expand_by: int
-) -> Union[Tuple[int, int], ValueError]:
-    """
-    Expand the bounding box of an object in a 3D image.
+    min_coor: int,
+    max_coord: int,
+    current_min: int,
+    current_max: int,
+    expand_by: int,
+) -> tuple[int, int]:
+    """Expand the bounding box of an object in a 3D image.
 
     Parameters
     ----------
@@ -52,13 +57,17 @@ def expand_box(
 
     Returns
     -------
-    Union[Tuple[int, int], ValueError]
+    Tuple[int, int]
         The new minimum and maximum coordinates of the bounding box.
-        Raises ValueError if the expansion is not possible.
-    """
 
+    Raises
+    ------
+    ValueError
+        If the expansion is not possible.
+
+    """
     if max_coord - min_coor - (current_max - current_min) < expand_by:
-        return ValueError("Cannot expand box by the requested amount")
+        raise ValueError("Cannot expand box by the requested amount")
     while expand_by > 0:
         if current_min > min_coor:
             current_min -= 1
@@ -75,8 +84,7 @@ def new_crop_border(
     bbox2: BBox3D,
     image: numpy.ndarray,
 ) -> tuple[BBox3D, BBox3D]:
-    """
-    Expand the bounding boxes of two objects in a 3D image to match their sizes.
+    """Expand the bounding boxes of two objects in a 3D image to match their sizes.
 
     Parameters
     ----------
@@ -91,9 +99,12 @@ def new_crop_border(
     -------
     tuple[BBox3D, BBox3D]
         The new bounding boxes of the two objects.
+
     Raises
+    ------
     ValueError
         If the expansion is not possible.
+
     """
     i1z1, i1y1, i1x1, i1z2, i1y2, i1x2 = bbox1
     i2z1, i2y1, i2x1, i2z2, i2y2, i2x2 = bbox2
@@ -168,8 +179,7 @@ def crop_3D_image(
     image: numpy.ndarray,
     bbox: BBox3D,
 ) -> numpy.ndarray:
-    """
-    Crop a 3D image to the bounding box of a mask.
+    """Crop a 3D image to the bounding box of a mask.
 
     Parameters
     ----------
@@ -182,6 +192,7 @@ def crop_3D_image(
     -------
     numpy.ndarray
         The cropped image.
+
     """
     z1, y1, x1, z2, y2, x2 = bbox
     return image[z1:z2, y1:y2, x1:x2]
@@ -193,8 +204,7 @@ def single_3D_image_expand_bbox(
     expand_pixels: int,
     anisotropy_factor: int,
 ) -> tuple[int, int, int, int, int, int]:
-    """
-    Expand the bbox in a way that keeps the crop within the
+    """Expand the bbox in a way that keeps the crop within the
     confines of the image volume
 
     Parameters
@@ -220,6 +230,7 @@ def single_3D_image_expand_bbox(
     tuple[int, int, int, int, int, int]
         Updated bbox in the format (zmin, ymin, xmin, zmax, ymax, xmax)
         after expansion and adjustment for anisotropy
+
     """
     z1, y1, x1, z2, y2, x2 = bbox
     zmin, ymin, xmin = 0, 0, 0
@@ -256,8 +267,7 @@ def single_3D_image_expand_bbox(
 
 
 def check_for_xy_squareness(bbox: tuple[int, int, int, int, int, int]) -> float:
-    """
-    This function returns the ratio of the x length to the y length
+    """This function returns the ratio of the x length to the y length
     A value of 1 indicates a square bbox is present
 
     Parameters
@@ -272,13 +282,14 @@ def check_for_xy_squareness(bbox: tuple[int, int, int, int, int, int]) -> float:
     float
         The ratio of the y length to the x length of the bbox.
         A value of 1 indicates a square bbox.
+
     """
     _z_min, y_min, x_min, _z_max, y_max, x_max = bbox
     x_length = x_max - x_min
     if x_length == 0:
         raise ValueError(
             "Cannot compute xy squareness for bbox with zero width in x dimension "
-            f"(bbox={bbox})."
+            f"(bbox={bbox}).",
         )
     xy_squareness = (y_max - y_min) / x_length
     return xy_squareness
@@ -287,8 +298,7 @@ def check_for_xy_squareness(bbox: tuple[int, int, int, int, int, int]) -> float:
 def square_off_xy_crop_bbox(
     bbox: tuple[int, int, int, int, int, int],
 ) -> tuple[int, int, int, int, int, int]:
-    """
-    Adjust the bbox to be square in the XY plane.
+    """Adjust the bbox to be square in the XY plane.
 
     The function computes the new bbox from the current X/Y dimensions.
 
@@ -307,6 +317,7 @@ def square_off_xy_crop_bbox(
         (z_min, new_y_min, new_x_min, z_max, new_y_max, new_x_max)
 
         Each value is an integer pixel coordinate in that dimension.
+
     """
     zmin, ymin, xmin, zmax, ymax, xmax = bbox
     # first find the larger dimension between x and y
@@ -317,11 +328,10 @@ def square_off_xy_crop_bbox(
         new_ymin = int(ymin - (x_size - y_size) / 2)
         new_ymax = int(ymax + (x_size - y_size) / 2)
         return (zmin, new_ymin, xmin, zmax, new_ymax, xmax)
-    elif y_size > x_size:
+    if y_size > x_size:
         # need to expand x dimension
         new_xmin = int(xmin - (y_size - x_size) / 2)
         new_xmax = int(xmax + (y_size - x_size) / 2)
         return (zmin, ymin, new_xmin, zmax, ymax, new_xmax)
-    else:
-        # already square
-        return bbox
+    # already square
+    return bbox

@@ -22,6 +22,7 @@ def my_data() -> str:
     str
         A deterministic string value used by tests that require simple text
         input.
+
     """
     return "Hello, differently!"
 
@@ -35,6 +36,7 @@ def minimal_profile() -> Profile:
     Profile
         A profile containing a valid 3D image array and empty feature and
         metadata mappings.
+
     """
     return Profile(
         image_array=np.random.rand(8, 16, 16),
@@ -52,6 +54,7 @@ def small_image_profile() -> Profile:
     Profile
         A profile with image shape ``(4, 8, 8)`` plus representative
         intensity features and metadata fields.
+
     """
     return Profile(
         image_array=np.random.rand(4, 8, 8).astype(np.float32),
@@ -76,6 +79,7 @@ def medium_image_profile() -> Profile:
     Profile
         A profile with image shape ``(16, 32, 32)`` and a mixed set of
         intensity, texture, and morphology feature values.
+
     """
     return Profile(
         image_array=np.random.rand(16, 32, 32).astype(np.float32),
@@ -104,6 +108,7 @@ def large_image_profile() -> Profile:
     Profile
         A profile with image shape ``(32, 64, 64)`` and a richer collection of
         features and metadata fields.
+
     """
     return Profile(
         image_array=np.random.rand(32, 64, 64).astype(np.float32),
@@ -140,6 +145,7 @@ def intensity_profile() -> Profile:
     Profile
         A profile emphasizing intensity-derived measurements across multiple
         channels and compartments.
+
     """
     return Profile(
         image_array=np.random.rand(16, 48, 48).astype(np.float32),
@@ -171,6 +177,7 @@ def texture_profile() -> Profile:
     Profile
         A profile containing entropy, gabor, and contrast style texture
         measurements.
+
     """
     return Profile(
         image_array=np.random.rand(12, 40, 40).astype(np.float32),
@@ -200,6 +207,7 @@ def morphology_profile() -> Profile:
     Profile
         A profile emphasizing morphology metrics such as volume, surface area,
         and sphericity.
+
     """
     return Profile(
         image_array=np.random.rand(20, 56, 56).astype(np.float32),
@@ -231,6 +239,7 @@ def colocalization_profile() -> Profile:
     Profile
         A profile containing correlation and overlap metrics for paired channel
         combinations.
+
     """
     return Profile(
         image_array=np.random.rand(14, 44, 44).astype(np.float32),
@@ -258,6 +267,7 @@ def granularity_profile() -> Profile:
     -------
     Profile
         A profile with a sequence of granularity spectrum measurements.
+
     """
     return Profile(
         image_array=np.random.rand(16, 48, 48).astype(np.float32),
@@ -289,6 +299,7 @@ def neighbors_profile() -> Profile:
     Profile
         A profile with adjacency, neighbor count, and nearest-distance style
         neighborhood features.
+
     """
     return Profile(
         image_array=np.random.rand(10, 32, 32).astype(np.float32),
@@ -316,6 +327,7 @@ def complete_profile() -> Profile:
     Profile
         A profile that mixes intensity, texture, morphology, granularity,
         colocalization, and neighbor-derived measurements.
+
     """
     return Profile(
         image_array=np.random.rand(24, 64, 64).astype(np.float32),
@@ -379,6 +391,7 @@ def all_profiles(
     list[Profile]
         A list of profiles ordered to provide size diversity for parameterized
         tests.
+
     """
     return [
         small_image_profile,
@@ -405,6 +418,7 @@ def all_feature_type_profiles(
     list[Profile]
         Profiles specialized for intensity, texture, morphology,
         colocalization, granularity, and neighbor-based tests.
+
     """
     fixture_names = [
         "intensity_profile",
@@ -427,7 +441,7 @@ def all_feature_type_profiles(
         (12, 24, 24),
         (16, 32, 32),
         (20, 40, 40),
-    ]
+    ],
 )
 def varying_image_sizes(request: pytest.FixtureRequest) -> tuple[int, int, int]:
     """Provide parameterized image dimensions for profile generation.
@@ -441,6 +455,7 @@ def varying_image_sizes(request: pytest.FixtureRequest) -> tuple[int, int, int]:
     -------
     tuple[int, int, int]
         A 3-tuple ``(z, y, x)`` describing image dimensions for test cases.
+
     """
     return request.param
 
@@ -462,6 +477,7 @@ def profile_with_varying_size(
     Profile
         A profile containing a random 3D float32 image of the requested shape,
         a minimal feature set, and minimal metadata.
+
     """
     z, y, x = varying_image_sizes
     return Profile(

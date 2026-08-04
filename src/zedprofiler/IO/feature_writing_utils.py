@@ -12,28 +12,22 @@ import pandas
 import pandera.pandas as pa
 from beartype import beartype
 
-FEATURE_NAME_COMPONENT_COLUMNS = (
-    "compartment",
-    "channel",
-    "feature_type",
-    "measurement",
-)
-
 
 def _coerce_dataframe_column_names_to_strings(
     dataframe: pandas.DataFrame,
 ) -> pandas.DataFrame:
-    """
-    Ensure DataFrame column labels are string-typed before writing.
+    """Ensure DataFrame column labels are string-typed before writing.
 
     Parameters
     ----------
     dataframe : pandas.DataFrame
         The DataFrame whose column names should be coerced to strings.
+
     Returns
     -------
     pandas.DataFrame
         A copy of the input DataFrame with all column names coerced to strings.
+
     """
     parsed_dataframe = dataframe.copy()
     parsed_dataframe.columns = [str(column) for column in parsed_dataframe.columns]
@@ -42,8 +36,7 @@ def _coerce_dataframe_column_names_to_strings(
 
 @beartype
 def remove_underscores_from_string(string: object) -> str:
-    """
-    Remove unwanted delimiters from a string and replace them with hyphens.
+    """Remove unwanted delimiters from a string and replace them with hyphens.
 
     Parameters
     ----------
@@ -54,6 +47,7 @@ def remove_underscores_from_string(string: object) -> str:
     -------
     str
         The string with unwanted delimiters removed and replaced with hyphens.
+
     """
     if not isinstance(string, str):
         try:
@@ -64,16 +58,7 @@ def remove_underscores_from_string(string: object) -> str:
                 f"Received input: {string!r} of type {type(string)}"
             )
             raise ValueError(msg) from e
-    string = string.translate(
-        str.maketrans(
-            {
-                "_": "-",
-                ".": "-",
-                " ": "-",
-                "/": "-",
-            }
-        )
-    )
+    string = string.translate(str.maketrans("_. /", "----"))
 
     return string
 
@@ -81,25 +66,26 @@ def remove_underscores_from_string(string: object) -> str:
 def _coerce_feature_name_components(
     dataframe: pandas.DataFrame,
 ) -> pandas.DataFrame:
-    """
-    Normalize feature-name components using shared delimiter cleanup.
+    """Normalize feature-name components using shared delimiter cleanup.
 
     Parameters
     ----------
     dataframe : pandas.DataFrame
         The DataFrame containing feature name components to be normalized.
         Expected to have columns corresponding to FEATURE NAME COMPONENT COLUMNS.
+
     Returns
     -------
     pandas.DataFrame
         A copy of the input DataFrame with feature name components normalized by
         removing unwanted delimiters and replacing them with hyphens.
+
     """
     parsed_dataframe = dataframe.copy()
     for column in FEATURE_NAME_COMPONENT_COLUMNS:
         if column in parsed_dataframe.columns:
             parsed_dataframe[column] = parsed_dataframe[column].map(
-                remove_underscores_from_string
+                remove_underscores_from_string,
             )
     return parsed_dataframe
 
@@ -135,10 +121,12 @@ FEATURE_NAME_COMPONENT_SCHEMA = pa.DataFrameSchema(
 
 @beartype
 def format_morphology_feature_name(
-    compartment: object, channel: object, feature_type: object, measurement: object
+    compartment: object,
+    channel: object,
+    feature_type: object,
+    measurement: object,
 ) -> str:
-    """
-    Format a morphology feature name in a consistent way across all morphology features.
+    """Format a morphology feature name consistently across all morphology features.
     This format follows specification for the following:
     https://github.com/WayScience/NF1_3D_organoid_profiling_pipeline/blob/main/docs/RFC-2119-Feature-Naming-Convention.md
 
@@ -157,8 +145,8 @@ def format_morphology_feature_name(
     -------
     str
         The formatted feature name.
-    """
 
+    """
     component_frame = pandas.DataFrame(
         [
             {
@@ -166,8 +154,8 @@ def format_morphology_feature_name(
                 "channel": channel,
                 "feature_type": feature_type,
                 "measurement": measurement,
-            }
-        ]
+            },
+        ],
     )
     coerced_components = FEATURE_NAME_COMPONENT_SCHEMA.validate(component_frame)
     parsed_row = coerced_components.iloc[0]
@@ -212,6 +200,7 @@ def save_features_as_parquet(
     Returns
     -------
     pathlib.Path
+
     """
     validated_df = FEATURE_OUTPUT_SCHEMA.validate(df)
     output_prefix = format_morphology_feature_name(

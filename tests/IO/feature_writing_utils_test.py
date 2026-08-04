@@ -76,7 +76,7 @@ def test_format_morphology_feature_name(
 def test_feature_name_component_schema_rejects_missing_columns() -> None:
     """Pandera schema should fail when required component columns are missing."""
     component_frame = pd.DataFrame(
-        [{"compartment": "nucleus", "channel": "dapi", "feature_type": "area"}]
+        [{"compartment": "nucleus", "channel": "dapi", "feature_type": "area"}],
     )
     with pytest.raises(SchemaError):
         FEATURE_NAME_COMPONENT_SCHEMA.validate(component_frame)
@@ -91,8 +91,8 @@ def test_coerce_feature_name_components_uses_cleanup_function() -> None:
                 "channel": "gfp.channel",
                 "feature_type": "mean intensity",
                 "measurement": "normalized/value",
-            }
-        ]
+            },
+        ],
     )
     parsed = _coerce_feature_name_components(input_df)
     assert parsed.iloc[0].to_dict() == {
@@ -110,8 +110,8 @@ def test_coerce_feature_name_components_skips_missing_columns() -> None:
             {
                 "compartment": "cell_body",
                 "measurement": "normalized/value",
-            }
-        ]
+            },
+        ],
     )
 
     parsed = _coerce_feature_name_components(input_df)
@@ -138,7 +138,7 @@ def test_coerce_dataframe_column_names_to_strings_keeps_data() -> None:
 
 
 def test_feature_metadata_enforces_runtime_types() -> None:
-    """beartype should validate dataclass init annotations at runtime."""
+    """Beartype should validate dataclass init annotations at runtime."""
     with pytest.raises(BeartypeCallHintParamViolation):
         FeatureMetadata(
             compartment=1,
@@ -233,7 +233,7 @@ def test_save_features_as_parquet_sanitizes_metadata_in_filename(
 
 
 def test_save_features_as_parquet_requires_path_type() -> None:
-    """beartype should reject non-Path inputs for parent_path."""
+    """Beartype should reject non-Path inputs for parent_path."""
     with pytest.raises(BeartypeCallHintParamViolation):
         save_features_as_parquet(
             "not-a-path",

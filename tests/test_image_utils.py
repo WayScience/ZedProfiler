@@ -26,9 +26,9 @@ def test_expand_box_expands_from_min_edge_first() -> None:
     assert (new_min, new_max) == (1, 6)
 
 
-def test_expand_box_returns_value_error_when_impossible() -> None:
-    result = expand_box(0, 5, 1, 4, 3)
-    assert isinstance(result, ValueError)
+def test_expand_box_raises_value_error_when_impossible() -> None:
+    with pytest.raises(ValueError):
+        expand_box(0, 5, 1, 4, 3)
 
 
 def test_new_crop_border_expands_first_bbox_when_second_is_larger() -> None:

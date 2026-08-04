@@ -35,7 +35,7 @@ class TestIntegrationWorkflows:
                     "Metadata_Object_ObjectID": [1, 2, 3],
                     "volume": [100.5, 200.3, 150.7],
                     "diameter": [10.2, 12.5, 11.8],
-                }
+                },
             )
 
             # Create metadata
@@ -106,7 +106,7 @@ class TestIntegrationWorkflows:
                     "Metadata_Object_ObjectID": pd.Series([], dtype="int64"),
                     "feature1": pd.Series([], dtype="float64"),
                     "feature2": pd.Series([], dtype="float64"),
-                }
+                },
             )
 
             metadata = FeatureMetadata(
@@ -169,7 +169,10 @@ class TestEdgeCases:
     def test_special_characters_in_compartment_names(self) -> None:
         """Test special characters in compartment names."""
         result = format_morphology_feature_name(
-            "cell/compartment", "ch_1", "feat.type", "meas"
+            "cell/compartment",
+            "ch_1",
+            "feat.type",
+            "meas",
         )
         assert isinstance(result, str)
         # Should have replaced delimiters

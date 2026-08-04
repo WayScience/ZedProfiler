@@ -1,10 +1,6 @@
-"""
-Calculate the granularity spectrum of a 3D image.
-"""
+"""Calculate the granularity spectrum of a 3D image."""
 
 from __future__ import annotations
-
-from typing import Dict, Optional
 
 import numpy
 import pandas
@@ -32,6 +28,7 @@ def _fix_scipy_ndimage_result(result: float | list | numpy.ndarray) -> numpy.nda
     -------
     numpy.ndarray
         1-D array of results.
+
     """
     if numpy.isscalar(result):
         return numpy.array([result])
@@ -65,6 +62,7 @@ def _subsample_3d(
     -------
     numpy.ndarray
         Subsampled array.
+
     """
     if subsample_factor >= 1.0:
         return data.copy()
@@ -100,13 +98,19 @@ def _upsample_3d(
     -------
     numpy.ndarray
         Upsampled array at original_shape resolution.
+
     """
     k, i, j = numpy.mgrid[
-        0 : original_shape[0], 0 : original_shape[1], 0 : original_shape[2]
+        0 : original_shape[0],
+        0 : original_shape[1],
+        0 : original_shape[2],
     ].astype(float)
-    k *= float(subsampled_shape[0] - 1) / float(original_shape[0] - 1)
-    i *= float(subsampled_shape[1] - 1) / float(original_shape[1] - 1)
-    j *= float(subsampled_shape[2] - 1) / float(original_shape[2] - 1)
+    if original_shape[0] > 1:
+        k *= float(subsampled_shape[0] - 1) / float(original_shape[0] - 1)
+    if original_shape[1] > 1:
+        i *= float(subsampled_shape[1] - 1) / float(original_shape[1] - 1)
+    if original_shape[2] > 1:
+        j *= float(subsampled_shape[2] - 1) / float(original_shape[2] - 1)
     return scipy.ndimage.map_coordinates(data, (k, i, j), order=1)
 
 
@@ -119,8 +123,8 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
     image_sample_size: float = 0.25,
     mask_threshold: float = 0.9,
     verbose: bool = False,
-    image_mask: Optional[numpy.ndarray] = None,
-) -> Dict[str, list]:
+    image_mask: numpy.ndarray | None = None,
+) -> pandas.DataFrame:
     """Calculate the granularity spectrum of a 3D image.
 
     Follows the CellProfiler MeasureGranularity algorithm exactly for 3D:
@@ -161,25 +165,29 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
 
     Returns
     -------
-    Dict[str, list]
-        Dictionary with keys 'object_id', 'feature', 'value'.
-        Image-level measurements use object_id=0.
+    pandas.DataFrame
+        Wide-format DataFrame with one row per object and one column per
+        granularity scale, plus Metadata columns.
+
     """
     # Validate inputs
     if subsample_size <= 0 or subsample_size > 1:
         raise ValueError(f"subsample_size must be in (0, 1], got {subsample_size}")
     if image_sample_size <= 0 or image_sample_size > 1:
         raise ValueError(
-            f"image_sample_size must be in (0, 1], got {image_sample_size}"
+            f"image_sample_size must be in (0, 1], got {image_sample_size}",
         )
     if radius <= 0:
         raise ValueError(f"radius must be positive, got {radius}")
     if granular_spectrum_length <= 0:
         raise ValueError(
-            f"granular_spectrum_length must be positive, got {granular_spectrum_length}"
+            "granular_spectrum_length must be positive, "
+            f"got {granular_spectrum_length}",
         )
 
     # Get original data
+    if object_loader.image is None or object_loader.label_image is None:
+        return pandas.DataFrame()
     original_pixels = object_loader.image
     original_labels = object_loader.label_image
     original_shape = original_pixels.shape
@@ -219,7 +227,7 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
         if verbose:
             print(
                 f"Subsampled image: {original_shape} -> {pixels.shape} "
-                f"(factor={subsample_size})"
+                f"(factor={subsample_size})",
             )
     else:
         pixels = original_pixels.copy()
@@ -243,7 +251,7 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
         # (NOT mgrid[0:back_shape] / image_sample_size as 2D does)
         k, i, j = (
             numpy.mgrid[0 : new_shape[0], 0 : new_shape[1], 0 : new_shape[2]].astype(
-                float
+                float,
             )
             / subsample_size
         )
@@ -257,7 +265,7 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
             print(
                 f"Background subsampled: pixels {pixels.shape} -> "
                 f"back_pixels {back_pixels.shape} "
-                f"(image_sample_size={image_sample_size})"
+                f"(image_sample_size={image_sample_size})",
             )
     else:
         back_pixels = pixels
@@ -274,7 +282,8 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
     back_pixels_masked = numpy.zeros_like(back_pixels)
     back_pixels_masked[back_mask] = back_pixels[back_mask]
     back_pixels = skimage.morphology.dilation(
-        back_pixels_masked, footprint=footprint_bg
+        back_pixels_masked,
+        footprint=footprint_bg,
     )
 
     # Upsample background back to subsampled image size
@@ -282,11 +291,16 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
         # CellProfiler 3D: mgrid[0:new_shape] with coords scaled by
         # (back_shape - 1) / (new_shape - 1)
         k, i, j = numpy.mgrid[
-            0 : new_shape[0], 0 : new_shape[1], 0 : new_shape[2]
+            0 : new_shape[0],
+            0 : new_shape[1],
+            0 : new_shape[2],
         ].astype(float)
-        k *= float(back_shape[0] - 1) / float(new_shape[0] - 1)
-        i *= float(back_shape[1] - 1) / float(new_shape[1] - 1)
-        j *= float(back_shape[2] - 1) / float(new_shape[2] - 1)
+        if new_shape[0] > 1:
+            k *= float(back_shape[0] - 1) / float(new_shape[0] - 1)
+        if new_shape[1] > 1:
+            i *= float(back_shape[1] - 1) / float(new_shape[1] - 1)
+        if new_shape[2] > 1:
+            j *= float(back_shape[2] - 1) / float(new_shape[2] - 1)
         back_pixels = scipy.ndimage.map_coordinates(back_pixels, (k, i, j), order=1)
 
     # Subtract background
@@ -302,7 +316,7 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
     # (im.pixel_data) using the full-resolution label image, with labels
     # masked by im.mask: labels[~im.mask] = 0.
     # ------------------------------------------------------------------
-    object_measurements = {
+    object_measurements: dict[str, list] = {
         "Metadata_Object_ObjectID": [],
         "feature": [],
         "value": [],
@@ -316,12 +330,13 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
         masked_labels = original_labels.copy()
         masked_labels[~original_mask] = 0
 
-        per_object_current_mean = _fix_scipy_ndimage_result(
-            scipy.ndimage.mean(original_pixels, masked_labels, label_range)
-        )
-        per_object_start_mean = numpy.maximum(
-            per_object_current_mean, numpy.finfo(float).eps
-        )
+        if numpy.any(masked_labels > 0):
+            per_object_current_mean = _fix_scipy_ndimage_result(
+                scipy.ndimage.mean(original_pixels, masked_labels, label_range),
+            )
+        else:
+            per_object_current_mean = numpy.zeros(len(label_range))
+        per_object_start_mean = per_object_current_mean.copy()
     else:
         label_range = numpy.array([], dtype=int)
         masked_labels = original_labels
@@ -333,12 +348,11 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
     # CellProfiler computes startmean AFTER background subtraction but
     # BEFORE zeroing pixels outside mask (zeroing is implicit via indexing).
     # ------------------------------------------------------------------
-    startmean = numpy.mean(pixels[mask])
+    startmean = numpy.mean(pixels[mask]) if mask.any() else 0.0
     ero = pixels.copy()
     # Mask the test image so masked pixels have no effect during reconstruction
     ero[~mask] = 0
     currentmean = startmean
-    startmean = max(startmean, numpy.finfo(float).eps)
 
     # CellProfiler uses ball(1) for the iterative erosion/reconstruction loop
     footprint = skimage.morphology.ball(1, dtype=bool)
@@ -347,7 +361,7 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
         print(
             f"Image startmean: {startmean:.6f}, "
             f"Processing {nobjects} objects, "
-            f"Spectrum length: {granular_spectrum_length}"
+            f"Spectrum length: {granular_spectrum_length}",
         )
 
     for scale in range(1, granular_spectrum_length + 1):
@@ -362,8 +376,8 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
         rec = skimage.morphology.reconstruction(ero, pixels, footprint=footprint)
 
         # Image-level granularity
-        currentmean = numpy.mean(rec[mask])
-        gs = (prevmean - currentmean) * 100 / startmean
+        currentmean = numpy.mean(rec[mask]) if mask.any() else 0.0
+        gs = (prevmean - currentmean) * 100 / startmean if startmean > 0 else 0.0
 
         if verbose and scale == 1:
             print(f"Scale 1 - gs: {gs:.4f}, currentmean: {currentmean:.6f}")
@@ -383,15 +397,24 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
                 rec_full = rec
 
             # Single-pass per-object mean via scipy.ndimage.mean
-            new_object_means = _fix_scipy_ndimage_result(
-                scipy.ndimage.mean(rec_full, masked_labels, label_range)
-            )
+            if numpy.any(masked_labels > 0):
+                new_object_means = _fix_scipy_ndimage_result(
+                    scipy.ndimage.mean(rec_full, masked_labels, label_range),
+                )
+            else:
+                new_object_means = numpy.zeros(len(label_range))
 
             # Granular spectrum: (prev - new) * 100 / start, per object
-            gss = (
-                (per_object_current_mean - new_object_means)
-                * 100
-                / per_object_start_mean
+            # Guard against zero start mean — return 0 rather than dividing by eps
+            _safe_denom = numpy.where(
+                per_object_start_mean > 0,
+                per_object_start_mean,
+                1.0,
+            )
+            gss = numpy.where(
+                per_object_start_mean > 0,
+                (per_object_current_mean - new_object_means) * 100 / _safe_denom,
+                0.0,
             )
 
             per_object_current_mean = new_object_means
@@ -399,7 +422,7 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
             # Record measurements for each object
             for idx in range(len(label_range)):
                 object_measurements["Metadata_Object_ObjectID"].append(
-                    int(label_range[idx])
+                    int(label_range[idx]),
                 )
                 object_measurements["feature"].append(scale)
                 object_measurements["value"].append(float(gss[idx]))
@@ -414,10 +437,10 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
             print(f"Mean granularity: {numpy.mean(vals):.2f}")
 
     final_df = pandas.DataFrame(object_measurements)
-    # get the mean of each value in the array
-    # melt the dataframe to wide format
     final_df = final_df.pivot_table(
-        index=["Metadata_Object_ObjectID"], columns=["feature"], values=["value"]
+        index=["Metadata_Object_ObjectID"],
+        columns=["feature"],
+        values=["value"],
     )
     final_df.columns = final_df.columns.droplevel()
     final_df = final_df.reset_index()
@@ -442,7 +465,6 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
         object_loader.image_set_loader.image_set_name,
     )
     result = final_df.to_dict(orient="list")
-
     for col in list(result.keys()):
         try:
             validate_column_name_schema(

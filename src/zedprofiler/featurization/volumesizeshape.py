@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from importlib import import_module
+from types import ModuleType
 from typing import Protocol
 
 import numpy as np
@@ -21,6 +22,12 @@ class SupportsImageSetLoader(Protocol):
     anisotropy_spacing: tuple[float, float, float]
 
 
+class _SupportsImageSetName(Protocol):
+    """Minimal image-set-loader interface for name access."""
+
+    image_set_name: str | None
+
+
 class SupportsObjectLoader(Protocol):
     """Minimal object loader interface required by this module."""
 
@@ -29,6 +36,9 @@ class SupportsObjectLoader(Protocol):
     # (0 is typically reserved for background)
     label_image: np.ndarray
     object_ids: Sequence[int]
+    compartment: str
+    channel: str
+    image_set_loader: _SupportsImageSetName
 
 
 def _empty_feature_result() -> dict[str, list[float]]:
@@ -56,7 +66,7 @@ def _empty_feature_result() -> dict[str, list[float]]:
 def compute_volume_size_shape(
     image_set_loader: SupportsImageSetLoader | None = None,
     object_loader: SupportsObjectLoader | None = None,
-) -> dict[str, list[float]]:
+) -> pandas.DataFrame | dict[str, list[float]]:
     """Compute volume/size/shape features for one object loader.
 
     Supports two invocation modes:
@@ -70,7 +80,7 @@ def compute_volume_size_shape(
     if image_set_loader is None or object_loader is None:
         raise ZedProfilerError(
             "volumesizeshape.compute requires both image_set_loader and "
-            "object_loader for execution."
+            "object_loader for execution.",
         )
 
     return measure_3D_volume_size_shape(
@@ -79,13 +89,13 @@ def compute_volume_size_shape(
     )
 
 
-def _get_skimage_measure() -> object:
+def _get_skimage_measure() -> ModuleType:
     """Return `skimage.measure` or raise a user-facing dependency error."""
     try:
         return import_module("skimage.measure")
     except ImportError as exc:
         raise ZedProfilerError(
-            "volumesizeshape requires scikit-image for area/size/shape computation."
+            "volumesizeshape requires scikit-image for area/size/shape computation.",
         ) from exc
 
 
@@ -115,7 +125,7 @@ def calculate_surface_area(
 def measure_3D_volume_size_shape(
     image_set_loader: SupportsImageSetLoader,
     object_loader: SupportsObjectLoader,
-) -> dict[str, list[float]]:
+) -> pandas.DataFrame:
     """Measure volume/size/shape features for each non-zero label object."""
     measure = _get_skimage_measure()
 
@@ -164,16 +174,16 @@ def measure_3D_volume_size_shape(
         features_to_record["Extent"].append(props["extent"].item())
         features_to_record["EulerNumber"].append(props["euler_number"].item())
         features_to_record["EquivalentDiameter"].append(
-            props["equivalent_diameter"].item()
+            props["equivalent_diameter"].item(),
         )
 
         try:
             features_to_record["SurfaceArea"].append(
                 calculate_surface_area(
-                    label_object=label_object,
+                    label_object=subset_lab_object,
                     props=props,
                     spacing=spacing,
-                )
+                ),
             )
         except (RuntimeError, ValueError):
             features_to_record["SurfaceArea"].append(np.nan)
