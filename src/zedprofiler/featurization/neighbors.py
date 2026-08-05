@@ -431,8 +431,10 @@ def classify_cells_into_shells(
         n_shells - 1,
     )
 
-    # Calculate distance from exterior (inverse of distance from center)
-    distance_from_exterior = max_distance - distances
+    # Calculate distance from exterior (inverse of distance from center).
+    # Clamp at 0: max_distance is the 95th percentile (by design, to resist
+    # outliers), so cells beyond it would otherwise get a negative value.
+    distance_from_exterior = numpy.maximum(0, max_distance - distances)
 
     results = {
         "Metadata_Object_ObjectID": object_ids,
