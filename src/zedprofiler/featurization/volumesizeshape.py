@@ -66,7 +66,7 @@ def _empty_feature_result() -> dict[str, list[float]]:
 def compute_volume_size_shape(
     image_set_loader: SupportsImageSetLoader | None = None,
     object_loader: SupportsObjectLoader | None = None,
-) -> pandas.DataFrame | dict[str, list[float]]:
+) -> pandas.DataFrame:
     """Compute volume/size/shape features for one object loader.
 
     Supports two invocation modes:
@@ -76,7 +76,7 @@ def compute_volume_size_shape(
     - both loaders provided: executes feature extraction.
     """
     if image_set_loader is None and object_loader is None:
-        return _empty_feature_result()
+        return pandas.DataFrame(_empty_feature_result())
     if image_set_loader is None or object_loader is None:
         raise ZedProfilerError(
             "volumesizeshape.compute requires both image_set_loader and "
