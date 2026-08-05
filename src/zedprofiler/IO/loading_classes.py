@@ -174,6 +174,7 @@ class ImageSetLoader:
         )
         self.image_set_dict = _LazyImageSetDict()
         channel_tokens = [str(value) for value in channel_mapping.values()]
+        self._label_key_names = list(config.label_key_name or [])
         self.anisotropy_spacing = anisotropy_spacing
         self.anisotropy_factor = self.anisotropy_spacing[0] / self.anisotropy_spacing[1]
         self.image_set_name = config.image_set_name
@@ -381,6 +382,9 @@ class ImageSetLoader:
     def get_compartments(self) -> list[str]:
         """Populate compartment names from available keys.
 
+        A compartment is a key explicitly declared as a label key via
+        ``ImageSetConfig.label_key_name``, not a raw intensity channel.
+
         Returns
         -------
         list[str]
@@ -388,11 +392,7 @@ class ImageSetLoader:
 
         """
         self.compartments = [
-            x
-            for x in self.image_set_dict
-            if any(
-                channel_mapping_key in x for channel_mapping_key in self.image_set_dict
-            )
+            x for x in self.image_set_dict if x in self._label_key_names
         ]
         return self.compartments
 
