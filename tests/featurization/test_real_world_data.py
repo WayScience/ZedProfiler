@@ -279,21 +279,20 @@ def _load_colocalization_case(
     colocalization_case: RealColocalizationCase,
 ) -> TwoObjectLoader:
     label = tifffile.imread(colocalization_case.label_image_case.label_path)
-    object_ids = [int(x) for x in np.unique(label) if x != 0]
-    image_set_loader = ImageSetLoader.__new__(ImageSetLoader)
-    image_set_loader.image_set_name = colocalization_case.image_set_name
-    image_set_loader.image_set_dict = {
-        colocalization_case.first_channel: tifffile.imread(
-            colocalization_case.first_image_case.image_path,
-        ),
-        colocalization_case.second_channel: tifffile.imread(
-            colocalization_case.second_image_case.image_path,
-        ),
-        colocalization_case.compartment: label,
-    }
-    image_set_loader.unique_compartment_objects = {
-        colocalization_case.compartment: object_ids,
-    }
+    image_set_loader = ImageSetLoader.from_image_dict(
+        {
+            colocalization_case.first_channel: tifffile.imread(
+                colocalization_case.first_image_case.image_path,
+            ),
+            colocalization_case.second_channel: tifffile.imread(
+                colocalization_case.second_image_case.image_path,
+            ),
+            colocalization_case.compartment: label,
+        },
+        anisotropy_spacing=(1.0, 1.0, 1.0),
+        image_set_name=colocalization_case.image_set_name,
+        label_key_names=[colocalization_case.compartment],
+    )
 
     return TwoObjectLoader(
         image_set_loader=image_set_loader,

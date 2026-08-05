@@ -6,6 +6,7 @@ Formats morphology feature names and saves features as parquet files.
 from __future__ import annotations
 
 import dataclasses
+import os
 import pathlib
 
 import pandas
@@ -181,6 +182,7 @@ def save_features_as_parquet(
     parent_path: pathlib.Path,
     df: pandas.DataFrame,
     metadata: FeatureMetadata,
+    atomic: bool = False,
 ) -> pathlib.Path:
     """Save features as parquet files in a consistent way.
 
@@ -196,6 +198,12 @@ def save_features_as_parquet(
     metadata : FeatureMetadata
         Metadata for the feature output (compartment, channel, feature_type,
         cpu_or_gpu).
+    atomic : bool
+        When True, write to a sibling ``.tmp`` file then atomically replace
+        the destination via ``os.replace``. This prevents a crashed write
+        from leaving a partial parquet file that a restartable caller (using
+        ``--skip-existing``) could mistake for a complete one. Default False
+        preserves the existing direct-write behavior.
 
     Returns
     -------
@@ -210,5 +218,10 @@ def save_features_as_parquet(
         metadata.cpu_or_gpu,
     )
     save_path = parent_path / f"{output_prefix}_features.parquet"
-    validated_df.to_parquet(save_path, index=False)
+    if atomic:
+        tmp_path = save_path.with_suffix(save_path.suffix + ".tmp")
+        validated_df.to_parquet(tmp_path, index=False)
+        os.replace(tmp_path, save_path)
+    else:
+        validated_df.to_parquet(save_path, index=False)
     return save_path

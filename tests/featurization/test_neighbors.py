@@ -23,6 +23,8 @@ from zedprofiler.featurization.neighbors import (
 class ImageSetLoaderModel(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     image_set_name: str = "neighbors"
+    # mirrors ImageSetLoader.image_id (falls back to image_set_name)
+    image_id: str = "neighbors"
 
 
 class ObjectLoaderModel(BaseModel):

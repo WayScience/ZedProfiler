@@ -15,6 +15,8 @@ class ImageSetLoaderModel(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     anisotropy_spacing: tuple[float, float, float]
     image_set_name: str = "testset"
+    # mirrors ImageSetLoader.image_id (falls back to image_set_name)
+    image_id: str = "testset"
 
 
 class ObjectLoaderModel(BaseModel):

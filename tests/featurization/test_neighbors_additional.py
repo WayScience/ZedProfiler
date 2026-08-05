@@ -50,7 +50,7 @@ def test_compute_neighbors_distance_counts() -> None:
     class Dummy:
         label_image = lab
         object_ids = (1, 2, 3)
-        image_set_loader = type("ISL", (), {"image_set_name": "s"})()
+        image_set_loader = type("ISL", (), {"image_set_name": "s", "image_id": "s"})()
         compartment = "Cell"
         channel = "Ch1"
 
