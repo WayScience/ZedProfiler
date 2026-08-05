@@ -48,11 +48,11 @@ same environment.
 Use this loop for each performance pass:
 
 1. Run the accuracy locks.
-2. Run the benchmark scorecard and keep the printed output.
-3. Optimize one hotspot.
-4. Re-run the accuracy locks.
-5. Re-run the benchmark scorecard in the same environment.
-6. Keep the optimization only when fingerprints stay fixed and scorecard timing
+1. Run the benchmark scorecard and keep the printed output.
+1. Optimize one hotspot.
+1. Re-run the accuracy locks.
+1. Re-run the benchmark scorecard in the same environment.
+1. Keep the optimization only when fingerprints stay fixed and scorecard timing
    improves enough to matter.
 
 For larger-scale runs, pair this with workflow-level characterization. Local

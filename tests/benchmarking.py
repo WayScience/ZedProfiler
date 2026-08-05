@@ -387,10 +387,7 @@ def canonical_records(dataframe: pd.DataFrame, precision: int = 6) -> list[dict]
         drop=True,
     )
     return [
-        {
-            column: _normalize_scalar(value, precision)
-            for column, value in row.items()
-        }
+        {column: _normalize_scalar(value, precision) for column, value in row.items()}
         for row in canonical.to_dict(orient="records")
     ]
 

@@ -327,8 +327,15 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
 
     if nobjects > 0:
         # CellProfiler: self.labels[~im.mask] = 0
-        masked_labels = original_labels.copy()
-        masked_labels[~original_mask] = 0
+        # When the mask covers the whole image (the common unmasked case,
+        # image_mask=None) no labels get zeroed, so skip the full-array copy
+        # and reuse original_labels directly. scipy.ndimage.mean does not
+        # mutate its label input, so this is safe.
+        if original_mask.all():
+            masked_labels = original_labels
+        else:
+            masked_labels = original_labels.copy()
+            masked_labels[~original_mask] = 0
 
         if numpy.any(masked_labels > 0):
             per_object_current_mean = _fix_scipy_ndimage_result(
@@ -348,7 +355,17 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
     # CellProfiler computes startmean AFTER background subtraction but
     # BEFORE zeroing pixels outside mask (zeroing is implicit via indexing).
     # ------------------------------------------------------------------
-    startmean = numpy.mean(pixels[mask]) if mask.any() else 0.0
+    # Whether the (possibly subsampled) mask covers the whole image. In the
+    # common unmasked case (image_mask=None) this is True, and several per-scale
+    # operations below become no-ops or can avoid full-array copies: the masked
+    # erosion zeroing, the rec[pixels[mask]] mean, and the startmean mean. Compute
+    # it once here instead of re-evaluating mask.any()/mask.all() each scale.
+    mask_all_true = bool(mask.all())
+    startmean = (
+        pixels.mean()
+        if mask_all_true
+        else (numpy.mean(pixels[mask]) if mask.any() else 0.0)
+    )
     ero = pixels.copy()
     # Mask the test image so masked pixels have no effect during reconstruction
     ero[~mask] = 0
@@ -364,19 +381,49 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
             f"Spectrum length: {granular_spectrum_length}",
         )
 
+    # Precompute the upsample coordinate grids once before the spectrum loop.
+    # They depend only on the fixed subsampled/original shapes (not on the
+    # per-scale ``rec``), so rebuilding three full-resolution float arrays via
+    # ``numpy.mgrid`` on every scale (as ``_upsample_3d`` does internally) is
+    # wasted work. Reuse the same coordinate tuple for every
+    # ``map_coordinates`` call below. Only needed when subsampling is active
+    # and there are objects to measure.
+    upsample_coords: tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray] | None = None
+    if subsample_size < 1.0 and nobjects > 0:
+        k, i, j = numpy.mgrid[
+            0 : original_shape[0],
+            0 : original_shape[1],
+            0 : original_shape[2],
+        ].astype(float)
+        if original_shape[0] > 1:
+            k *= float(new_shape[0] - 1) / float(original_shape[0] - 1)
+        if original_shape[1] > 1:
+            i *= float(new_shape[1] - 1) / float(original_shape[1] - 1)
+        if original_shape[2] > 1:
+            j *= float(new_shape[2] - 1) / float(original_shape[2] - 1)
+        upsample_coords = (k, i, j)
+
     for scale in range(1, granular_spectrum_length + 1):
         prevmean = currentmean
 
-        # Masked erosion
-        ero_masked = numpy.zeros_like(ero)
-        ero_masked[mask] = ero[mask]
-        ero = skimage.morphology.erosion(ero_masked, footprint=footprint)
+        # Masked erosion: zero pixels outside the mask before eroding. When the
+        # mask is all-True this is a no-op (ero is already zeroed at ~mask from
+        # the prior iteration), so skip the full-array ``numpy.where`` copy and
+        # erode ero directly.
+        ero_marker = ero if mask_all_true else numpy.where(mask, ero, 0)
+        ero = skimage.morphology.erosion(ero_marker, footprint=footprint)
 
         # Reconstruction
         rec = skimage.morphology.reconstruction(ero, pixels, footprint=footprint)
 
-        # Image-level granularity
-        currentmean = numpy.mean(rec[mask]) if mask.any() else 0.0
+        # Image-level granularity. When the mask is all-True, rec[mask] is all
+        # of rec, so rec.mean() avoids the boolean-index copy that rec[mask]
+        # would perform.
+        currentmean = (
+            rec.mean()
+            if mask_all_true
+            else (numpy.mean(rec[mask]) if mask.any() else 0.0)
+        )
         gs = (prevmean - currentmean) * 100 / startmean if startmean > 0 else 0.0
 
         if verbose and scale == 1:
@@ -387,11 +434,11 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
         # then compute per-label means using masked_labels.
         # ----------------------------------------------------------
         if nobjects > 0:
-            if subsample_size < 1.0:
-                rec_full = _upsample_3d(
+            if upsample_coords is not None:
+                rec_full = scipy.ndimage.map_coordinates(
                     rec,
-                    subsampled_shape=new_shape,
-                    original_shape=original_shape,
+                    upsample_coords,
+                    order=1,
                 )
             else:
                 rec_full = rec

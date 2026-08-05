@@ -17,7 +17,6 @@ from __future__ import annotations
 from typing import Any
 
 import numpy as np
-import pandas as pd
 import pandera.pandas as pa
 from beartype import beartype
 from pydantic import (
@@ -567,43 +566,38 @@ def validate_column_name_schema(
                 f"underscores, got {len(parts)} parts in '{column_name}'",
             )
         return True
-    feature_components = pd.DataFrame(
-        [
-            {
-                "compartment": parts[0],
-                "channel": parts[1],
-                "feature": parts[2],
-            },
-        ],
-    )
-
-    feature_component_schema = pa.DataFrameSchema(
-        {
-            "compartment": pa.Column(
-                str,
-                checks=pa.Check.isin(expected_values.get("compartments", [])),
-                nullable=False,
-                coerce=True,
-            ),
-            "channel": pa.Column(
-                str,
-                checks=pa.Check.isin(expected_values.get("channels", [])),
-                nullable=False,
-                coerce=True,
-            ),
-            "feature": pa.Column(
-                str,
-                checks=pa.Check.isin(expected_values.get("features", [])),
-                nullable=False,
-                coerce=True,
-            ),
-        },
-        strict=True,
-    )
-
-    try:
-        feature_component_schema.validate(feature_components)
-    except (pa.errors.SchemaError, pa.errors.SchemaErrors) as e:
-        raise ContractError(f"Column name schema validation failed: {e}") from e
+    # Validate the non-metadata column's compartment/channel/feature components.
+    #
+    # This is equivalent to the prior pandera DataFrameSchema check
+    # (Check.isin with coerce=True, nullable=False, strict=True applied to
+    # parts[0..2]) but expressed as a plain set-membership test. ``parts`` are
+    # always strings produced by ``column_name.split("_")``, so the pandera
+    # ``coerce`` (str cast), ``nullable`` (no NaN), and ``strict`` (exactly
+    # three components) considerations are no-ops here, and pass/fail semantics
+    # are identical.
+    #
+    # The motivation is overhead: this function is called once per output
+    # column by every feature module's tail validation loop, and rebuilding a
+    # pandas DataFrame plus a pandera DataFrameSchema and running ``.validate``
+    # on a one-row frame per column dominated feature extraction time (e.g.
+    # ~67% of texture runtime). A direct membership check removes that cost
+    # without changing any feature value, column name, or row identity.
+    feature_components = {
+        "compartment": parts[0],
+        "channel": parts[1],
+        "feature": parts[2],
+    }
+    for component, allowed_key in (
+        ("compartment", "compartments"),
+        ("channel", "channels"),
+        ("feature", "features"),
+    ):
+        allowed = expected_values.get(allowed_key, [])
+        if feature_components[component] not in allowed:
+            raise ContractError(
+                f"Column name schema validation failed: "
+                f"{component} '{feature_components[component]}' in "
+                f"'{column_name}' is not in allowed {allowed_key} {list(allowed)}.",
+            )
 
     return True

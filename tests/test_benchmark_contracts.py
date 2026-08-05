@@ -16,21 +16,13 @@ from benchmarking import (
 )
 
 EXPECTED_SIGNATURES = {
-    "intensity": (
-        "351f6508dcfc0978c8d5bfc1891847cfe0090c42d8243baf0acb0f528f3061c0"
-    ),
+    "intensity": ("351f6508dcfc0978c8d5bfc1891847cfe0090c42d8243baf0acb0f528f3061c0"),
     "volume_size_shape": (
         "1fc7482eb490256eca01cc6d54d4b96956d132cdf0a6a27a934eba37dbf83f39"
     ),
-    "neighbors": (
-        "8f2b18e6023d656ec6fad41ffa0ff9b802f7b3eadb98ea315ea11cfa400644ec"
-    ),
-    "texture": (
-        "e6ae19f7b6bc9e635fb6e199dd45452fca1a17246e027dcb8385478a95e913fa"
-    ),
-    "granularity": (
-        "b46cd8ae17d0d1e8b47d24821c480975dd0464159744bc3913e619616dc94295"
-    ),
+    "neighbors": ("8f2b18e6023d656ec6fad41ffa0ff9b802f7b3eadb98ea315ea11cfa400644ec"),
+    "texture": ("e6ae19f7b6bc9e635fb6e199dd45452fca1a17246e027dcb8385478a95e913fa"),
+    "granularity": ("b46cd8ae17d0d1e8b47d24821c480975dd0464159744bc3913e619616dc94295"),
     "colocalization": (
         "8bf9495cabc617a5743614f8d57c3855283f6cc6aff9715d975fef416bc29d4a"
     ),
