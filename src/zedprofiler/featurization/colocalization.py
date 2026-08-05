@@ -326,7 +326,7 @@ def prepare_two_images_for_colocalization(  # noqa: PLR0913
     return cropped_image_1, cropped_image_2
 
 
-def calculate_colocalization(  # noqa: PLR0912, PLR0915, C901
+def calculate_colocalization(  # noqa: PLR0912, PLR0915
     cropped_image_1: numpy.ndarray,
     cropped_image_2: numpy.ndarray,
     thr: int = 15,
@@ -388,9 +388,11 @@ def calculate_colocalization(  # noqa: PLR0912, PLR0915, C901
     ################################################################################################
 
     # Threshold as percentage of maximum intensity of objects in each channel
-    # Initialise before the try block so combined_thresh is always bound even
-    # when the except branch fires (numpy.max raises ValueError on empty arrays).
+    # Initialise before the try block so these are always bound even when the
+    # except branch fires (numpy.max raises ValueError on empty arrays).
     combined_thresh = numpy.zeros_like(cropped_image_1, dtype=bool)
+    first_image_thresh = cropped_image_1[combined_thresh]
+    second_image_thresh = cropped_image_2[combined_thresh]
     try:
         tff = (thr / 100) * numpy.max(cropped_image_1)
         tss = (thr / 100) * numpy.max(cropped_image_2)
@@ -433,16 +435,15 @@ def calculate_colocalization(  # noqa: PLR0912, PLR0915, C901
             )
             / pdt
         )
-        K1 = scipy.ndimage.sum(
+        # K1/K2 are computed but not currently exported as features.
+        _k1 = scipy.ndimage.sum(
             cropped_image_1[combined_thresh] * cropped_image_2[combined_thresh],
         ) / (numpy.array(fpsq))
-        K2 = scipy.ndimage.sum(
+        _k2 = scipy.ndimage.sum(
             cropped_image_1[combined_thresh] * cropped_image_2[combined_thresh],
         ) / (numpy.array(spsq))
-        if K1 == K2:
-            pass
     else:
-        overlap, K1, K2 = 0.0, 0.0, 0.0
+        overlap, _k1, _k2 = 0.0, 0.0, 0.0
 
     # first_pixels, second_pixels = flattened image arrays
     # combined_thresh = boolean mask of pixels above threshold in both channels
