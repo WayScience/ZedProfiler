@@ -8,10 +8,10 @@ If you are stuck, please feel free to ask any questions or ask for help.
 
 ## Code of conduct
 
-This project is governed by our [code of conduct](code_of_conduct.md). By participating, you are expected to uphold this code.
-Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to community leaders responsible for enforcement.
-Please open a [new security advisory notice](https://github.com/org/repohttps://github.com/WayScience/ZedProfiler/security/advisories/new) (using defaults or "n/a" where unable to fill in the form) to privately notify us of any incidents of this nature.
+This project is governed by our [code of conduct](code_of_conduct.md).
+By participating, you are expected to uphold this code.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to community leaders responsible for enforcement.
+Please open a [new security advisory notice](https://github.com/WayScience/ZedProfiler/security/advisories/new) (using defaults or "n/a" where unable to fill in the form) to privately notify us of any incidents of this nature.
 
 ## Development
 
@@ -61,7 +61,7 @@ We welcome anyone to use [GitHub issues](https://docs.github.com/en/issues/track
 
 Specifically, there are several ways to suggest or make changes to this repository:
 
-1. Open a GitHub issue: https://github.com/org/repohttps://github.com/WayScience/ZedProfiler/issues
+1. Open a GitHub issue: https://github.com/WayScience/ZedProfiler/issues
 1. Create a pull request from a forked branch of the repository
 
 ### Creating a pull request
@@ -76,7 +76,7 @@ Once you make the necessary changes on this branch, you should file a pull reque
 The content and description of your pull request are directly related to the speed at which we are able to review, approve, and merge your contribution.
 To ensure an efficient review process please perform the following steps:
 
-1. Follow all instructions in the [pull request template](https://github.com/org/repohttps://github.com/WayScience/ZedProfiler/blob/main/.github/PULL_REQUEST_TEMPLATE.md)
+1. Follow all instructions in the [pull request template](https://github.com/WayScience/ZedProfiler/blob/main/.github/PULL_REQUEST_TEMPLATE.md)
 1. Triple check that your pull request is adding _one_ specific feature or additional group of content.
    Small, bite-sized pull requests move so much faster than large pull requests.
 1. After submitting your pull request, ensure that your contribution passes all status checks (e.g. passes all tests)
@@ -92,12 +92,12 @@ We use [`setuptools-scm`](https://github.com/pypa/setuptools-scm) to help versio
 Configuration for versioning is found within the `pyproject.toml` file.
 All builds for packages include dynamic version data to help label distinct versions of the software.
 `setuptools-scm` uses `git` tags to help distinguish version data.
-We also use the `_version.py` file as a place to persist the version data for occaissions where the `git` history is unavailable or unwanted (this file is only present in package builds).
+We also use the `_version.py` file as a place to persist the version data for occasions where the `git` history is unavailable or unwanted (this file is only present in package builds).
 Versioning for the project is intended to align with GitHub Releases which provide `git` tag capabilities.
 
 ### Releases
 
-We publish source code by using [GitHub Releases](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases) available [here](https://github.com/org/repohttps://github.com/WayScience/ZedProfiler/releases).
+We publish source code by using [GitHub Releases](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases) available [here](https://github.com/WayScience/ZedProfiler/releases).
 
 #### Release Publishing Process
 
@@ -123,13 +123,8 @@ It can sometimes be useful to test documentation builds locally before proposing
 See below for some examples of how to build documentation locally.
 
 ```shell
-# build single-version sphinx documentation
-# (useful for troubleshooting potential issues)
+# build sphinx documentation
 uv run sphinx-build docs/src docs/build
-
-# build multi-version sphinx documentation
-# (used in production)
-uv run sphinx-multiversion docs/src docs/build
 
 # serve the built docs locally on port 8000
 uv run sphinx-build docs/src docs/build && python -m http.server 8000 --directory docs/build

@@ -1,6 +1,6 @@
 # ZEDprofiler [![Documentation](https://img.shields.io/badge/documentation-available-brightgreen)](https://zedprofiler.readthedocs.io/en/latest/) ![License](https://img.shields.io/badge/license-BSD%203--Clause-blue)[![Coverage](https://codecov.io/gh/WayScience/ZedProfiler/branch/main/graph/badge.svg)](https://codecov.io/gh/WayScience/ZedProfiler)
 
-<img height="100" src="https://github.com/WayScience/ZEDprofiler/raw/main/logo/with-text-for-light-bg.png" />
+<img height="100" src="https://github.com/WayScience/ZedProfiler/raw/main/logo/with-text-for-light-bg.png" />
 
 CPU-first 3D image feature extraction toolkit for high-content and high-throughput image-based profiling.
 

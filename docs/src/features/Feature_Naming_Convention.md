@@ -20,7 +20,8 @@ ______________________________________________________________________
 
 ## Abstract
 
-This document specifies the naming specification and schema for morphological features extracted using ZEDprofiler. The specification defines requirements for feature identifiers, data structures, and formatting rules to ensure consistency, interoperability, and maintainability across pipelines.
+This document specifies the naming specification and schema for morphological features extracted using ZEDprofiler.
+The specification defines requirements for feature identifiers, data structures, and formatting rules to ensure consistency, interoperability, and maintainability across pipelines.
 
 ______________________________________________________________________
 
@@ -28,7 +29,8 @@ ______________________________________________________________________
 
 ### 1.1 Purpose
 
-This specification establishes a standardized feature naming specification and data schema. Standardization enables:
+This specification establishes a standardized feature naming specification and data schema.
+Standardization enables:
 
 - Consistent feature identification across analysis stages
 - Automated feature parsing and metadata extraction
