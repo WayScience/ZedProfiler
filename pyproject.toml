@@ -106,7 +106,7 @@ lint.per-file-ignores."*.ipynb" = [ "C408", "E402", "E501" ]
 lint.per-file-ignores."src/**/__init__.py" = [ "F401" ]
 
 [tool.codespell]
-ignore-words-list = "inout"
+ignore-words-list = "doesnot,inout"
 
 [tool.vulture]
 paths = [ "src/zedprofiler", "tests" ]
