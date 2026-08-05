@@ -1,4 +1,4 @@
-from .image_utils import (
+from zedprofiler.image_utils.image_utils import (
     check_for_xy_squareness,
     crop_3D_image,
     expand_box,
