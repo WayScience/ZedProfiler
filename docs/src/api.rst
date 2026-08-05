@@ -42,3 +42,17 @@ IO utils
 .. automodule:: zedprofiler.IO.loading_classes
     :members:
     :undoc-members:
+
+Contracts
+=========
+
+.. automodule:: zedprofiler.contracts
+    :members:
+    :undoc-members:
+
+Exceptions
+==========
+
+.. automodule:: zedprofiler.exceptions
+    :members:
+    :undoc-members:
