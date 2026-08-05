@@ -23,7 +23,6 @@ Where:
 - `y` is the height of the image in pixels
 - `z` is the depth of the image in pixels
 
-Though I have reservations about width, height, and depth being used to describe the dimensions of an image.
 Different fields use different dimensions for different meanings.
 We use `x` and `y` to refer to the same dimensions captured in a 2D image, and `z` to refer to the "depth" dimension in a 3D image if looking down into the image stack.
 The `x`, `y`, and `z` dimensions are less description and more absolute while `depth` is relative to angle of observation.
