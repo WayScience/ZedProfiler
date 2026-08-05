@@ -112,10 +112,6 @@ ignore-words-list = "inout"
 paths = [ "src/zedprofiler", "tests" ]
 min_confidence = 90
 
-[tool.mypy]
-ignore_missing_imports = true
-python_version = "3.11"
-
 [tool.pytest]
 ini_options.pythonpath = [ "." ]
 
