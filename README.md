@@ -12,7 +12,7 @@ ZEDprofiler is extensible to any fluorescence microscopy image modality, and is 
 ## Install environment
 
 ```bash
-just env
+uv sync --group dev --group docs --group notebooks
 ```
 
 ## Data Contract

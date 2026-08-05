@@ -51,31 +51,9 @@ You can run pytest on your work using the following example:
 % uv run pytest
 ```
 
-### Linting, testing, coverage, and updating coverage badges
+### Linting, testing, and coverage
 
-We apply a custom script to update our coverage badge in the README during our CI workflow.
-When running `scripts/update_coverage_badge.py` the script will parse the `coverage.xml` file generated from pytest and update the badge in the README with the new coverage percentage.
-When running `just all` locally, the coverage badge will not be updated since it is intended to be updated as part of the CI workflow.
-
-```sh
-just all
-```
-
-Where `all` is runnins all defined steps in the `justfile` which includes running tests and generating coverage reports.
-To see all of the steps defined in the `justfile`, you can run:
-
-```sh
-just --list
-```
-
-the coverage badge will be automatically updated as part of the workflow.
-If you want to update the coverage, run:
-
-```sh
-just coverage
-```
-
-This will run the tests and update the coverage badge in the README.
+Coverage reports are generated during CI and uploaded to [Codecov](https://codecov.io/gh/WayScience/ZedProfiler), which keeps the coverage badge in the README up to date automatically.
 
 ## Making changes to this repository
 
@@ -152,4 +130,10 @@ uv run sphinx-build docs/src docs/build
 # build multi-version sphinx documentation
 # (used in production)
 uv run sphinx-multiversion docs/src docs/build
+
+# serve the built docs locally on port 8000
+uv run sphinx-build docs/src docs/build && python -m http.server 8000 --directory docs/build
+
+# live-reload docs while editing (requires sphinx-autobuild)
+cd docs && uv run --group docs python scripts/run_autobuild.py
 ```
