@@ -201,6 +201,38 @@ def _load_nuclei_case(
     )
 
 
+def _load_nuclei_case_from_paths(
+    dataset_case: RealDatasetCase,
+    image_case: RealImageCase,
+) -> LoadedNucleiCase:
+    image_set_loader = ImageSetLoader(
+        image_set_path=image_case.image_path.parent,
+        label_set_path=image_case.label_path.parent,
+        anisotropy_spacing=(1.0, 1.0, 1.0),
+        channel_mapping={
+            image_case.channel: image_case.image_name,
+            image_case.compartment: f"{image_case.image_name}SegmentationMask",
+        },
+        config=ImageSetConfig(
+            image_set_name=image_case.image_set_name,
+            label_key_name=[image_case.compartment],
+            raw_image_key_name=[image_case.channel],
+        ),
+    )
+    object_loader = ObjectLoader(
+        image_set_loader=image_set_loader,
+        channel_name=image_case.channel,
+        compartment_name=image_case.compartment,
+    )
+
+    return LoadedNucleiCase(
+        dataset_case=dataset_case,
+        image_case=image_case,
+        image_set_loader=image_set_loader,
+        object_loader=object_loader,
+    )
+
+
 def _load_colocalization_case(
     colocalization_case: RealColocalizationCase,
 ) -> TwoObjectLoader:
@@ -367,6 +399,35 @@ def test_real_world_volumes_match_label_voxel_counts(
     reference_volumes = _expected_volumes_from_label(label)
 
     assert zedprofiler_volumes == reference_volumes
+
+
+@pytest.mark.parametrize("case", IMAGE_CASES, ids=_image_case_id)
+def test_real_world_path_loaded_images_process_nuclei(
+    case: tuple[RealDatasetCase, RealImageCase],
+) -> None:
+    dataset_case, image_case = case
+    label = tifffile.imread(image_case.label_path)
+    loaded_case = _load_nuclei_case_from_paths(dataset_case, image_case)
+
+    assert set(loaded_case.image_set_loader.image_set_dict) == {
+        image_case.channel,
+        image_case.compartment,
+    }
+    assert loaded_case.image_set_loader.compartments == [image_case.compartment]
+    assert loaded_case.image_set_loader.image_names == [image_case.channel]
+    assert loaded_case.object_loader.image.shape == dataset_case.expected_shape
+    assert loaded_case.object_loader.label_image.shape == dataset_case.expected_shape
+    assert sorted(loaded_case.object_ids) == sorted(_expected_volumes_from_label(label))
+
+    df = compute_volume_size_shape(
+        image_set_loader=loaded_case.image_set_loader,
+        object_loader=loaded_case.object_loader,
+    )
+    _assert_real_feature_frame_matches_objects(
+        df=df,
+        loaded_case=loaded_case,
+        expected_column_token="VolumeSizeShape",
+    )
 
 
 @pytest.mark.parametrize(
