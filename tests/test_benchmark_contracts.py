@@ -10,6 +10,7 @@ import pytest
 from benchmarking import (
     dataframe_signature,
     feature_cases,
+    real_world_feature_cases,
     scaling_feature_cases,
     time_feature_cases,
 )
@@ -36,6 +37,7 @@ EXPECTED_SIGNATURES = {
 }
 EXPECTED_OBJECT_ROWS = 2
 EXPECTED_SCALING_ROWS = 32
+EXPECTED_REAL_WORLD_ROWS = 5
 
 
 @pytest.mark.parametrize(("feature_name", "run_case"), feature_cases())
@@ -53,7 +55,9 @@ def test_feature_outputs_match_current_accuracy_lock(
 @pytest.mark.benchmark
 def test_feature_benchmark_scorecard() -> None:
     """Print an opt-in scorecard for comparing performance passes."""
-    scorecard = time_feature_cases([*feature_cases(), *scaling_feature_cases()])
+    scorecard = time_feature_cases(
+        [*feature_cases(), *scaling_feature_cases(), *real_world_feature_cases()],
+    )
     print("\nZedProfiler feature benchmark scorecard")
     print(json.dumps(scorecard, indent=2, sort_keys=True))
 
@@ -65,6 +69,8 @@ def test_feature_benchmark_scorecard() -> None:
             if str(record["feature"]).startswith("scaling_")
             else EXPECTED_OBJECT_ROWS
         )
+        if str(record["feature"]).startswith("real_world_"):
+            expected_rows = EXPECTED_REAL_WORLD_ROWS
         assert record["rows"] == expected_rows
         assert record["columns"] > 0
         assert record["seconds"] >= 0

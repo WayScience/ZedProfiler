@@ -8,6 +8,7 @@ import math
 import time
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -18,6 +19,24 @@ from zedprofiler.featurization.intensity import compute_intensity
 from zedprofiler.featurization.neighbors import compute_neighbors
 from zedprofiler.featurization.texture import compute_texture
 from zedprofiler.featurization.volumesizeshape import compute_volume_size_shape
+from zedprofiler.IO.loading_classes import (
+    ImageSetConfig,
+    ImageSetLoader,
+    ObjectLoader,
+    TwoObjectLoader,
+)
+
+try:
+    import tifffile
+except ImportError:  # pragma: no cover - exercised only without optional test dep
+    tifffile = None
+
+
+CELLPROFILER_TUTORIAL_ROOT = (
+    Path(__file__).resolve().parent
+    / "data"
+    / "CP_tutorial_3D_noise_nuclei_segmentation"
+)
 
 
 @dataclass
@@ -221,6 +240,125 @@ def scaling_feature_cases() -> list[FeatureCase]:
                 fast_costes="Faster",
                 channel1="DNA",
                 channel2="GFP",
+            ),
+        ),
+    ]
+
+
+def _load_real_world_object_loader(
+    *,
+    image_name: str = "nuclei1_out_c00_dr90_image",
+) -> ObjectLoader:
+    """Load a representative real-world image/mask pair for scorecards."""
+    if tifffile is None:
+        raise ModuleNotFoundError("tifffile is required for real-world benchmarks.")
+
+    image = tifffile.imread(CELLPROFILER_TUTORIAL_ROOT / "input" / f"{image_name}.tif")
+    label = tifffile.imread(
+        CELLPROFILER_TUTORIAL_ROOT
+        / "output"
+        / "masks"
+        / f"{image_name}SegmentationMask.tiff",
+    )
+    image_set_loader = ImageSetLoader(
+        image_set_path=None,
+        label_set_path=None,
+        image_set_array=image,
+        label_set_array=label,
+        anisotropy_spacing=(1.0, 1.0, 1.0),
+        channel_mapping={
+            "DNA": image_name,
+            "Nuclei": "SegmentationMask",
+        },
+        config=ImageSetConfig(
+            image_set_name=image_name,
+            label_key_name=["Nuclei"],
+            raw_image_key_name=["DNA"],
+        ),
+    )
+    return ObjectLoader(
+        image_set_loader=image_set_loader,
+        channel_name="DNA",
+        compartment_name="Nuclei",
+    )
+
+
+def _load_real_world_two_object_loader() -> TwoObjectLoader:
+    """Load a representative paired-channel real-world case for scorecards."""
+    if tifffile is None:
+        raise ModuleNotFoundError("tifffile is required for real-world benchmarks.")
+
+    first_image_name = "nuclei1_out_c00_dr90_image"
+    second_image_name = "nuclei2_out_c90_dr90_image"
+    label = tifffile.imread(
+        CELLPROFILER_TUTORIAL_ROOT
+        / "output"
+        / "masks"
+        / f"{first_image_name}SegmentationMask.tiff",
+    )
+    object_ids = [int(x) for x in np.unique(label) if x != 0]
+    image_set_loader = ImageSetLoader.__new__(ImageSetLoader)
+    image_set_loader.image_set_name = "real-world-dr90-c00-c90"
+    image_set_loader.image_set_dict = {
+        "DNA1": tifffile.imread(
+            CELLPROFILER_TUTORIAL_ROOT / "input" / f"{first_image_name}.tif",
+        ),
+        "DNA2": tifffile.imread(
+            CELLPROFILER_TUTORIAL_ROOT / "input" / f"{second_image_name}.tif",
+        ),
+        "Nuclei": label,
+    }
+    image_set_loader.unique_compartment_objects = {"Nuclei": object_ids}
+    return TwoObjectLoader(
+        image_set_loader=image_set_loader,
+        compartment="Nuclei",
+        channel1="DNA1",
+        channel2="DNA2",
+    )
+
+
+def real_world_feature_cases() -> list[FeatureCase]:
+    """Return real-world benchmark cases backed by checked-in tutorial data."""
+    object_loader = _load_real_world_object_loader()
+    two_object_loader = _load_real_world_two_object_loader()
+    return [
+        ("real_world_intensity", lambda: compute_intensity(object_loader)),
+        (
+            "real_world_volume_size_shape",
+            lambda: compute_volume_size_shape(
+                image_set_loader=object_loader.image_set_loader,
+                object_loader=object_loader,
+            ),
+        ),
+        (
+            "real_world_neighbors",
+            lambda: compute_neighbors(
+                object_loader=object_loader,
+                distance_threshold=50,
+                anisotropy_factor=1,
+            ),
+        ),
+        (
+            "real_world_texture",
+            lambda: compute_texture(object_loader, distance=1, grayscale=256),
+        ),
+        (
+            "real_world_granularity",
+            lambda: compute_granularity(
+                object_loader,
+                radius=1,
+                granular_spectrum_length=2,
+                subsample_size=1.0,
+                image_sample_size=1.0,
+            ),
+        ),
+        (
+            "real_world_colocalization",
+            lambda: compute_colocalization(
+                two_object_loader,
+                fast_costes="Faster",
+                channel1="DNA1",
+                channel2="DNA2",
             ),
         ),
     ]

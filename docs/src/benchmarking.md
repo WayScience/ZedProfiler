@@ -37,9 +37,11 @@ ZEDPROFILER_RUN_BENCHMARKS=1 uv run pytest tests/test_benchmark_contracts.py -s
 
 The scorecard prints elapsed seconds, row count, column count, and the same
 result fingerprint for each feature family. It includes the small accuracy-lock
-level and a larger many-object scaling level. Timing is intentionally not a hard
-gate yet because local machines and shared compute environments vary. Use the
-scorecard to compare before and after runs on the same environment.
+level, a larger many-object synthetic scaling level, and a representative
+real-world data level from checked-in tutorial image data. Timing is
+intentionally not a hard gate yet because local machines and shared compute
+environments vary. Use the scorecard to compare before and after runs on the
+same environment.
 
 ## Game loop
 
