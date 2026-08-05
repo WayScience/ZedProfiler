@@ -157,19 +157,20 @@ class TestImageSetLoaderMethods:
         assert np.array_equal(values[0], np.array([[1, 2]], dtype=np.int32))
 
     def test_get_compartments_and_image_names(self) -> None:
-        """Current compartment logic classifies all loaded keys as compartments."""
+        """Compartments are declared label keys; the rest are image names."""
         loader = ImageSetLoader.__new__(ImageSetLoader)
         loader.image_set_dict = {
             "Nuclei_label": np.zeros((2, 2), dtype=np.int32),
             "Cell_label": np.zeros((2, 2), dtype=np.int32),
             "DNA": np.ones((2, 2), dtype=np.int32),
         }
+        loader._label_key_names = ["Nuclei_label", "Cell_label"]
 
         compartments = loader.get_compartments()
         names = loader.get_image_names()
 
-        assert compartments == ["Nuclei_label", "Cell_label", "DNA"]
-        assert names == []
+        assert compartments == ["Nuclei_label", "Cell_label"]
+        assert names == ["DNA"]
 
     def test_get_unique_objects_in_compartments_filters_background(self) -> None:
         """Unique compartment objects should exclude background label 0."""
@@ -248,16 +249,16 @@ class TestImageSetLoaderInit:
             channel_mapping={"DNA": "dna_raw", "Nuclei_label": "nuc_label"},
             config=ImageSetConfig(
                 image_set_name="set-01",
-                label_key_name=["label"],
-                raw_image_key_name=["raw"],
+                label_key_name=["Nuclei_label"],
+                raw_image_key_name=["DNA"],
             ),
         )
 
         assert loader.image_set_name == "set-01"
         assert loader.anisotropy_factor == EXPECTED_ANISOTROPY
         assert set(loader.image_set_dict.keys()) == {"DNA", "Nuclei_label"}
-        assert loader.compartments == ["DNA", "Nuclei_label"]
-        assert loader.image_names == []
+        assert loader.compartments == ["Nuclei_label"]
+        assert loader.image_names == ["DNA"]
         assert loader.unique_compartment_objects["Nuclei_label"] == [
             ONE_LABEL,
             TWO_LABEL,

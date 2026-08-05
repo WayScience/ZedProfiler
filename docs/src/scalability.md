@@ -1,6 +1,6 @@
 # ZEDprofiler scalability
 
-ZEDprofiler is designed to be scalable and efficient by use of its felixible API.
+ZEDprofiler is designed to be scalable and efficient by use of its flexible API.
 This means that ZEDprofiler can be parallelized and distributed across multiple machines, allowing it to handle large datasets and complex profiling tasks.
 How ZEDprofiler can be scaled depends on the specific use case and requirements of the profiling task.
 Here are some ways ZEDprofiler can be scaled:

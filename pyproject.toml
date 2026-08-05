@@ -106,15 +106,11 @@ lint.per-file-ignores."*.ipynb" = [ "C408", "E402", "E501" ]
 lint.per-file-ignores."src/**/__init__.py" = [ "F401" ]
 
 [tool.codespell]
-ignore-words-list = "inout"
+ignore-words-list = "doesnot,inout"
 
 [tool.vulture]
 paths = [ "src/zedprofiler", "tests" ]
 min_confidence = 90
-
-[tool.mypy]
-ignore_missing_imports = true
-python_version = "3.11"
 
 [tool.pytest]
 ini_options.pythonpath = [ "." ]

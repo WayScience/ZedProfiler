@@ -43,3 +43,13 @@ references:
         family-names: Bunten
       - given-names: Gregory P.
         family-names: Way
+  - type: data
+    title: "3D Noise Nuclei Segmentation Tutorial"
+    authors:
+      - name: "CellProfiler Tutorials Team"
+    url: "https://tutorials.cellprofiler.org/#3d-noise-nuclei-segmentation"
+    publisher:
+      name: "CellProfiler Organization"
+    notes: >-
+      This work uses data that were slightly modified from the CellProfiler 3D
+      Noise Nuclei Segmentation tutorial.

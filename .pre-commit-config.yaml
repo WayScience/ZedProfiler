@@ -57,4 +57,5 @@ repos:
     rev: v0.11.0
     hooks:
     -   id: shellcheck
+        exclude: ^tests/data/CP_tutorial_3D_noise_nuclei_segmentation/run\.sh$
 #       args: ["--severity=warning"]  # Optionally only show errors and warnings

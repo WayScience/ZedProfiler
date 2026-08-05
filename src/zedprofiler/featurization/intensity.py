@@ -36,7 +36,7 @@ def get_outline(mask: numpy.ndarray) -> numpy.ndarray:
     return outline
 
 
-def compute_intensity(  # noqa: PLR0915
+def compute_intensity(  # noqa: C901, PLR0915
     object_loader: ObjectLoader,
 ) -> pandas.DataFrame:
     """Measure the intensity of objects in a 3D image.
@@ -127,7 +127,7 @@ def compute_intensity(  # noqa: PLR0915
         volume = numpy.sum(object_mask)
 
         # Skip if volume is zero to avoid division by zero
-        if volume == 0 or integrated_intensity == 0:
+        if volume == 0:
             continue
 
         # calculate the mean intensity
@@ -166,9 +166,15 @@ def compute_intensity(  # noqa: PLR0915
         i_y = numpy.sum(intensity_y_coord[object_mask])
         i_z = numpy.sum(intensity_z_coord[object_mask])
         # calculate the center of mass
-        cmi_x = i_x / integrated_intensity
-        cmi_y = i_y / integrated_intensity
-        cmi_z = i_z / integrated_intensity
+        # No signal to weight by -- the intensity-weighted center (and thus
+        # mass displacement) is genuinely undefined, not 0. Report NaN rather
+        # than asserting a false "signal is symmetric" reading.
+        if integrated_intensity > 0:
+            cmi_x = i_x / integrated_intensity
+            cmi_y = i_y / integrated_intensity
+            cmi_z = i_z / integrated_intensity
+        else:
+            cmi_x = cmi_y = cmi_z = numpy.nan
         # calculate the center of mass distance
         diff_x = cm_x - cmi_x
         diff_y = cm_y - cmi_y

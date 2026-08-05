@@ -6,7 +6,7 @@ The roadmap is intended to be a living document and may be updated as needed.
 
 ## Future Plans
 
-- [ ] Migrate topolars for dataframe handling.
+- [ ] Migrate to polars for dataframe handling.
 - [ ] Optional mask output mode.
 - [ ] Expanded benchmark strategy.
 - [ ] ome-arrow and iceberg-bioimage support.

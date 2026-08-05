@@ -537,7 +537,7 @@ def validate_column_name_schema(
     expected_values = ExpectedFeatureNameValues(
         channels=channels,
         compartments=compartments,
-        features=None,
+        features=features,
     ).expected_values_dict
 
     # check if the column name is a string

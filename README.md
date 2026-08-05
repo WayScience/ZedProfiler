@@ -1,6 +1,6 @@
 # ZEDprofiler [![Documentation](https://img.shields.io/badge/documentation-available-brightgreen)](https://zedprofiler.readthedocs.io/en/latest/) ![License](https://img.shields.io/badge/license-BSD%203--Clause-blue)[![Coverage](https://codecov.io/gh/WayScience/ZedProfiler/branch/main/graph/badge.svg)](https://codecov.io/gh/WayScience/ZedProfiler)
 
-<img height="100" src="https://github.com/WayScience/ZEDprofiler/raw/main/logo/with-text-for-light-bg.png" />
+<img height="100" src="https://github.com/WayScience/ZedProfiler/raw/main/logo/with-text-for-light-bg.png" />
 
 CPU-first 3D image feature extraction toolkit for high-content and high-throughput image-based profiling.
 
@@ -12,7 +12,7 @@ ZEDprofiler is extensible to any fluorescence microscopy image modality, and is 
 ## Install environment
 
 ```bash
-just env
+uv sync --group dev --group docs --group notebooks
 ```
 
 ## Data Contract
@@ -23,7 +23,6 @@ Where:
 - `y` is the height of the image in pixels
 - `z` is the depth of the image in pixels
 
-Though I have reservations about width, height, and depth being used to describe the dimensions of an image.
 Different fields use different dimensions for different meanings.
 We use `x` and `y` to refer to the same dimensions captured in a 2D image, and `z` to refer to the "depth" dimension in a 3D image if looking down into the image stack.
 The `x`, `y`, and `z` dimensions are less description and more absolute while `depth` is relative to angle of observation.

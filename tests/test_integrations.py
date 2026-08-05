@@ -138,15 +138,20 @@ class TestIntegrationWorkflows:
         result2 = volumesizeshape.compute_volume_size_shape()
         result3 = volumesizeshape.compute_volume_size_shape()
 
-        # All calls should return same keys in same order
-        assert list(result1.keys()) == list(result2.keys())
-        assert list(result2.keys()) == list(result3.keys())
+        # All calls should return a DataFrame, matching the other
+        # featurization modules' no-data return convention.
+        assert isinstance(result1, pd.DataFrame)
+        assert isinstance(result2, pd.DataFrame)
+        assert isinstance(result3, pd.DataFrame)
 
-        # All values should be empty lists
-        for key in result1:
-            assert result1[key] == []
-            assert result2[key] == []
-            assert result3[key] == []
+        # All calls should return same columns in same order
+        assert list(result1.columns) == list(result2.columns)
+        assert list(result2.columns) == list(result3.columns)
+
+        # All results should be empty (no rows)
+        assert result1.empty
+        assert result2.empty
+        assert result3.empty
 
 
 class TestEdgeCases:
