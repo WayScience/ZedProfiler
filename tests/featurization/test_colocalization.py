@@ -22,6 +22,8 @@ from zedprofiler.featurization.colocalization import (  # noqa: E402
 class ImageSetLoaderModel(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     image_set_name: str = "coloc"
+    # mirrors ImageSetLoader.image_id (falls back to image_set_name)
+    image_id: str = "coloc"
 
 
 class TwoObjectLoaderModel(BaseModel):

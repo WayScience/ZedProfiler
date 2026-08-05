@@ -210,6 +210,11 @@ def compute_texture(  # noqa: C901
     )
     final_df.insert(
         0,
+        "Metadata_Imaging_ImageID",
+        object_loader.image_set_loader.image_id,
+    )
+    final_df.insert(
+        0,
         "Metadata_Experiment_ImageSet",
         object_loader.image_set_loader.image_set_name,
     )

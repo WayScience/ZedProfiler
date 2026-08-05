@@ -12,6 +12,8 @@ from zedprofiler.featurization.intensity import compute_intensity
 class ImageSetLoaderModel(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     image_set_name: str = "intensity"
+    # mirrors ImageSetLoader.image_id (falls back to image_set_name)
+    image_id: str = "intensity"
 
 
 class ObjectLoaderModel(BaseModel):

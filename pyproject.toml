@@ -42,7 +42,7 @@ dependencies = [
 ]
 urls.Homepage = "https://zedprofiler.readthedocs.io"
 urls.Repository = "https://github.com/WayScience/ZedProfiler"
-scripts.ZedProfiler = "ZedProfiler.cli:trigger"
+scripts.ZedProfiler = "zedprofiler.cli:trigger"
 
 [dependency-groups]
 dev = [

@@ -12,6 +12,7 @@ import numpy
 from beartype import beartype
 
 from zedprofiler.contracts import ImageArrayModel
+from zedprofiler.identifiers import build_image_id
 
 logging.basicConfig(level=logging.INFO)
 
@@ -42,6 +43,15 @@ class ImageSetConfig:
     image_set_name: str | None = None
     label_key_name: list[str] | None = None
     raw_image_key_name: list[str] | None = None
+    # Imaging-coordinate identifier fields used to build a deterministic
+    # ``Metadata_Imaging_ImageID``. All four must be set for ``image_id`` to be
+    # populated; when any is None, ``image_id`` is None and the loader falls
+    # back to ``image_set_name`` for the emitted metadata column (see
+    # ``ImageSetLoader.image_id``).
+    patient_tumor: str | None = None
+    plate: str | None = None
+    well: str | None = None
+    field: int | str | None = None
 
     # validate the arg types
     def __post_init__(self) -> None:
@@ -52,11 +62,41 @@ class ImageSetConfig:
             raise TypeError("label_key_name must be a list of strings or None")
         if not isinstance(self.raw_image_key_name, (list, type(None))):
             raise TypeError("raw_image_key_name must be a list of strings or None")
+        if not isinstance(self.patient_tumor, (str, type(None))):
+            raise TypeError("patient_tumor must be a string or None")
+        if not isinstance(self.plate, (str, type(None))):
+            raise TypeError("plate must be a string or None")
+        if not isinstance(self.well, (str, type(None))):
+            raise TypeError("well must be a string or None")
+        if not isinstance(self.field, (int, str, type(None))):
+            raise TypeError("field must be an int, str, or None")
 
         if self.label_key_name is None:
             self.label_key_name = []
         if self.raw_image_key_name is None:
             self.raw_image_key_name = []
+
+    @property
+    def image_id(self) -> str | None:
+        """Deterministic ``Metadata_Imaging_ImageID`` value, or None if unset.
+
+        Returns ``build_image_id(...)`` when all four coordinate fields are
+        set, otherwise ``None`` (the loader then falls back to
+        ``image_set_name``).
+        """
+        if (
+            self.patient_tumor is not None
+            and self.plate is not None
+            and self.well is not None
+            and self.field is not None
+        ):
+            return build_image_id(
+                patient_tumor=self.patient_tumor,
+                plate=self.plate,
+                well=self.well,
+                field=self.field,
+            )
+        return None
 
 
 class _LazyImageSetDict(dict):  # type: ignore[type-arg]
@@ -178,6 +218,13 @@ class ImageSetLoader:
         self.anisotropy_factor = self.anisotropy_spacing[0] / self.anisotropy_spacing[1]
         self.image_set_name = config.image_set_name
         self.label_set_path = label_set_path
+        # Deterministic imaging identifier for the warehouse join key
+        # (``Metadata_Imaging_ImageID``). When identifier fields are not
+        # provided (legacy/library use), fall back to the image set name so
+        # the emitted metadata column always has a value.
+        self.image_id = (
+            config.image_id if config.image_id is not None else config.image_set_name
+        )
         self._load_path_based_images(
             channel_mapping=channel_mapping,
             channel_tokens=channel_tokens,
@@ -193,6 +240,92 @@ class ImageSetLoader:
         self.get_compartments()
         self.get_image_names()
         self.get_unique_objects_in_compartments()
+
+    @classmethod
+    def from_image_dict(  # noqa: PLR0913
+        cls,
+        image_dict: dict[str, numpy.ndarray],
+        *,
+        anisotropy_spacing: tuple[float, float, float],
+        image_set_name: str | None = None,
+        label_key_names: list[str] | None = None,
+        patient_tumor: str | None = None,
+        plate: str | None = None,
+        well: str | None = None,
+        field: int | str | None = None,
+    ) -> ImageSetLoader:
+        """Build an ImageSetLoader from an in-memory channel/label dict.
+
+        Existing constructors only accept a directory glob (path-based) or a
+        single array (array-based). A well/FOV shard carries multiple channels
+        and multiple compartments as distinct arrays, so this classmethod
+        builds the ``image_set_dict`` directly from a pre-loaded
+        ``{key: ndarray}`` mapping. It formalizes the ``ImageSetLoader.__new__``
+        workaround previously used in the colocalization test helper.
+
+        Parameters
+        ----------
+        image_dict : dict[str, numpy.ndarray]
+            Mapping of channel names and compartment names to their arrays.
+            Each array is validated through ``ImageArrayModel``.
+        anisotropy_spacing : tuple[float, float, float]
+            (z_spacing, y_spacing, x_spacing).
+        image_set_name : str | None
+            Optional image set name (emitted as ``Metadata_Experiment_ImageSet``).
+        label_key_names : list[str] | None
+            Keys in ``image_dict`` that are compartment labels (not channels).
+            Used by ``get_compartments`` to distinguish compartments from
+            raw channels.
+        patient_tumor, plate, well, field : optional
+            Imaging-coordinate identifier fields. When all four are set, the
+            loader's ``image_id`` is the deterministic
+            ``Metadata_Imaging_ImageID``; otherwise it falls back to
+            ``image_set_name``.
+
+        Returns
+        -------
+        ImageSetLoader
+            A fully initialized loader (compartments, image names, and unique
+            compartment objects populated).
+
+        """
+        self = cls.__new__(cls)
+        self.image_set_dict = _LazyImageSetDict()
+        for key, array in image_dict.items():
+            # Run through pydantic validation to ensure each array is valid,
+            # mirroring ``_load_array_based_images``.
+            self.image_set_dict[key] = ImageArrayModel(array=array).array
+        self._label_key_names = list(label_key_names or [])
+        self.anisotropy_spacing = anisotropy_spacing
+        self.anisotropy_factor = self.anisotropy_spacing[0] / self.anisotropy_spacing[1]
+        self.image_set_name = image_set_name
+        self.label_set_path = None
+        config = ImageSetConfig(
+            image_set_name=image_set_name,
+            label_key_name=list(label_key_names or []),
+            raw_image_key_name=[
+                key for key in image_dict if key not in (label_key_names or [])
+            ],
+            patient_tumor=patient_tumor,
+            plate=plate,
+            well=well,
+            field=field,
+        )
+        self.image_id = (
+            config.image_id if config.image_id is not None else config.image_set_name
+        )
+        # Set compartments and image names directly from the declared label
+        # keys rather than calling ``get_compartments``/``get_image_names``.
+        # Those methods' compartment heuristic differs across repo revisions
+        # (it was corrected in a later bugfix commit), but this classmethod
+        # already knows which keys are labels, so deriving the split here keeps
+        # it self-contained and correct on any base.
+        self.compartments = list(self._label_key_names)
+        self.image_names = [
+            key for key in image_dict if key not in self._label_key_names
+        ]
+        self.get_unique_objects_in_compartments()
+        return self
 
     @staticmethod
     def _validate_input_sources(

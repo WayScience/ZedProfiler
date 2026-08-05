@@ -626,6 +626,7 @@ def compute_colocalization(  # noqa: C901, PLR0912
             if full_name not in (
                 "Metadata_Object_ObjectID",
                 "Metadata_Experiment_ImageSet",
+                "Metadata_Imaging_ImageID",
             ):
                 try:
                     row[full_name] = numpy.float32(meas_val)
@@ -634,11 +635,12 @@ def compute_colocalization(  # noqa: C901, PLR0912
             else:
                 row[full_name] = meas_val
 
-        # ensure object_id and image_set are present and first
+        # ensure object_id and image identifiers are present and first
         row["Metadata_Object_ObjectID"] = object_id
         row["Metadata_Experiment_ImageSet"] = (
             two_object_loader.image_set_loader.image_set_name
         )
+        row["Metadata_Imaging_ImageID"] = two_object_loader.image_set_loader.image_id
         list_of_dfs.append(row)
 
     # Convert list of row-dicts into a dict-of-lists with stable ordering
@@ -649,7 +651,11 @@ def compute_colocalization(  # noqa: C901, PLR0912
     other_keys: list[str] = []
     for d in list_of_dfs:
         for k in d:
-            if k in ("Metadata_Object_ObjectID", "Metadata_Experiment_ImageSet"):
+            if k in (
+                "Metadata_Object_ObjectID",
+                "Metadata_Experiment_ImageSet",
+                "Metadata_Imaging_ImageID",
+            ):
                 continue
             if k not in other_keys:
                 other_keys.append(k)
@@ -657,6 +663,7 @@ def compute_colocalization(  # noqa: C901, PLR0912
     all_keys = [
         "Metadata_Object_ObjectID",
         "Metadata_Experiment_ImageSet",
+        "Metadata_Imaging_ImageID",
         *other_keys,
     ]
     result: dict[str, list[object]] = {
