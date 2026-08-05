@@ -103,6 +103,7 @@ def calculate_surface_area(
     label_object: np.ndarray,
     props: dict[str, np.ndarray],
     spacing: tuple[float, float, float],
+    label: int | None = None,
 ) -> float:
     """Calculate surface area for one labeled object using marching cubes."""
     measure = _get_skimage_measure()
@@ -112,7 +113,7 @@ def calculate_surface_area(
         max(props["bbox-1"][0], 0) : min(props["bbox-4"][0], label_object.shape[1]),
         max(props["bbox-2"][0], 0) : min(props["bbox-5"][0], label_object.shape[2]),
     ]
-    volume_truths = volume > 0
+    volume_truths = volume == label if label is not None else volume > 0
     verts, faces, _normals, _values = measure.marching_cubes(
         volume_truths,
         method="lewiner",
@@ -136,6 +137,7 @@ def measure_3D_volume_size_shape(
     features_to_record = _empty_feature_result()
 
     desired_properties = [
+        "label",
         "area",  # for 3D it is volume but skimage uses "area" naming for the property
         "bbox",
         "centroid",
@@ -144,20 +146,26 @@ def measure_3D_volume_size_shape(
         "euler_number",
         "equivalent_diameter",
     ]
+    all_props = measure.regionprops_table(
+        label_object,
+        properties=desired_properties,
+    )
+    label_to_index = {
+        int(label): index for index, label in enumerate(all_props.get("label", []))
+    }
+
     for label in unique_objects:
         # avoid the 0 index which is the background and not an object,
         if label == 0:
             continue
-        subset_lab_object = label_object.copy()
-        # subset here means zeroing out all other objects except the
-        # one we want to measure, so that we can use
-        # skimage's regionprops_table to compute
-        # features for that object
-        subset_lab_object[subset_lab_object != label] = 0
-        props = measure.regionprops_table(
-            subset_lab_object,
-            properties=desired_properties,
-        )
+        props_index = label_to_index.get(int(label))
+        if props_index is None:
+            continue
+        props = {
+            prop_name: np.asarray([prop_values[props_index]])
+            for prop_name, prop_values in all_props.items()
+            if prop_name != "label"
+        }
 
         features_to_record["Metadata_Object_ObjectID"].append(label)
         features_to_record["Volume"].append(props["area"].item())
@@ -180,9 +188,10 @@ def measure_3D_volume_size_shape(
         try:
             features_to_record["SurfaceArea"].append(
                 calculate_surface_area(
-                    label_object=subset_lab_object,
+                    label_object=label_object,
                     props=props,
                     spacing=spacing,
+                    label=int(label),
                 ),
             )
         except (RuntimeError, ValueError):

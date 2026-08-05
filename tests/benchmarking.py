@@ -86,6 +86,57 @@ def make_benchmark_loaders() -> tuple[BenchmarkObjectLoader, BenchmarkTwoObjectL
     return object_loader, two_object_loader
 
 
+def make_grid_benchmark_loaders(
+    *,
+    image_set_name: str = "benchmark-grid",
+    shape: tuple[int, int, int] = (32, 128, 128),
+    object_count: int = 32,
+    cube_size: int = 4,
+) -> tuple[BenchmarkObjectLoader, BenchmarkTwoObjectLoader]:
+    """Create a deterministic many-object image set for scaling scorecards."""
+    z, y, x = np.indices(shape)
+    image1 = ((z * 11 + y * 7 + x * 5) % 4093 + 1).astype(np.uint16)
+    image2 = ((image1.astype(np.uint32) * 3 + z * 13 + x * 17) % 4093 + 1).astype(
+        np.uint16,
+    )
+
+    labels = np.zeros(shape, dtype=np.int32)
+    object_ids: list[int] = []
+    object_id = 1
+    for z_start in range(1, shape[0] - cube_size, cube_size + 2):
+        for y_start in range(1, shape[1] - cube_size, cube_size + 4):
+            for x_start in range(1, shape[2] - cube_size, cube_size + 4):
+                labels[
+                    z_start : z_start + cube_size,
+                    y_start : y_start + cube_size,
+                    x_start : x_start + cube_size,
+                ] = object_id
+                object_ids.append(object_id)
+                object_id += 1
+                if len(object_ids) >= object_count:
+                    image_set = BenchmarkImageSet(image_set_name=image_set_name)
+                    return (
+                        BenchmarkObjectLoader(
+                            image_set_loader=image_set,
+                            image=image1,
+                            label_image=labels,
+                            object_ids=object_ids,
+                        ),
+                        BenchmarkTwoObjectLoader(
+                            image_set_loader=image_set,
+                            image1=image1,
+                            image2=image2,
+                            label_image=labels,
+                            object_ids=object_ids,
+                        ),
+                    )
+
+    raise ValueError(
+        f"Could not place {object_count} objects in shape {shape} "
+        f"with cube size {cube_size}.",
+    )
+
+
 def feature_cases() -> list[FeatureCase]:
     """Return feature computations that should remain result-stable."""
     object_loader, two_object_loader = make_benchmark_loaders()
@@ -119,6 +170,52 @@ def feature_cases() -> list[FeatureCase]:
         ),
         (
             "colocalization",
+            lambda: compute_colocalization(
+                two_object_loader,
+                fast_costes="Faster",
+                channel1="DNA",
+                channel2="GFP",
+            ),
+        ),
+    ]
+
+
+def scaling_feature_cases() -> list[FeatureCase]:
+    """Return a many-object benchmark level for opt-in scorecards."""
+    object_loader, two_object_loader = make_grid_benchmark_loaders()
+    return [
+        ("scaling_intensity", lambda: compute_intensity(object_loader)),
+        (
+            "scaling_volume_size_shape",
+            lambda: compute_volume_size_shape(
+                image_set_loader=object_loader.image_set_loader,
+                object_loader=object_loader,
+            ),
+        ),
+        (
+            "scaling_neighbors",
+            lambda: compute_neighbors(
+                object_loader=object_loader,
+                distance_threshold=10,
+                anisotropy_factor=10,
+            ),
+        ),
+        (
+            "scaling_texture",
+            lambda: compute_texture(object_loader, distance=1, grayscale=256),
+        ),
+        (
+            "scaling_granularity",
+            lambda: compute_granularity(
+                object_loader,
+                granular_spectrum_length=3,
+                subsample_size=0.5,
+                image_sample_size=0.5,
+                radius=2,
+            ),
+        ),
+        (
+            "scaling_colocalization",
             lambda: compute_colocalization(
                 two_object_loader,
                 fast_costes="Faster",

@@ -7,7 +7,12 @@ from collections.abc import Callable
 
 import pandas as pd
 import pytest
-from benchmarking import dataframe_signature, feature_cases, time_feature_cases
+from benchmarking import (
+    dataframe_signature,
+    feature_cases,
+    scaling_feature_cases,
+    time_feature_cases,
+)
 
 EXPECTED_SIGNATURES = {
     "intensity": (
@@ -30,6 +35,7 @@ EXPECTED_SIGNATURES = {
     ),
 }
 EXPECTED_OBJECT_ROWS = 2
+EXPECTED_SCALING_ROWS = 32
 
 
 @pytest.mark.parametrize(("feature_name", "run_case"), feature_cases())
@@ -47,14 +53,20 @@ def test_feature_outputs_match_current_accuracy_lock(
 @pytest.mark.benchmark
 def test_feature_benchmark_scorecard() -> None:
     """Print an opt-in scorecard for comparing performance passes."""
-    scorecard = time_feature_cases(feature_cases())
+    scorecard = time_feature_cases([*feature_cases(), *scaling_feature_cases()])
     print("\nZedProfiler feature benchmark scorecard")
     print(json.dumps(scorecard, indent=2, sort_keys=True))
 
     observed_features = {record["feature"] for record in scorecard}
-    assert observed_features == set(EXPECTED_SIGNATURES)
+    assert set(EXPECTED_SIGNATURES).issubset(observed_features)
     for record in scorecard:
-        assert record["rows"] == EXPECTED_OBJECT_ROWS
+        expected_rows = (
+            EXPECTED_SCALING_ROWS
+            if str(record["feature"]).startswith("scaling_")
+            else EXPECTED_OBJECT_ROWS
+        )
+        assert record["rows"] == expected_rows
         assert record["columns"] > 0
         assert record["seconds"] >= 0
-        assert record["signature"] == EXPECTED_SIGNATURES[record["feature"]]
+        if record["feature"] in EXPECTED_SIGNATURES:
+            assert record["signature"] == EXPECTED_SIGNATURES[record["feature"]]
