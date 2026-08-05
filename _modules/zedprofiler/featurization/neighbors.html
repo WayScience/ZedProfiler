@@ -840,8 +840,10 @@
         <span class="n">n_shells</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="c1"># Calculate distance from exterior (inverse of distance from center)</span>
-    <span class="n">distance_from_exterior</span> <span class="o">=</span> <span class="n">max_distance</span> <span class="o">-</span> <span class="n">distances</span>
+    <span class="c1"># Calculate distance from exterior (inverse of distance from center).</span>
+    <span class="c1"># Clamp at 0: max_distance is the 95th percentile (by design, to resist</span>
+    <span class="c1"># outliers), so cells beyond it would otherwise get a negative value.</span>
+    <span class="n">distance_from_exterior</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_distance</span> <span class="o">-</span> <span class="n">distances</span><span class="p">)</span>
 
     <span class="n">results</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">:</span> <span class="n">object_ids</span><span class="p">,</span>

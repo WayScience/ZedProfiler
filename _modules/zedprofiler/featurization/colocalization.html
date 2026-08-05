@@ -726,7 +726,7 @@
 
 <div class="viewcode-block" id="calculate_colocalization">
 <a class="viewcode-back" href="../../../api.html#zedprofiler.featurization.colocalization.calculate_colocalization">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">calculate_colocalization</span><span class="p">(</span>  <span class="c1"># noqa: PLR0912, PLR0915, C901</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_colocalization</span><span class="p">(</span>  <span class="c1"># noqa: PLR0912, PLR0915</span>
     <span class="n">cropped_image_1</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">cropped_image_2</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">thr</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span>
@@ -788,9 +788,11 @@
     <span class="c1">################################################################################################</span>
 
     <span class="c1"># Threshold as percentage of maximum intensity of objects in each channel</span>
-    <span class="c1"># Initialise before the try block so combined_thresh is always bound even</span>
-    <span class="c1"># when the except branch fires (numpy.max raises ValueError on empty arrays).</span>
+    <span class="c1"># Initialise before the try block so these are always bound even when the</span>
+    <span class="c1"># except branch fires (numpy.max raises ValueError on empty arrays).</span>
     <span class="n">combined_thresh</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">cropped_image_1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">first_image_thresh</span> <span class="o">=</span> <span class="n">cropped_image_1</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">]</span>
+    <span class="n">second_image_thresh</span> <span class="o">=</span> <span class="n">cropped_image_2</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">]</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">tff</span> <span class="o">=</span> <span class="p">(</span><span class="n">thr</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cropped_image_1</span><span class="p">)</span>
         <span class="n">tss</span> <span class="o">=</span> <span class="p">(</span><span class="n">thr</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cropped_image_2</span><span class="p">)</span>
@@ -833,16 +835,15 @@
             <span class="p">)</span>
             <span class="o">/</span> <span class="n">pdt</span>
         <span class="p">)</span>
-        <span class="n">K1</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+        <span class="c1"># K1/K2 are computed but not currently exported as features.</span>
+        <span class="n">_k1</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
             <span class="n">cropped_image_1</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">]</span> <span class="o">*</span> <span class="n">cropped_image_2</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">],</span>
         <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fpsq</span><span class="p">))</span>
-        <span class="n">K2</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+        <span class="n">_k2</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
             <span class="n">cropped_image_1</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">]</span> <span class="o">*</span> <span class="n">cropped_image_2</span><span class="p">[</span><span class="n">combined_thresh</span><span class="p">],</span>
         <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spsq</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">K1</span> <span class="o">==</span> <span class="n">K2</span><span class="p">:</span>
-            <span class="k">pass</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">overlap</span><span class="p">,</span> <span class="n">K1</span><span class="p">,</span> <span class="n">K2</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
+        <span class="n">overlap</span><span class="p">,</span> <span class="n">_k1</span><span class="p">,</span> <span class="n">_k2</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
 
     <span class="c1"># first_pixels, second_pixels = flattened image arrays</span>
     <span class="c1"># combined_thresh = boolean mask of pixels above threshold in both channels</span>

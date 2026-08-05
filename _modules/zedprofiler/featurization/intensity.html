@@ -506,7 +506,7 @@
         <span class="n">volume</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">selected_label_object</span><span class="p">)</span>
 
         <span class="c1"># Skip if volume is zero to avoid division by zero</span>
-        <span class="k">if</span> <span class="n">volume</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">integrated_intensity</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">volume</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">continue</span>
 
         <span class="c1"># calculate the mean intensity</span>
@@ -542,9 +542,15 @@
         <span class="n">i_y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">intensity_y_coord</span><span class="p">[</span><span class="n">object_mask</span><span class="p">])</span>
         <span class="n">i_z</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">intensity_z_coord</span><span class="p">[</span><span class="n">object_mask</span><span class="p">])</span>
         <span class="c1"># calculate the center of mass</span>
-        <span class="n">cmi_x</span> <span class="o">=</span> <span class="n">i_x</span> <span class="o">/</span> <span class="n">integrated_intensity</span>
-        <span class="n">cmi_y</span> <span class="o">=</span> <span class="n">i_y</span> <span class="o">/</span> <span class="n">integrated_intensity</span>
-        <span class="n">cmi_z</span> <span class="o">=</span> <span class="n">i_z</span> <span class="o">/</span> <span class="n">integrated_intensity</span>
+        <span class="c1"># No signal to weight by -- the intensity-weighted center (and thus</span>
+        <span class="c1"># mass displacement) is genuinely undefined, not 0. Report NaN rather</span>
+        <span class="c1"># than asserting a false &quot;signal is symmetric&quot; reading.</span>
+        <span class="k">if</span> <span class="n">integrated_intensity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">cmi_x</span> <span class="o">=</span> <span class="n">i_x</span> <span class="o">/</span> <span class="n">integrated_intensity</span>
+            <span class="n">cmi_y</span> <span class="o">=</span> <span class="n">i_y</span> <span class="o">/</span> <span class="n">integrated_intensity</span>
+            <span class="n">cmi_z</span> <span class="o">=</span> <span class="n">i_z</span> <span class="o">/</span> <span class="n">integrated_intensity</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cmi_x</span> <span class="o">=</span> <span class="n">cmi_y</span> <span class="o">=</span> <span class="n">cmi_z</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span>
         <span class="c1"># calculate the center of mass distance</span>
         <span class="n">diff_x</span> <span class="o">=</span> <span class="n">cm_x</span> <span class="o">-</span> <span class="n">cmi_x</span>
         <span class="n">diff_y</span> <span class="o">=</span> <span class="n">cm_y</span> <span class="o">-</span> <span class="n">cmi_y</span>

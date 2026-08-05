@@ -565,6 +565,7 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">image_set_dict</span> <span class="o">=</span> <span class="n">_LazyImageSetDict</span><span class="p">()</span>
         <span class="n">channel_tokens</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">channel_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_label_key_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">label_key_name</span> <span class="ow">or</span> <span class="p">[])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">anisotropy_spacing</span> <span class="o">=</span> <span class="n">anisotropy_spacing</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">anisotropy_factor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">anisotropy_spacing</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">anisotropy_spacing</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">image_set_name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">image_set_name</span>
@@ -783,6 +784,9 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">get_compartments</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Populate compartment names from available keys.</span>
 
+<span class="sd">        A compartment is a key explicitly declared as a label key via</span>
+<span class="sd">        ``ImageSetConfig.label_key_name``, not a raw intensity channel.</span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        list[str]</span>
@@ -790,11 +794,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">compartments</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">x</span>
-            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_set_dict</span>
-            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
-                <span class="n">channel_mapping_key</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">for</span> <span class="n">channel_mapping_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_set_dict</span>
-            <span class="p">)</span>
+            <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_set_dict</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_key_names</span>
         <span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compartments</span></div>
 

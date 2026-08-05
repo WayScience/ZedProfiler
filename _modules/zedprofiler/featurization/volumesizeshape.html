@@ -460,7 +460,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_volume_size_shape</span><span class="p">(</span>
     <span class="n">image_set_loader</span><span class="p">:</span> <span class="n">SupportsImageSetLoader</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">object_loader</span><span class="p">:</span> <span class="n">SupportsObjectLoader</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute volume/size/shape features for one object loader.</span>
 
 <span class="sd">    Supports two invocation modes:</span>
@@ -470,7 +470,7 @@
 <span class="sd">    - both loaders provided: executes feature extraction.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">image_set_loader</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">object_loader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_empty_feature_result</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">_empty_feature_result</span><span class="p">())</span>
     <span class="k">if</span> <span class="n">image_set_loader</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">object_loader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">ZedProfilerError</span><span class="p">(</span>
             <span class="s2">&quot;volumesizeshape.compute requires both image_set_loader and &quot;</span>
