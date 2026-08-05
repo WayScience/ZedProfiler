@@ -44,10 +44,7 @@ def scale_image(image: numpy.ndarray, num_gray_levels: int = 256) -> numpy.ndarr
         256: "uint8",
         65536: "uint16",
     }
-    try:
-        out_range = outrange_mapping.get(num_gray_levels)
-    except KeyError:
-        out_range = None
+    out_range = outrange_mapping.get(num_gray_levels)
     if out_range is None:
         raise ValueError(
             f"Unsupported num_gray_levels: {num_gray_levels}. "
