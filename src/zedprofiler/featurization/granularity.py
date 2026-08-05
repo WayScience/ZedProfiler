@@ -461,6 +461,11 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
     )
     final_df.insert(
         0,
+        "Metadata_Imaging_ImageID",
+        object_loader.image_set_loader.image_id,
+    )
+    final_df.insert(
+        0,
         "Metadata_Experiment_ImageSet",
         object_loader.image_set_loader.image_set_name,
     )

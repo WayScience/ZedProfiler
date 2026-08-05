@@ -20,6 +20,8 @@ scipy = pytest.importorskip("scipy")
 class ImageSetLoaderModel(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     image_set_name: str = "gran"
+    # mirrors ImageSetLoader.image_id (falls back to image_set_name)
+    image_id: str = "gran"
 
 
 class ObjectLoaderModel(BaseModel):
@@ -94,7 +96,7 @@ def test_compute_granularity_subsample_size_ge_1_uses_copy() -> None:
         image = img
         label_image = lab
         object_ids: ClassVar[list[int]] = [1]
-        image_set_loader = type("ISL", (), {"image_set_name": "s"})()
+        image_set_loader = type("ISL", (), {"image_set_name": "s", "image_id": "s"})()
         compartment = "Cell"
         channel = "Ch1"
 
@@ -120,7 +122,7 @@ def test_compute_granularity_with_image_sample_size_background_path() -> None:
         image = img
         label_image = lab
         object_ids: ClassVar[list[int]] = [1]
-        image_set_loader = type("ISL", (), {"image_set_name": "s"})()
+        image_set_loader = type("ISL", (), {"image_set_name": "s", "image_id": "s"})()
         compartment = "Cell"
         channel = "Ch1"
 
@@ -150,7 +152,7 @@ def test_compute_granularity_mask_handling_and_zero_volume_skips() -> None:
         image = img
         label_image = lab
         object_ids: ClassVar[list[int]] = [1]
-        image_set_loader = type("ISL", (), {"image_set_name": "s"})()
+        image_set_loader = type("ISL", (), {"image_set_name": "s", "image_id": "s"})()
         compartment = "Cell"
         channel = "Ch1"
 
@@ -195,7 +197,7 @@ def test_granularity_no_crash_on_single_z_slice() -> None:
         image = img
         label_image = lab
         object_ids: ClassVar[list[int]] = [1]
-        image_set_loader = type("ISL", (), {"image_set_name": "s"})()
+        image_set_loader = type("ISL", (), {"image_set_name": "s", "image_id": "s"})()
         compartment = "Cell"
         channel = "Ch1"
 
@@ -222,7 +224,7 @@ def test_compute_granularity_preserves_sparse_label_ids() -> None:
         image = img
         label_image = lab
         object_ids: ClassVar[list[int]] = [257, 514]
-        image_set_loader = type("ISL", (), {"image_set_name": "s"})()
+        image_set_loader = type("ISL", (), {"image_set_name": "s", "image_id": "s"})()
         compartment = "Cell"
         channel = "Ch1"
 

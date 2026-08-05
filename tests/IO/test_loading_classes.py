@@ -382,3 +382,123 @@ class TestObjectLoaders:
         assert np.array_equal(obj.image2, image)
         assert np.array_equal(obj.label_image, label_image)
         assert obj.object_ids == [ONE_LABEL, TWO_LABEL]
+
+
+class TestImageSetConfigImageId:
+    """Tests for ImageSetConfig.image_id identifier propagation."""
+
+    def test_image_id_is_none_when_any_field_missing(self) -> None:
+        """image_id stays None until all four identifier fields are set."""
+        assert ImageSetConfig().image_id is None
+        assert (
+            ImageSetConfig(
+                patient_tumor="NF0014_T1",
+                plate="PLATE01",
+                well="A1",
+                field=None,
+            ).image_id
+            is None
+        )
+
+    def test_image_id_built_when_all_fields_set(self) -> None:
+        """With all four fields set, image_id is the deterministic image id."""
+        config = ImageSetConfig(
+            patient_tumor="NF0014_T1",
+            plate="PLATE01",
+            well="A1",
+            field=1,
+        )
+        assert config.image_id == "NF0014_T1_PLATE01_A1_field1"
+
+
+class TestFromImageDict:
+    """Tests for ImageSetLoader.from_image_dict (multi-channel shard loader)."""
+
+    def _build_dict(self) -> dict[str, np.ndarray]:
+        label = np.array(
+            [
+                [[ZERO_LABEL, ONE_LABEL], [TWO_LABEL, TWO_LABEL]],
+                [[ZERO_LABEL, ONE_LABEL], [TWO_LABEL, TWO_LABEL]],
+            ],
+            dtype=np.int32,
+        )
+        return {
+            "DNA": np.ones((2, 2, 2), dtype=np.float32),
+            "AGP": np.full((2, 2, 2), 5.0, dtype=np.float32),
+            "Nuclei": label,
+        }
+
+    def test_builds_working_multi_channel_loader(self) -> None:
+        """from_image_dict resolves compartments and channels from the dict."""
+        loader = ImageSetLoader.from_image_dict(
+            self._build_dict(),
+            anisotropy_spacing=(2.0, 1.0, 1.0),
+            image_set_name="shard-01",
+            label_key_names=["Nuclei"],
+        )
+        assert loader.image_set_name == "shard-01"
+        assert loader.anisotropy_factor == EXPECTED_ANISOTROPY
+        assert loader.compartments == ["Nuclei"]
+        assert sorted(loader.image_names) == ["AGP", "DNA"]
+        assert loader.unique_compartment_objects["Nuclei"] == [
+            ONE_LABEL,
+            TWO_LABEL,
+        ]
+        # ObjectLoader built on the resulting loader resolves both channels.
+        dna_obj = ObjectLoader(
+            image_set_loader=loader,
+            channel_name="DNA",
+            compartment_name="Nuclei",
+        )
+        assert dna_obj.object_ids == [ONE_LABEL, TWO_LABEL]
+        assert np.array_equal(
+            dna_obj.image,
+            np.ones((2, 2, 2), dtype=np.float32),
+        )
+
+    def test_image_id_populated_when_identifiers_provided(self) -> None:
+        """Passing all four identifier fields populates image_id deterministically."""
+        loader = ImageSetLoader.from_image_dict(
+            self._build_dict(),
+            anisotropy_spacing=(1.0, 1.0, 1.0),
+            image_set_name="shard-01",
+            label_key_names=["Nuclei"],
+            patient_tumor="NF0014_T1",
+            plate="PLATE01",
+            well="A1",
+            field=1,
+        )
+        assert loader.image_id == "NF0014_T1_PLATE01_A1_field1"
+
+    def test_image_id_falls_back_to_image_set_name_without_identifiers(
+        self,
+    ) -> None:
+        """Without identifiers, image_id falls back to the image set name."""
+        loader = ImageSetLoader.from_image_dict(
+            self._build_dict(),
+            anisotropy_spacing=(1.0, 1.0, 1.0),
+            image_set_name="legacy-set",
+            label_key_names=["Nuclei"],
+        )
+        assert loader.image_id == "legacy-set"
+
+    def test_two_object_loader_on_from_image_dict(self) -> None:
+        """A TwoObjectLoader resolves two channels from a from_image_dict loader."""
+        loader = ImageSetLoader.from_image_dict(
+            self._build_dict(),
+            anisotropy_spacing=(1.0, 1.0, 1.0),
+            image_set_name="shard-02",
+            label_key_names=["Nuclei"],
+            patient_tumor="X",
+            plate="P",
+            well="A1",
+            field="1",
+        )
+        two = TwoObjectLoader(
+            image_set_loader=loader,
+            compartment="Nuclei",
+            channel1="DNA",
+            channel2="AGP",
+        )
+        assert two.object_ids == [ONE_LABEL, TWO_LABEL]
+        assert two.image_set_loader.image_id == "X_P_A1_field1"
