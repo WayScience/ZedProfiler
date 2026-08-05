@@ -99,9 +99,12 @@ def compute_intensity(  # noqa: C901, PLR0915
             bbox_min_y:bbox_max_y,
             bbox_min_x:bbox_max_x,
         ]
+        # The bbox always bounds at least one voxel of ``label`` because it was
+        # derived from regionprops for that exact label, so ``object_mask`` is
+        # never empty here. Kept as a defensive guard; excluded from coverage.
         object_mask = cropped_label_values == label
-        if not numpy.any(object_mask):
-            continue
+        if not numpy.any(object_mask):  # pragma: no cover
+            continue  # pragma: no cover
 
         object_pixels = cropped_image_values[object_mask]
         non_zero_pixels_object = object_pixels[object_pixels > 0]
@@ -126,9 +129,13 @@ def compute_intensity(  # noqa: C901, PLR0915
         # calculate the volume
         volume = numpy.sum(object_mask)
 
-        # Skip if volume is zero to avoid division by zero
-        if volume == 0:
-            continue
+        # Skip if volume is zero to avoid division by zero. Unreachable in
+        # practice because ``object_mask`` (label voxels within the bbox)
+        # always has at least one True voxel — the bbox is derived from
+        # regionprops for this exact label. Kept as a defensive guard;
+        # excluded from coverage.
+        if volume == 0:  # pragma: no cover
+            continue  # pragma: no cover
 
         # calculate the mean intensity
         mean_intensity = integrated_intensity / volume

@@ -203,3 +203,29 @@ def test_create_results_dataframe_and_errors_and_plots() -> None:
 
     fig2 = plot_distance_distributions(results, n_shells=2)
     assert hasattr(fig2, "axes")
+
+
+def test_compute_neighbors_skips_phantom_object_id_without_bbox() -> None:
+    """Object ids absent from the label image are skipped via the bbox guard.
+
+    ``compute_neighbors`` looks up each requested object id in the
+    ``regionprops`` bbox table and skips ids with no matching region via the
+    ``if bbox_label is None: continue`` guard. Requesting a phantom id (99)
+    alongside a real one (1) exercises that guard: only object 1 should appear
+    in the output, with no crash and a finite neighbor count for the real
+    object.
+    """
+    shape = (10, 10, 10)
+    centers = [(3, 3, 3), (6, 6, 6)]
+    lab = make_two_labels(shape, centers)
+    imgset = ImageSetLoaderModel()
+    loader = ObjectLoaderModel(
+        label_image=lab,
+        object_ids=[1, 99],
+        image_set_loader=imgset,
+    )
+
+    df = compute_neighbors(loader, distance_threshold=5, anisotropy_factor=1)
+
+    returned_ids = sorted(int(x) for x in df["Metadata_Object_ObjectID"].tolist())
+    assert returned_ids == [1]

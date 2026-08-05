@@ -75,3 +75,28 @@ def test_compute_volume_size_shape_returns_dataframe(
     # All object ids present
     returned_ids = sorted(int(x) for x in df["Metadata_Object_ObjectID"].tolist())
     assert returned_ids == obj_ids
+
+
+def test_compute_volume_size_shape_skips_phantom_object_id_without_props() -> None:
+    """Object ids absent from the label image are skipped via the props guard.
+
+    ``measure_3D_volume_size_shape`` builds a label->index map from
+    ``regionprops_table`` and skips any requested id with no matching region
+    via the ``if props_index is None: continue`` guard. Requesting a phantom
+    id (99) alongside a real one (1) exercises that guard: only object 1
+    should appear in the output, with no crash.
+    """
+    imgset = ImageSetLoaderModel(anisotropy_spacing=(1.0, 1.0, 1.0))
+    label = make_label_image((7, 7, 7), [(3, 3, 3)])
+    loader = ObjectLoaderModel(
+        label_image=label,
+        object_ids=[1, 99],
+        image_set_loader=imgset,
+        compartment="Nucleus",
+        channel="DAPI",
+    )
+
+    df = compute_volume_size_shape(image_set_loader=imgset, object_loader=loader)
+
+    returned_ids = sorted(int(x) for x in df["Metadata_Object_ObjectID"].tolist())
+    assert returned_ids == [1]

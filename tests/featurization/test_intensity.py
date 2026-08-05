@@ -152,3 +152,71 @@ def test_compute_intensity_basic(
     df = compute_intensity(loader)
     assert isinstance(df, pd.DataFrame)
     assert "Metadata_Object_ObjectID" in df.columns
+
+
+def test_compute_intensity_skips_phantom_object_id_without_bbox() -> None:
+    """Object ids absent from the label image are skipped, not crashed on.
+
+    ``compute_intensity`` looks up each requested object id in the
+    ``regionprops`` bbox table. When an id has no matching label region the
+    bbox lookup returns ``None`` and the object is skipped via the
+    ``if bbox is None: continue`` guard. This test exercises that guard by
+    requesting a phantom id (99) alongside a real one (1) and asserting only
+    the real object appears in the output.
+    """
+    shape = (10, 10, 10)
+    image = np.zeros(shape, dtype=np.float32)
+    label = np.zeros(shape, dtype=np.int32)
+    image[3:7, 3:7, 3:7] = 100.0
+    label[3:7, 3:7, 3:7] = 1
+
+    imgset = ImageSetLoaderModel()
+    loader = ObjectLoaderModel(
+        image=image,
+        label_image=label,
+        object_ids=[1, 99],
+        image_set_loader=imgset,
+    )
+
+    df = compute_intensity(loader)
+
+    returned_ids = sorted(int(x) for x in df["Metadata_Object_ObjectID"].tolist())
+    assert returned_ids == [1]
+
+
+def test_compute_intensity_handles_all_zero_intensity_object() -> None:
+    """An object with no nonzero-intensity voxels yields NaN mass displacement.
+
+    When every voxel of an object has zero intensity, the non-zero pixel
+    selection is empty and the ``if non_zero_pixels_object.size == 0`` guard
+    substitutes a single zero so downstream statistics are well-defined. With
+    zero integrated intensity the intensity-weighted center of mass (and thus
+    mass displacement) is undefined, so those features are reported as NaN
+    rather than a misleading 0. This test exercises the zero-pixel fallback
+    and the NaN mass-displacement branch together.
+    """
+    shape = (10, 10, 10)
+    image = np.zeros(shape, dtype=np.float32)
+    label = np.zeros(shape, dtype=np.int32)
+    label[3:7, 3:7, 3:7] = 1
+
+    imgset = ImageSetLoaderModel()
+    loader = ObjectLoaderModel(
+        image=image,
+        label_image=label,
+        object_ids=[1],
+        image_set_loader=imgset,
+    )
+
+    df = compute_intensity(loader)
+
+    row = df[df["Metadata_Object_ObjectID"] == 1]
+    assert len(row) == 1
+
+    mass_disp_col = next(
+        c for c in df.columns if c.endswith("Intensity_MassDisplacement")
+    )
+    assert np.isnan(row[mass_disp_col].values[0])
+
+    cmi_col = next(c for c in df.columns if c.endswith("Intensity_CMI-X"))
+    assert np.isnan(row[cmi_col].values[0])
