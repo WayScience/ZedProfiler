@@ -1,3 +1,35 @@
+"""Real-world data tests for zedprofiler's featurization pipeline.
+
+These tests exercise the featurization functions against real 3D microscopy
+data rather than synthetic arrays, so that loading, segmentation-label
+handling, and per-object feature extraction are validated end-to-end on
+plausible inputs.
+
+Scope and data source
+---------------------
+The data comes from the CellProfiler 3D tutorial ("3D noise nuclei segmentation")
+and lives under ``tests/data/CP_tutorial_3D_noise_nuclei_segmentation``. We are
+**not** testing CellProfiler itself — CellProfiler is only the source of the
+input images and their segmentation masks. The tutorial provides four single
+-channel 3D image volumes paired with label masks, which give us realistic
+nuclei segmentation to feed into zedprofiler.
+
+What is tested
+--------------
+* Each feature extractor (volume/size/shape, intensity, neighbors, texture,
+  granularity) produces a well-formed per-object dataframe with finite values
+  and the expected object ids.
+* Computed volumes match the raw voxel counts of the label masks (a ground
+  truth sanity check independent of zedprofiler's own logic).
+* Images loaded from file paths (rather than in-memory arrays) are processed
+  identically by the loaders.
+* Colocalization runs on paired two-channel image sets built from the tutorial
+  images (c00 + c90), producing a finite per-object dataframe. Colocalization
+  is tested separately from ``FEATURE_RUNNERS`` because it requires a
+  ``TwoObjectLoader`` and two channels, whereas the other extractors consume a
+  single-channel ``ObjectLoader``.
+"""
+
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -32,6 +64,8 @@ CELLPROFILER_TUTORIAL_ROOT = (
 
 @dataclass(frozen=True)
 class RealImageCase:
+    """A single real 3D image volume and its matching segmentation mask."""
+
     image_name: str
     image_path: Path
     label_path: Path
@@ -42,6 +76,8 @@ class RealImageCase:
 
 @dataclass(frozen=True)
 class RealDatasetCase:
+    """A named real dataset: expected image properties and its image cases."""
+
     name: str
     expected_shape: tuple[int, int, int]
     expected_object_count: int
@@ -52,6 +88,8 @@ class RealDatasetCase:
 
 @dataclass(frozen=True)
 class RealColocalizationCase:
+    """Two real single-channel images paired into a two-channel colocalization input."""
+
     name: str
     first_image_case: RealImageCase
     second_image_case: RealImageCase
@@ -64,6 +102,8 @@ class RealColocalizationCase:
 
 @dataclass(frozen=True)
 class LoadedNucleiCase:
+    """A real image case bundled with its loaded image set and object loader."""
+
     dataset_case: RealDatasetCase
     image_case: RealImageCase
     image_set_loader: ImageSetLoader
@@ -76,6 +116,8 @@ class LoadedNucleiCase:
 
 @dataclass(frozen=True)
 class FeatureRunner:
+    """Binds a feature extractor to a name and the column token it should emit."""
+
     name: str
     run: Callable[[LoadedNucleiCase], pd.DataFrame]
     expected_column_token: str
@@ -342,6 +384,12 @@ FEATURE_RUNNERS = (
 
 @pytest.mark.parametrize("dataset_case", REAL_DATASETS, ids=_dataset_case_id)
 def test_real_dataset_files_are_static(dataset_case: RealDatasetCase) -> None:
+    """Guard against the tutorial data silently changing.
+
+    Asserts each image and mask has the expected shape, dtype, and segmented
+    object count so downstream feature tests fail loudly if the data is
+    swapped or regenerated rather than producing misleading feature values.
+    """
     for image_case in dataset_case.image_cases:
         image = tifffile.imread(image_case.image_path)
         label = tifffile.imread(image_case.label_path)
@@ -360,6 +408,12 @@ def test_real_world_nuclei_feature_extractors(
     case: tuple[RealDatasetCase, RealImageCase],
     feature_runner: FeatureRunner,
 ) -> None:
+    """Each single-channel extractor yields a valid per-object frame on real nuclei.
+
+    Loads a real image/mask pair, runs the extractor, and checks the dataframe
+    has the expected object count, object ids, image set metadata, an expected
+    column token, and only finite feature values.
+    """
     dataset_case, image_case = case
     loaded_case = _load_nuclei_case(dataset_case, image_case)
 
@@ -376,6 +430,12 @@ def test_real_world_nuclei_feature_extractors(
 def test_real_world_volumes_match_label_voxel_counts(
     case: tuple[RealDatasetCase, RealImageCase],
 ) -> None:
+    """Computed object volumes equal raw voxel counts from the label mask.
+
+    Recomputes each object's voxel count directly from the segmentation mask
+    and compares it to zedprofiler's ``VolumeSizeShape_Volume``, verifying the
+    volume feature against a ground truth independent of the featurization code.
+    """
     dataset_case, image_case = case
     label = tifffile.imread(image_case.label_path)
     loaded_case = _load_nuclei_case(dataset_case, image_case)
@@ -405,6 +465,12 @@ def test_real_world_volumes_match_label_voxel_counts(
 def test_real_world_path_loaded_images_process_nuclei(
     case: tuple[RealDatasetCase, RealImageCase],
 ) -> None:
+    """File-path-loaded images load and featurize identically to in-memory arrays.
+
+    Uses ``_load_nuclei_case_from_paths`` (the path-based ``ImageSetLoader``
+    entry point) instead of the array-based loader, confirming the loader
+    resolves the tutorial files correctly and volume featurization still works.
+    """
     dataset_case, image_case = case
     label = tifffile.imread(image_case.label_path)
     loaded_case = _load_nuclei_case_from_paths(dataset_case, image_case)
@@ -438,6 +504,14 @@ def test_real_world_path_loaded_images_process_nuclei(
 def test_real_world_colocalization_feature_extractor(
     case: tuple[RealDatasetCase, RealColocalizationCase],
 ) -> None:
+    """Colocalization yields a valid per-object frame on paired two-channel real data.
+
+    Pairs two single-channel tutorial images (c00 + c90) into a
+    ``TwoObjectLoader`` and checks the colocalization dataframe has the expected
+    object count, ids, image set metadata, a ``Colocalization`` column, and only
+    finite values. Kept separate from ``FEATURE_RUNNERS`` because colocalization
+    requires two channels and a ``TwoObjectLoader``.
+    """
     dataset_case, colocalization_case = case
     two_object_loader = _load_colocalization_case(colocalization_case)
 
