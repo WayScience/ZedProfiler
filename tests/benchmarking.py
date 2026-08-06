@@ -181,6 +181,11 @@ def feature_cases() -> list[FeatureCase]:
             "granularity",
             lambda: compute_granularity(
                 object_loader,
+                # The production default is 16, but granularity cost scales
+                # linearly with spectrum length (one morphology pass per
+                # scale). Kept small here so the accuracy lock stays fast and
+                # its fingerprint stable; the scaling scorecard below uses the
+                # realistic default of 16 for representative timing.
                 granular_spectrum_length=3,
                 subsample_size=0.5,
                 image_sample_size=0.5,
@@ -225,9 +230,12 @@ def scaling_feature_cases() -> list[FeatureCase]:
         ),
         (
             "scaling_granularity",
+            # Use the production default of 16 so the scaling scorecard
+            # reflects representative granularity cost, which scales with
+            # spectrum length. (No locked fingerprint for scaling cases.)
             lambda: compute_granularity(
                 object_loader,
-                granular_spectrum_length=3,
+                granular_spectrum_length=16,
                 subsample_size=0.5,
                 image_sample_size=0.5,
                 radius=2,
