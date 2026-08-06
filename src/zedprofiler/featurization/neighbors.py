@@ -146,6 +146,10 @@ def compute_neighbors(
         distance_z = numpy.ceil(distance_threshold / anisotropy_factor).astype(int)
         # find how many other indexes are within a specified distance of the object
         # first expand the mask image by a specified distance
+        # regionprops bbox returns all min coords first then all max coords,
+        # in axis order (z, y, x): bbox-0/1/2 = min_z/y/x, bbox-3/4/5 =
+        # max_z/y/x. So this unpacks to each dimension's own min and max,
+        # all sourced from this label's bounding box.
         z_min, y_min, x_min, z_max, y_max, x_max = bbox_label
         new_z_min, new_z_max = neighbors_expand_box(
             min_coor=image_global_min_coord_z,
