@@ -226,7 +226,12 @@ def scaling_feature_cases() -> list[FeatureCase]:
         ),
         (
             "scaling_texture",
-            lambda: compute_texture(object_loader, distance=1, grayscale=256),
+            # CellProfiler's default Haralick distance is 3; use it here so
+            # the scorecard reflects representative cost. The anisotropy spacing
+            # is (10, 1, 1), so 3 voxels in z is 30 physical units while 3 in
+            # x/y is 3 — the GLCM distance is in voxel space and does not
+            # adjust for anisotropy.
+            lambda: compute_texture(object_loader, distance=3, grayscale=256),
         ),
         (
             "scaling_granularity",
