@@ -51,39 +51,32 @@ _CPU_OR_GPU = "cpu"
 # Minimum number of channels required for colocalization requests.
 _MIN_CHANNELS_FOR_COLOCALIZATION = 2
 
-# Each feature type is declared once, with the two independent axes the CLI
-# cares about:
-#   two_channel      - True if the feature reads two channel images via
-#                      TwoObjectLoader; False if it reads one via ObjectLoader.
-#   channel_agnostic - True if the computation ignores the channel pixel data
-#                      (it only uses the compartment mask). Such features are
-#                      still namespaced by a channel for warehouse organization,
-#                      so a channel (for naming only) is still required. These
-#                      are always a subset of the single-channel types: a
-#                      two-channel feature by definition uses its channel
-#                      images, so it cannot be channel-agnostic.
-_FEATURE_SPECS: dict[str, dict[str, bool]] = {
-    "VolumeSizeShape": {"two_channel": False, "channel_agnostic": True},
-    "Intensity": {"two_channel": False, "channel_agnostic": False},
-    "Neighbors": {"two_channel": False, "channel_agnostic": True},
-    "Texture": {"two_channel": False, "channel_agnostic": False},
-    "Granularity": {"two_channel": False, "channel_agnostic": False},
-    "Colocalization": {"two_channel": True, "channel_agnostic": False},
-}
-
-# Loader axis: how many channel images each feature reads.
-_SINGLE_CHANNEL_TYPES = tuple(
-    name for name, spec in _FEATURE_SPECS.items() if not spec["two_channel"]
+# Feature types partitioned into three mutually exclusive groups (their union
+# is ALL_FEATURE_TYPES), so each type appears in exactly one list:
+#   - _SINGLE_CHANNEL_TYPES: read one channel + one compartment via ObjectLoader
+#     and actually use the channel pixel data.
+#   - _TWO_CHANNEL_TYPES: read two channels via TwoObjectLoader.
+#   - _CHANNEL_AGNOSTIC_TYPES: read one channel via ObjectLoader but ignore the
+#     channel pixel data (they only use the compartment mask). They are still
+#     namespaced by a channel for warehouse organization, so a channel (for
+#     naming only) is still required.
+_SINGLE_CHANNEL_TYPES = (
+    "Intensity",
+    "Texture",
+    "Granularity",
 )
-_TWO_CHANNEL_TYPES = tuple(
-    name for name, spec in _FEATURE_SPECS.items() if spec["two_channel"]
-)
-ALL_FEATURE_TYPES = tuple(_FEATURE_SPECS)
+# Feature types that require two channels via TwoObjectLoader.
+_TWO_CHANNEL_TYPES = ("Colocalization",)
 
-# Computation axis: features that ignore the channel pixels (a subset of
-# _SINGLE_CHANNEL_TYPES).
-_CHANNEL_AGNOSTIC_TYPES = tuple(
-    name for name, spec in _FEATURE_SPECS.items() if spec["channel_agnostic"]
+# Channel-agnostic features: their computation does not use the channel image,
+# but like every ZedProfiler feature they are namespaced by a channel for
+# warehouse organization, so a channel (for naming only) is still required.
+_CHANNEL_AGNOSTIC_TYPES = ("VolumeSizeShape", "Neighbors")
+
+ALL_FEATURE_TYPES = (
+    *_SINGLE_CHANNEL_TYPES,
+    *_TWO_CHANNEL_TYPES,
+    *_CHANNEL_AGNOSTIC_TYPES,
 )
 
 
@@ -405,9 +398,14 @@ def _resolve_requests(
             requests = [r for r in requests if str(r["type"]) in features_filter]
         _validate_request_channels_compartments(requests, channels, compartments)
         return requests
-    feature_types = features_filter if features_filter else list(_SINGLE_CHANNEL_TYPES)
+    # Default (no --features, no --feature): run every non-colocalization type
+    # (single-channel + channel-agnostic), plus Colocalization when there are
+    # enough channels. _SINGLE_CHANNEL_TYPES alone is not the full default
+    # because the channel-agnostic types live in their own group.
+    default_types = [*_SINGLE_CHANNEL_TYPES, *_CHANNEL_AGNOSTIC_TYPES]
+    feature_types = features_filter if features_filter else default_types
     if (features_filter is None) and len(channels) >= _MIN_CHANNELS_FOR_COLOCALIZATION:
-        feature_types = [*_SINGLE_CHANNEL_TYPES, "Colocalization"]
+        feature_types = [*default_types, "Colocalization"]
     return _auto_requests(channels, compartments, feature_types)
 
 
