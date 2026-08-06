@@ -13,10 +13,8 @@ Accuracy locks run with normal pytest:
 uv run pytest tests/test_benchmark_contracts.py
 ```
 
-These tests run deterministic synthetic image-set cases across the major feature
-families and compare each output dataframe to a current-result fingerprint. If an
-optimization changes a feature value, column name, row identity, or missing-value
-pattern, the fingerprint changes and the test fails.
+These tests run deterministic synthetic image-set cases across the major feature families and compare each output dataframe to a current-result fingerprint.
+If an optimization changes a feature value, column name, row identity, or missing-value pattern, the fingerprint changes and the test fails.
 
 Only update these fingerprints when the project intentionally changes the
 scientific result contract.
