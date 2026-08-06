@@ -89,6 +89,10 @@ def compute_intensity(  # noqa: C901, PLR0915
         if bbox is None:
             continue
         bbox_min_z, bbox_min_y, bbox_min_x, bbox_max_z, bbox_max_y, bbox_max_x = bbox
+        # regionprops bbox max coords are exclusive (half-open [min, max)),
+        # so the slices below need no +1. (The old code computed the bbox with
+        # numpy.max, which is an inclusive last index and required +1; the two
+        # produce the identical cropped region.)
         cropped_label_values = label_object[
             bbox_min_z:bbox_max_z,
             bbox_min_y:bbox_max_y,
@@ -117,7 +121,9 @@ def compute_intensity(  # noqa: C901, PLR0915
         padded_label = numpy.pad(cropped_label, pad_width=1, mode="constant")
         mask_outlines = get_outline(padded_label)[1:-1, 1:-1, 1:-1]
 
-        # Create coordinate grids for the bounding box
+        # Create coordinate grids for the bounding box. Same exclusive
+        # bbox convention as the crops above: regionprops max coords are
+        # half-open [min, max), so no +1 is needed here either.
         mesh_z, mesh_y, mesh_x = numpy.mgrid[
             bbox_min_z:bbox_max_z,
             bbox_min_y:bbox_max_y,
