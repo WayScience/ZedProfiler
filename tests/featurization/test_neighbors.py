@@ -139,6 +139,9 @@ def test_mahalanobis_small_and_regularized_and_singular() -> None:
     assert np.allclose(md_sing, 0.0)
 
 
+EXPECTED_MULTIPLE_NEIGHBORS = 2
+
+
 def test_neighbors_count_adjacent_detects_touching_cells() -> None:
     """NeighborsCountAdjacent must be > 0 for two directly touching objects (Bug 5).
 
@@ -174,6 +177,39 @@ def test_neighbors_count_adjacent_detects_touching_cells() -> None:
     assert n_adj > 0, (
         "NeighborsCountAdjacent is 0 for two touching cells — "
         "likely caused by bbox-crop excluding the shared boundary voxel"
+    )
+
+
+def test_neighbors_count_adjacent_detects_multiple_neighbors() -> None:
+    """NeighborsCountAdjacent must count more than one neighbour.
+
+    Object 1 is face-adjacent to two separate objects: object 2 along the z
+    axis and object 3 along the x axis. The 1-voxel dilation of object 1's
+    mask must reach both, so ``NeighborsCountAdjacent`` for object 1 is 2.
+    """
+    shape = (12, 12, 12)
+    lab = np.zeros(shape, dtype=int)
+    # Object 1: z,y,x in {3,4,5}; touches object 2 at z=6 and object 3 at x=6.
+    lab[3:6, 3:6, 3:6] = 1
+    lab[6:9, 3:6, 3:6] = 2
+    lab[3:6, 3:6, 6:9] = 3
+
+    imgset = ImageSetLoaderModel()
+    loader = ObjectLoaderModel(
+        label_image=lab,
+        object_ids=[1, 2, 3],
+        image_set_loader=imgset,
+    )
+
+    df = compute_neighbors(loader, distance_threshold=5, anisotropy_factor=1)
+    obj1_row = df[df["Metadata_Object_ObjectID"] == 1]
+    adjacent_col = [c for c in df.columns if "NeighborsCountAdjacent" in c]
+    assert adjacent_col, "NeighborsCountAdjacent column not found in output"
+
+    n_adj = int(obj1_row[adjacent_col[0]].values[0])
+    assert n_adj == EXPECTED_MULTIPLE_NEIGHBORS, (
+        f"Expected object 1 to have {EXPECTED_MULTIPLE_NEIGHBORS} adjacent "
+        f"neighbours, got {n_adj}"
     )
 
 
