@@ -16,19 +16,29 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import pytest
 
+import zedprofiler.cli as cli_module
 from zedprofiler.cli import (
     _auto_requests,
+    _coerce_param,
     _output_path,
     _parse_feature_spec,
     _parse_name_path,
+    _resolve_channel,
+    _resolve_compartment,
     _resolve_requests,
+    _run_colocalization,
+    _run_single_channel,
+    _validate_request_channels_compartments,
     main,
+    trigger,
 )
 from zedprofiler.featurization import texture
 from zedprofiler.identifiers import build_image_id
+from zedprofiler.IO.loading_classes import ImageSetLoader
 
 tifffile = pytest.importorskip("tifffile")
 
@@ -48,6 +58,7 @@ LABEL1 = (
 
 EXPECTED_OBJECT_COUNT = 5
 EXPECTED_CHANNEL_COUNT = 2
+EXPECTED_TINY_OBJECT_COUNT = 2
 PATIENT_TUMOR, PLATE, WELL, FIELD = "NF0014_T1", "PLATE01", "A1", "1"
 EXPECTED_IMAGE_ID = build_image_id(PATIENT_TUMOR, PLATE, WELL, FIELD)
 
@@ -191,6 +202,168 @@ def test_resolve_requests_features_filter_applied_to_explicit_specs() -> None:
     requests = _resolve_requests(["DNA"], ["Nuclei"], specs, ["Intensity"])
     assert len(requests) == 1
     assert requests[0]["type"] == "Intensity"
+
+
+# ---------------------------------------------------------------------------
+# Unit tests: parser/validation error branches
+# ---------------------------------------------------------------------------
+
+
+def test_parse_name_path_rejects_empty_name() -> None:
+    """A NAME=PATH token with an empty name is a user error."""
+    with pytest.raises(argparse.ArgumentTypeError, match="empty"):
+        _parse_name_path("=/tmp/a.tif")
+
+
+@pytest.mark.parametrize("spec", ["", "  ", " , , "])
+def test_parse_feature_spec_rejects_empty_spec(spec: str) -> None:
+    """An all-whitespace feature spec yields no tokens and is rejected."""
+    with pytest.raises(argparse.ArgumentTypeError, match="Empty feature spec"):
+        _parse_feature_spec(spec)
+
+
+def test_coerce_param_returns_cast_value_and_raises_friendly_error() -> None:
+    """_coerce_param casts on success and raises ArgumentTypeError on failure."""
+    assert _coerce_param("5", int, "distance", "Texture,distance=5") == int("5")
+    with pytest.raises(argparse.ArgumentTypeError, match="not a valid int"):
+        _coerce_param("not-a-number", int, "distance", "Texture,distance=bad")
+
+
+def test_resolve_channel_requires_nonempty_string() -> None:
+    """A single-channel request missing 'channel' is rejected."""
+    with pytest.raises(argparse.ArgumentTypeError, match="requires a 'channel' key"):
+        _resolve_channel({"type": "Intensity", "compartment": "Nuclei"}, "Intensity")
+
+
+def test_resolve_compartment_requires_nonempty_string() -> None:
+    """A request missing 'compartment' is rejected."""
+    with pytest.raises(
+        argparse.ArgumentTypeError, match="requires a 'compartment' key"
+    ):
+        _resolve_compartment({"type": "Intensity", "channel": "DNA"}, "Intensity")
+
+
+def test_auto_requests_rejects_no_channels() -> None:
+    """Auto-generation with zero --image channels is a user error."""
+    with pytest.raises(argparse.ArgumentTypeError, match="No --image flags"):
+        _auto_requests([], ["Nuclei"], ["Intensity"])
+
+
+def test_auto_requests_rejects_no_compartments() -> None:
+    """Auto-generation with zero --label compartments is a user error."""
+    with pytest.raises(argparse.ArgumentTypeError, match="No --label flags"):
+        _auto_requests(["DNA"], [], ["Intensity"])
+
+
+def test_validate_rejects_undeclared_compartment() -> None:
+    """An explicit request referencing an undeclared compartment is rejected."""
+    with pytest.raises(argparse.ArgumentTypeError, match="not declared via --label"):
+        _validate_request_channels_compartments(
+            [{"type": "Intensity", "channel": "DNA", "compartment": "Ghost"}],
+            ["DNA"],
+            ["Nuclei"],
+        )
+
+
+def test_validate_rejects_undeclared_colocalization_channel() -> None:
+    """A colocalization request with an undeclared channel is rejected."""
+    with pytest.raises(argparse.ArgumentTypeError, match="not declared via --image"):
+        _validate_request_channels_compartments(
+            [
+                {
+                    "type": "Colocalization",
+                    "channel1": "Ghost",
+                    "channel2": "DNA",
+                    "compartment": "Nuclei",
+                },
+            ],
+            ["DNA"],
+            ["Nuclei"],
+        )
+
+
+# ---------------------------------------------------------------------------
+# Unit tests: featurizer dispatch on tiny in-memory data
+# ---------------------------------------------------------------------------
+
+
+def _tiny_image_set_loader() -> ImageSetLoader:
+    """A small multi-channel loader for exercising dispatch branches quickly."""
+    rng = np.random.default_rng(0)
+    label = np.zeros((6, 6, 6), dtype=np.int32)
+    label[1:3, 1:3, 1:3] = 1
+    label[4:6, 4:6, 4:6] = 2
+    image = rng.integers(0, 200, size=(6, 6, 6)).astype(np.float32)
+    image2 = rng.integers(0, 200, size=(6, 6, 6)).astype(np.float32)
+    return ImageSetLoader.from_image_dict(
+        {"DNA": image, "AGP": image2, "Nuclei": label},
+        anisotropy_spacing=(2.0, 1.0, 1.0),
+        image_set_name="tiny",
+        label_key_names=["Nuclei"],
+    )
+
+
+@pytest.mark.parametrize(
+    "feature_type",
+    ["Neighbors", "Texture", "Granularity", "VolumeSizeShape"],
+)
+def test_run_single_channel_dispatches_each_type(feature_type: str) -> None:
+    """Each single-channel dispatch branch runs and returns a framed result."""
+    request = {"type": feature_type, "channel": "DNA", "compartment": "Nuclei"}
+    channel, ran_type, df = _run_single_channel(_tiny_image_set_loader(), dict(request))
+    assert channel == "DNA"
+    assert ran_type == feature_type
+    assert len(df) == EXPECTED_TINY_OBJECT_COUNT  # two objects in the tiny label mask
+
+
+def test_run_colocalization_requires_channel_keys() -> None:
+    """A colocalization request missing channel1/channel2 is rejected."""
+    with pytest.raises(argparse.ArgumentTypeError, match="requires 'channel1'"):
+        _run_colocalization(
+            _tiny_image_set_loader(),
+            {"type": "Colocalization", "compartment": "Nuclei"},
+        )
+
+
+# ---------------------------------------------------------------------------
+# Unit tests: run() / main() / trigger() control flow
+# ---------------------------------------------------------------------------
+
+
+def test_run_returns_empty_when_features_filter_drops_all_requests(
+    tmp_path: Path,
+) -> None:
+    """A --features filter that excludes every --feature request writes nothing."""
+    argv = [
+        "run",
+        "--image=DNA=/does/not/exist.tif",
+        "--label=Nuclei=/does/not/exist.tiff",
+        "--anisotropy-spacing",
+        "1.0",
+        "1.0",
+        "1.0",
+        "--patient-tumor=NF0014_T1",
+        "--plate=PLATE01",
+        "--well=A1",
+        "--field=1",
+        f"--out-dir={tmp_path}",
+        "--feature=Intensity,channel=DNA,compartment=Nuclei",
+        "--features=Colocalization",
+    ]
+    # No requests survive the Colocalization filter, so no images are read and
+    # no Parquet is written; the command still exits 0.
+    assert _run(argv) == 0
+    assert not list(tmp_path.glob("*.parquet"))
+
+
+def test_trigger_raises_system_exit_with_main_exit_code(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """trigger() wraps main()'s exit code in a SystemExit."""
+    monkeypatch.setattr(cli_module, "main", lambda argv=None: 0)
+    with pytest.raises(SystemExit) as exc:
+        trigger()
+    assert exc.value.code == 0
 
 
 # ---------------------------------------------------------------------------

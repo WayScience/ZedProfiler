@@ -638,7 +638,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     """CLI entry point. Returns a process exit code."""
     parser = _build_parser()
     args = parser.parse_args(argv)
-    if args.command != "run":
+    if args.command != "run":  # pragma: no cover - subparsers required=True
         parser.error("a subcommand is required")
         return 2  # pragma: no cover - parser.error exits
 

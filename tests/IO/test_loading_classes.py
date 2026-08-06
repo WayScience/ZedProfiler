@@ -63,6 +63,10 @@ class TestImageSetConfig:
                 {"raw_image_key_name": "raw"},
                 "raw_image_key_name must be a list of strings or None",
             ),
+            ({"patient_tumor": 123}, "patient_tumor must be a string or None"),
+            ({"plate": 123}, "plate must be a string or None"),
+            ({"well": 123}, "well must be a string or None"),
+            ({"field": 1.5}, "field must be an int, str, or None"),
         ],
     )
     def test_config_rejects_invalid_types(
