@@ -438,7 +438,7 @@ def _build_image_set_loader(
     for name, path in labels:
         image_dict[name] = _image_loading(path)
         compartment_names.append(name)
-    patient_tumor, plate, well, field = identifiers
+    patient_tumor, plate, well, field_of_view = identifiers
     image_set_name = build_image_id_from_identifiers(identifiers)
     image_set_loader = ImageSetLoader.from_image_dict(
         image_dict,
@@ -448,7 +448,7 @@ def _build_image_set_loader(
         patient_tumor=patient_tumor,
         plate=plate,
         well=well,
-        field=field,
+        field_of_view=field_of_view,
     )
     channels = [name for name, _ in images]
     return image_set_loader, channels, compartment_names
@@ -458,8 +458,8 @@ def build_image_id_from_identifiers(
     identifiers: tuple[str, str, str, str],
 ) -> str:
     """Build the deterministic image set name from identifier fields."""
-    patient_tumor, plate, well, field = identifiers
-    return build_image_id(patient_tumor, plate, well, field)
+    patient_tumor, plate, well, field_of_view = identifiers
+    return build_image_id(patient_tumor, plate, well, field_of_view)
 
 
 def run(  # noqa: PLR0913, PLR0917
@@ -484,7 +484,7 @@ def run(  # noqa: PLR0913, PLR0917
     anisotropy_spacing : tuple[float, float, float]
         (z, y, x) spacing.
     identifiers : tuple[str, str, str, str]
-        (patient_tumor, plate, well, field) imaging coordinates.
+        (patient_tumor, plate, well, field_of_view) imaging coordinates.
     out_dir : Path
         Shard output directory.
     feature_specs : list[dict[str, object]] | None
@@ -589,7 +589,7 @@ def _build_parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--plate", required=True, help="Plate identifier.")
     run_parser.add_argument("--well", required=True, help="Well identifier.")
     run_parser.add_argument(
-        "--field",
+        "--fov",
         required=True,
         help="Field-of-view index or identifier.",
     )
@@ -654,7 +654,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         args.patient_tumor,
         args.plate,
         args.well,
-        args.field,
+        args.fov,
     )
     run(
         images=images,

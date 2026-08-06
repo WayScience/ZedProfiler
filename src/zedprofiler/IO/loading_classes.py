@@ -51,7 +51,7 @@ class ImageSetConfig:
     patient_tumor: str | None = None
     plate: str | None = None
     well: str | None = None
-    field: int | str | None = None
+    field_of_view: int | str | None = None
 
     # validate the arg types
     def __post_init__(self) -> None:
@@ -68,8 +68,8 @@ class ImageSetConfig:
             raise TypeError("plate must be a string or None")
         if not isinstance(self.well, (str, type(None))):
             raise TypeError("well must be a string or None")
-        if not isinstance(self.field, (int, str, type(None))):
-            raise TypeError("field must be an int, str, or None")
+        if not isinstance(self.field_of_view, (int, str, type(None))):
+            raise TypeError("field_of_view must be an int, str, or None")
 
         if self.label_key_name is None:
             self.label_key_name = []
@@ -88,13 +88,13 @@ class ImageSetConfig:
             self.patient_tumor is not None
             and self.plate is not None
             and self.well is not None
-            and self.field is not None
+            and self.field_of_view is not None
         ):
             return build_image_id(
                 patient_tumor=self.patient_tumor,
                 plate=self.plate,
                 well=self.well,
-                field=self.field,
+                field_of_view=self.field_of_view,
             )
         return None
 
@@ -253,7 +253,7 @@ class ImageSetLoader:
         patient_tumor: str | None = None,
         plate: str | None = None,
         well: str | None = None,
-        field: int | str | None = None,
+        field_of_view: int | str | None = None,
     ) -> ImageSetLoader:
         """Build an ImageSetLoader from an in-memory channel/label dict.
 
@@ -277,7 +277,7 @@ class ImageSetLoader:
             Keys in ``image_dict`` that are compartment labels (not channels).
             Used by ``get_compartments`` to distinguish compartments from
             raw channels.
-        patient_tumor, plate, well, field : optional
+        patient_tumor, plate, well, field_of_view : optional
             Imaging-coordinate identifier fields. When all four are set, the
             loader's ``image_id`` is the deterministic
             ``Metadata_Imaging_ImageID``; otherwise it falls back to
@@ -310,7 +310,7 @@ class ImageSetLoader:
             patient_tumor=patient_tumor,
             plate=plate,
             well=well,
-            field=field,
+            field_of_view=field_of_view,
         )
         self.image_id = (
             config.image_id if config.image_id is not None else config.image_set_name

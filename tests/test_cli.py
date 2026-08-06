@@ -59,8 +59,8 @@ LABEL1 = (
 EXPECTED_OBJECT_COUNT = 5
 EXPECTED_CHANNEL_COUNT = 2
 EXPECTED_TINY_OBJECT_COUNT = 2
-PATIENT_TUMOR, PLATE, WELL, FIELD = "NF0014_T1", "PLATE01", "A1", "1"
-EXPECTED_IMAGE_ID = build_image_id(PATIENT_TUMOR, PLATE, WELL, FIELD)
+PATIENT_TUMOR, PLATE, WELL, FOV = "NF0014_T1", "PLATE01", "A1", "1"
+EXPECTED_IMAGE_ID = build_image_id(PATIENT_TUMOR, PLATE, WELL, FOV)
 
 
 def test_feature_namespace_import() -> None:
@@ -345,7 +345,7 @@ def test_run_returns_empty_when_features_filter_drops_all_requests(
         "--patient-tumor=NF0014_T1",
         "--plate=PLATE01",
         "--well=A1",
-        "--field=1",
+        "--fov=1",
         f"--out-dir={tmp_path}",
         "--feature=Intensity,channel=DNA,compartment=Nuclei",
         "--features=Colocalization",
@@ -392,7 +392,7 @@ def _base_run_args(out_dir: Path, *extra: str) -> list[str]:
         f"--patient-tumor={PATIENT_TUMOR}",
         f"--plate={PLATE}",
         f"--well={WELL}",
-        f"--field={FIELD}",
+        f"--fov={FOV}",
         f"--out-dir={out_dir}",
         *extra,
     ]
@@ -474,7 +474,7 @@ def test_cli_skip_existing_skips_recompute(tmp_path: Path) -> None:
                 f"--patient-tumor={PATIENT_TUMOR}",
                 f"--plate={PLATE}",
                 f"--well={WELL}",
-                f"--field={FIELD}",
+                f"--fov={FOV}",
                 f"--out-dir={out_dir}",
                 "--features=Intensity",
                 "--skip-existing",
@@ -504,7 +504,7 @@ def test_cli_colocalization_two_channels(tmp_path: Path) -> None:
                 f"--patient-tumor={PATIENT_TUMOR}",
                 f"--plate={PLATE}",
                 f"--well={WELL}",
-                f"--field={FIELD}",
+                f"--fov={FOV}",
                 f"--out-dir={out_dir}",
                 "--feature=Colocalization,channel1=DNA1,channel2=DNA2,compartment=Nuclei,fast_costes=Faster",
             ],
@@ -532,7 +532,7 @@ def test_cli_missing_required_arg_errors(tmp_path: Path) -> None:
         f"--patient-tumor={PATIENT_TUMOR}",
         f"--plate={PLATE}",
         f"--well={WELL}",
-        f"--field={FIELD}",
+        f"--fov={FOV}",
     ]
     with pytest.raises(SystemExit):
         _run(argv)

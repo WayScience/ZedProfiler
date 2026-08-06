@@ -66,7 +66,7 @@ class TestImageSetConfig:
             ({"patient_tumor": 123}, "patient_tumor must be a string or None"),
             ({"plate": 123}, "plate must be a string or None"),
             ({"well": 123}, "well must be a string or None"),
-            ({"field": 1.5}, "field must be an int, str, or None"),
+            ({"field_of_view": 1.5}, "field_of_view must be an int, str, or None"),
         ],
     )
     def test_config_rejects_invalid_types(
@@ -74,7 +74,7 @@ class TestImageSetConfig:
         kwargs: dict[str, object],
         message: str,
     ) -> None:
-        """ImageSetConfig should validate field types during initialization."""
+        """ImageSetConfig should validate identifier field types."""
         with pytest.raises(TypeError, match=message):
             ImageSetConfig(**kwargs)
 
@@ -400,7 +400,7 @@ class TestImageSetConfigImageId:
                 patient_tumor="NF0014_T1",
                 plate="PLATE01",
                 well="A1",
-                field=None,
+                field_of_view=None,
             ).image_id
             is None
         )
@@ -411,9 +411,9 @@ class TestImageSetConfigImageId:
             patient_tumor="NF0014_T1",
             plate="PLATE01",
             well="A1",
-            field=1,
+            field_of_view=1,
         )
-        assert config.image_id == "NF0014_T1_PLATE01_A1_field1"
+        assert config.image_id == "NF0014_T1_PLATE01_A1_fov1"
 
 
 class TestFromImageDict:
@@ -471,9 +471,9 @@ class TestFromImageDict:
             patient_tumor="NF0014_T1",
             plate="PLATE01",
             well="A1",
-            field=1,
+            field_of_view=1,
         )
-        assert loader.image_id == "NF0014_T1_PLATE01_A1_field1"
+        assert loader.image_id == "NF0014_T1_PLATE01_A1_fov1"
 
     def test_image_id_falls_back_to_image_set_name_without_identifiers(
         self,
@@ -497,7 +497,7 @@ class TestFromImageDict:
             patient_tumor="X",
             plate="P",
             well="A1",
-            field="1",
+            field_of_view="1",
         )
         two = TwoObjectLoader(
             image_set_loader=loader,
@@ -506,4 +506,4 @@ class TestFromImageDict:
             channel2="AGP",
         )
         assert two.object_ids == [ONE_LABEL, TWO_LABEL]
-        assert two.image_set_loader.image_id == "X_P_A1_field1"
+        assert two.image_set_loader.image_id == "X_P_A1_fov1"
