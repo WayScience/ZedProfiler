@@ -51,22 +51,40 @@ _CPU_OR_GPU = "cpu"
 # Minimum number of channels required for colocalization requests.
 _MIN_CHANNELS_FOR_COLOCALIZATION = 2
 
-# Feature types that consume a single channel + compartment via ObjectLoader.
-_SINGLE_CHANNEL_TYPES = (
-    "VolumeSizeShape",
-    "Intensity",
-    "Neighbors",
-    "Texture",
-    "Granularity",
-)
-# Feature types that require two channels via TwoObjectLoader.
-_TWO_CHANNEL_TYPES = ("Colocalization",)
-ALL_FEATURE_TYPES = (*_SINGLE_CHANNEL_TYPES, *_TWO_CHANNEL_TYPES)
+# Each feature type is declared once, with the two independent axes the CLI
+# cares about:
+#   two_channel      - True if the feature reads two channel images via
+#                      TwoObjectLoader; False if it reads one via ObjectLoader.
+#   channel_agnostic - True if the computation ignores the channel pixel data
+#                      (it only uses the compartment mask). Such features are
+#                      still namespaced by a channel for warehouse organization,
+#                      so a channel (for naming only) is still required. These
+#                      are always a subset of the single-channel types: a
+#                      two-channel feature by definition uses its channel
+#                      images, so it cannot be channel-agnostic.
+_FEATURE_SPECS: dict[str, dict[str, bool]] = {
+    "VolumeSizeShape": {"two_channel": False, "channel_agnostic": True},
+    "Intensity": {"two_channel": False, "channel_agnostic": False},
+    "Neighbors": {"two_channel": False, "channel_agnostic": True},
+    "Texture": {"two_channel": False, "channel_agnostic": False},
+    "Granularity": {"two_channel": False, "channel_agnostic": False},
+    "Colocalization": {"two_channel": True, "channel_agnostic": False},
+}
 
-# Channel-agnostic features: their computation does not use the channel image,
-# but like every ZedProfiler feature they are namespaced by a channel for
-# warehouse organization, so a channel (for naming only) is still required.
-_CHANNEL_AGNOSTIC_TYPES = ("VolumeSizeShape", "Neighbors")
+# Loader axis: how many channel images each feature reads.
+_SINGLE_CHANNEL_TYPES = tuple(
+    name for name, spec in _FEATURE_SPECS.items() if not spec["two_channel"]
+)
+_TWO_CHANNEL_TYPES = tuple(
+    name for name, spec in _FEATURE_SPECS.items() if spec["two_channel"]
+)
+ALL_FEATURE_TYPES = tuple(_FEATURE_SPECS)
+
+# Computation axis: features that ignore the channel pixels (a subset of
+# _SINGLE_CHANNEL_TYPES).
+_CHANNEL_AGNOSTIC_TYPES = tuple(
+    name for name, spec in _FEATURE_SPECS.items() if spec["channel_agnostic"]
+)
 
 
 def _parse_name_path(token: str) -> tuple[str, Path]:
