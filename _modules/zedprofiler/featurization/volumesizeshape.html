@@ -357,6 +357,12 @@
 <p class="caption" role="heading"><span class="caption-text">A Note on Scalability</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../scalability.html">ZEDprofiler scalability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../benchmarking.html">Benchmarking and Accuracy Locks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../benchmarking.html#accuracy-locks">Accuracy locks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../benchmarking.html#benchmark-scorecard">Benchmark scorecard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../benchmarking.html#game-loop">Game loop</a></li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -500,6 +506,7 @@
     <span class="n">label_object</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">props</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
     <span class="n">spacing</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate surface area for one labeled object using marching cubes.&quot;&quot;&quot;</span>
     <span class="n">measure</span> <span class="o">=</span> <span class="n">_get_skimage_measure</span><span class="p">()</span>
@@ -509,7 +516,7 @@
         <span class="nb">max</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="s2">&quot;bbox-1&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span> <span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="s2">&quot;bbox-4&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">label_object</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
         <span class="nb">max</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="s2">&quot;bbox-2&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span> <span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="s2">&quot;bbox-5&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">label_object</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
     <span class="p">]</span>
-    <span class="n">volume_truths</span> <span class="o">=</span> <span class="n">volume</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">volume_truths</span> <span class="o">=</span> <span class="n">volume</span> <span class="o">==</span> <span class="n">label</span> <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">volume</span> <span class="o">&gt;</span> <span class="mi">0</span>
     <span class="n">verts</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">_normals</span><span class="p">,</span> <span class="n">_values</span> <span class="o">=</span> <span class="n">measure</span><span class="o">.</span><span class="n">marching_cubes</span><span class="p">(</span>
         <span class="n">volume_truths</span><span class="p">,</span>
         <span class="n">method</span><span class="o">=</span><span class="s2">&quot;lewiner&quot;</span><span class="p">,</span>
@@ -536,6 +543,7 @@
     <span class="n">features_to_record</span> <span class="o">=</span> <span class="n">_empty_feature_result</span><span class="p">()</span>
 
     <span class="n">desired_properties</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;label&quot;</span><span class="p">,</span>
         <span class="s2">&quot;area&quot;</span><span class="p">,</span>  <span class="c1"># for 3D it is volume but skimage uses &quot;area&quot; naming for the property</span>
         <span class="s2">&quot;bbox&quot;</span><span class="p">,</span>
         <span class="s2">&quot;centroid&quot;</span><span class="p">,</span>
@@ -544,20 +552,26 @@
         <span class="s2">&quot;euler_number&quot;</span><span class="p">,</span>
         <span class="s2">&quot;equivalent_diameter&quot;</span><span class="p">,</span>
     <span class="p">]</span>
+    <span class="n">all_props</span> <span class="o">=</span> <span class="n">measure</span><span class="o">.</span><span class="n">regionprops_table</span><span class="p">(</span>
+        <span class="n">label_object</span><span class="p">,</span>
+        <span class="n">properties</span><span class="o">=</span><span class="n">desired_properties</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">label_to_index</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">label</span><span class="p">):</span> <span class="n">index</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">all_props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="p">[]))</span>
+    <span class="p">}</span>
+
     <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">unique_objects</span><span class="p">:</span>
         <span class="c1"># avoid the 0 index which is the background and not an object,</span>
         <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">continue</span>
-        <span class="n">subset_lab_object</span> <span class="o">=</span> <span class="n">label_object</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="c1"># subset here means zeroing out all other objects except the</span>
-        <span class="c1"># one we want to measure, so that we can use</span>
-        <span class="c1"># skimage&#39;s regionprops_table to compute</span>
-        <span class="c1"># features for that object</span>
-        <span class="n">subset_lab_object</span><span class="p">[</span><span class="n">subset_lab_object</span> <span class="o">!=</span> <span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">props</span> <span class="o">=</span> <span class="n">measure</span><span class="o">.</span><span class="n">regionprops_table</span><span class="p">(</span>
-            <span class="n">subset_lab_object</span><span class="p">,</span>
-            <span class="n">properties</span><span class="o">=</span><span class="n">desired_properties</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">props_index</span> <span class="o">=</span> <span class="n">label_to_index</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">props_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">props</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">prop_name</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">prop_values</span><span class="p">[</span><span class="n">props_index</span><span class="p">]])</span>
+            <span class="k">for</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">prop_values</span> <span class="ow">in</span> <span class="n">all_props</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">prop_name</span> <span class="o">!=</span> <span class="s2">&quot;label&quot;</span>
+        <span class="p">}</span>
 
         <span class="n">features_to_record</span><span class="p">[</span><span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
         <span class="n">features_to_record</span><span class="p">[</span><span class="s2">&quot;Volume&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="s2">&quot;area&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
@@ -580,9 +594,10 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">features_to_record</span><span class="p">[</span><span class="s2">&quot;SurfaceArea&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">calculate_surface_area</span><span class="p">(</span>
-                    <span class="n">label_object</span><span class="o">=</span><span class="n">subset_lab_object</span><span class="p">,</span>
+                    <span class="n">label_object</span><span class="o">=</span><span class="n">label_object</span><span class="p">,</span>
                     <span class="n">props</span><span class="o">=</span><span class="n">props</span><span class="p">,</span>
                     <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">label</span><span class="p">),</span>
                 <span class="p">),</span>
             <span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>

@@ -357,6 +357,12 @@
 <p class="caption" role="heading"><span class="caption-text">A Note on Scalability</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../scalability.html">ZEDprofiler scalability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../benchmarking.html">Benchmarking and Accuracy Locks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../benchmarking.html#accuracy-locks">Accuracy locks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../benchmarking.html#benchmark-scorecard">Benchmark scorecard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../benchmarking.html#game-loop">Game loop</a></li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -715,8 +721,15 @@
 
     <span class="k">if</span> <span class="n">nobjects</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="c1"># CellProfiler: self.labels[~im.mask] = 0</span>
-        <span class="n">masked_labels</span> <span class="o">=</span> <span class="n">original_labels</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">masked_labels</span><span class="p">[</span><span class="o">~</span><span class="n">original_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># When the mask covers the whole image (the common unmasked case,</span>
+        <span class="c1"># image_mask=None) no labels get zeroed, so skip the full-array copy</span>
+        <span class="c1"># and reuse original_labels directly. scipy.ndimage.mean does not</span>
+        <span class="c1"># mutate its label input, so this is safe.</span>
+        <span class="k">if</span> <span class="n">original_mask</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">masked_labels</span> <span class="o">=</span> <span class="n">original_labels</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">masked_labels</span> <span class="o">=</span> <span class="n">original_labels</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">masked_labels</span><span class="p">[</span><span class="o">~</span><span class="n">original_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">masked_labels</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
             <span class="n">per_object_current_mean</span> <span class="o">=</span> <span class="n">_fix_scipy_ndimage_result</span><span class="p">(</span>
@@ -736,7 +749,17 @@
     <span class="c1"># CellProfiler computes startmean AFTER background subtraction but</span>
     <span class="c1"># BEFORE zeroing pixels outside mask (zeroing is implicit via indexing).</span>
     <span class="c1"># ------------------------------------------------------------------</span>
-    <span class="n">startmean</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">pixels</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span> <span class="k">if</span> <span class="n">mask</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="c1"># Whether the (possibly subsampled) mask covers the whole image. In the</span>
+    <span class="c1"># common unmasked case (image_mask=None) this is True, and several per-scale</span>
+    <span class="c1"># operations below become no-ops or can avoid full-array copies: the masked</span>
+    <span class="c1"># erosion zeroing, the rec[pixels[mask]] mean, and the startmean mean. Compute</span>
+    <span class="c1"># it once here instead of re-evaluating mask.any()/mask.all() each scale.</span>
+    <span class="n">mask_all_true</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+    <span class="n">startmean</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">pixels</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">mask_all_true</span>
+        <span class="k">else</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">pixels</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span> <span class="k">if</span> <span class="n">mask</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="k">else</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="p">)</span>
     <span class="n">ero</span> <span class="o">=</span> <span class="n">pixels</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="c1"># Mask the test image so masked pixels have no effect during reconstruction</span>
     <span class="n">ero</span><span class="p">[</span><span class="o">~</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -752,19 +775,49 @@
             <span class="sa">f</span><span class="s2">&quot;Spectrum length: </span><span class="si">{</span><span class="n">granular_spectrum_length</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
+    <span class="c1"># Precompute the upsample coordinate grids once before the spectrum loop.</span>
+    <span class="c1"># They depend only on the fixed subsampled/original shapes (not on the</span>
+    <span class="c1"># per-scale ``rec``), so rebuilding three full-resolution float arrays via</span>
+    <span class="c1"># ``numpy.mgrid`` on every scale (as ``_upsample_3d`` does internally) is</span>
+    <span class="c1"># wasted work. Reuse the same coordinate tuple for every</span>
+    <span class="c1"># ``map_coordinates`` call below. Only needed when subsampling is active</span>
+    <span class="c1"># and there are objects to measure.</span>
+    <span class="n">upsample_coords</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">subsample_size</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="ow">and</span> <span class="n">nobjects</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span>
+            <span class="mi">0</span> <span class="p">:</span> <span class="n">original_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="mi">0</span> <span class="p">:</span> <span class="n">original_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="mi">0</span> <span class="p">:</span> <span class="n">original_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">original_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">k</span> <span class="o">*=</span> <span class="nb">float</span><span class="p">(</span><span class="n">new_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">original_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">original_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">*=</span> <span class="nb">float</span><span class="p">(</span><span class="n">new_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">original_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">original_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">j</span> <span class="o">*=</span> <span class="nb">float</span><span class="p">(</span><span class="n">new_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">original_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">upsample_coords</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+
     <span class="k">for</span> <span class="n">scale</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">granular_spectrum_length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
         <span class="n">prevmean</span> <span class="o">=</span> <span class="n">currentmean</span>
 
-        <span class="c1"># Masked erosion</span>
-        <span class="n">ero_masked</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">ero</span><span class="p">)</span>
-        <span class="n">ero_masked</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">ero</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
-        <span class="n">ero</span> <span class="o">=</span> <span class="n">skimage</span><span class="o">.</span><span class="n">morphology</span><span class="o">.</span><span class="n">erosion</span><span class="p">(</span><span class="n">ero_masked</span><span class="p">,</span> <span class="n">footprint</span><span class="o">=</span><span class="n">footprint</span><span class="p">)</span>
+        <span class="c1"># Masked erosion: zero pixels outside the mask before eroding. When the</span>
+        <span class="c1"># mask is all-True this is a no-op (ero is already zeroed at ~mask from</span>
+        <span class="c1"># the prior iteration), so skip the full-array ``numpy.where`` copy and</span>
+        <span class="c1"># erode ero directly.</span>
+        <span class="n">ero_marker</span> <span class="o">=</span> <span class="n">ero</span> <span class="k">if</span> <span class="n">mask_all_true</span> <span class="k">else</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">ero</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">ero</span> <span class="o">=</span> <span class="n">skimage</span><span class="o">.</span><span class="n">morphology</span><span class="o">.</span><span class="n">erosion</span><span class="p">(</span><span class="n">ero_marker</span><span class="p">,</span> <span class="n">footprint</span><span class="o">=</span><span class="n">footprint</span><span class="p">)</span>
 
         <span class="c1"># Reconstruction</span>
         <span class="n">rec</span> <span class="o">=</span> <span class="n">skimage</span><span class="o">.</span><span class="n">morphology</span><span class="o">.</span><span class="n">reconstruction</span><span class="p">(</span><span class="n">ero</span><span class="p">,</span> <span class="n">pixels</span><span class="p">,</span> <span class="n">footprint</span><span class="o">=</span><span class="n">footprint</span><span class="p">)</span>
 
-        <span class="c1"># Image-level granularity</span>
-        <span class="n">currentmean</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span> <span class="k">if</span> <span class="n">mask</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="c1"># Image-level granularity. When the mask is all-True, rec[mask] is all</span>
+        <span class="c1"># of rec, so rec.mean() avoids the boolean-index copy that rec[mask]</span>
+        <span class="c1"># would perform.</span>
+        <span class="n">currentmean</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">rec</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">mask_all_true</span>
+            <span class="k">else</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span> <span class="k">if</span> <span class="n">mask</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="k">else</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">gs</span> <span class="o">=</span> <span class="p">(</span><span class="n">prevmean</span> <span class="o">-</span> <span class="n">currentmean</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">/</span> <span class="n">startmean</span> <span class="k">if</span> <span class="n">startmean</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
 
         <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="n">scale</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -775,11 +828,11 @@
         <span class="c1"># then compute per-label means using masked_labels.</span>
         <span class="c1"># ----------------------------------------------------------</span>
         <span class="k">if</span> <span class="n">nobjects</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">subsample_size</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
-                <span class="n">rec_full</span> <span class="o">=</span> <span class="n">_upsample_3d</span><span class="p">(</span>
+            <span class="k">if</span> <span class="n">upsample_coords</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">rec_full</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">map_coordinates</span><span class="p">(</span>
                     <span class="n">rec</span><span class="p">,</span>
-                    <span class="n">subsampled_shape</span><span class="o">=</span><span class="n">new_shape</span><span class="p">,</span>
-                    <span class="n">original_shape</span><span class="o">=</span><span class="n">original_shape</span><span class="p">,</span>
+                    <span class="n">upsample_coords</span><span class="p">,</span>
+                    <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">rec_full</span> <span class="o">=</span> <span class="n">rec</span>

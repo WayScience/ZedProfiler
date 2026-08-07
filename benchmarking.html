@@ -3,9 +3,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Python Module Index &mdash; ZEDprofiler  documentation</title>
+  <title>Benchmarking and Accuracy Locks &mdash; ZEDprofiler  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
@@ -20,9 +21,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
- 
-
-
+    <link rel="prev" title="ZEDprofiler scalability" href="scalability.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -358,12 +357,12 @@
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">A Note on Scalability</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="scalability.html">ZEDprofiler scalability</a></li>
-<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking and Accuracy Locks</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#accuracy-locks">Accuracy locks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#benchmark-scorecard">Benchmark scorecard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#game-loop">Game loop</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Benchmarking and Accuracy Locks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#accuracy-locks">Accuracy locks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#benchmark-scorecard">Benchmark scorecard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#game-loop">Game loop</a></li>
 </ul>
 </li>
 </ul>
@@ -382,8 +381,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Python Module Index</li>
+      <li class="breadcrumb-item active">Benchmarking and Accuracy Locks</li>
       <li class="wy-breadcrumbs-aside">
+            <a href="_sources/benchmarking.md.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -391,84 +391,64 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-
-   <h1>Python Module Index</h1>
-
-   <div class="modindex-jumpbox">
-   <a href="#cap-z"><strong>z</strong></a>
-   </div>
-
-   <table class="indextable modindextable">
-     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
-     <tr class="cap" id="cap-z"><td></td><td>
-       <strong>z</strong></td><td></td></tr>
-     <tr>
-       <td><img src="_static/minus.png" class="toggler"
-              id="toggle-1" style="display: none" alt="-" /></td>
-       <td>
-       <code class="xref">zedprofiler</code></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="api.html#module-zedprofiler.contracts"><code class="xref">zedprofiler.contracts</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="api.html#module-zedprofiler.exceptions"><code class="xref">zedprofiler.exceptions</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="api.html#module-zedprofiler.featurization.colocalization"><code class="xref">zedprofiler.featurization.colocalization</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="api.html#module-zedprofiler.featurization.granularity"><code class="xref">zedprofiler.featurization.granularity</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="api.html#module-zedprofiler.featurization.intensity"><code class="xref">zedprofiler.featurization.intensity</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="api.html#module-zedprofiler.featurization.neighbors"><code class="xref">zedprofiler.featurization.neighbors</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="api.html#module-zedprofiler.featurization.texture"><code class="xref">zedprofiler.featurization.texture</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="api.html#module-zedprofiler.featurization.volumesizeshape"><code class="xref">zedprofiler.featurization.volumesizeshape</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="api.html#module-zedprofiler.image_utils.image_utils"><code class="xref">zedprofiler.image_utils.image_utils</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="api.html#module-zedprofiler.IO.feature_writing_utils"><code class="xref">zedprofiler.IO.feature_writing_utils</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="api.html#module-zedprofiler.IO.loading_classes"><code class="xref">zedprofiler.IO.loading_classes</code></a></td><td>
-       <em></em></td></tr>
-   </table>
+  <section id="benchmarking-and-accuracy-locks">
+<h1>Benchmarking and Accuracy Locks<a class="headerlink" href="#benchmarking-and-accuracy-locks" title="Link to this heading"></a></h1>
+<p>ZEDprofiler performance work should be treated as a score-improvement loop:
+make one optimization, keep the same feature outputs, then compare the scorecard.</p>
+<p>The test suite now has two layers for this.</p>
+<section id="accuracy-locks">
+<h2>Accuracy locks<a class="headerlink" href="#accuracy-locks" title="Link to this heading"></a></h2>
+<p>Accuracy locks run with normal pytest:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>tests/test_benchmark_contracts.py
+</pre></div>
+</div>
+<p>These tests run deterministic synthetic image-set cases across the major feature families and compare each output dataframe to a current-result fingerprint.
+If an optimization changes a feature value, column name, row identity, or missing-value pattern, the fingerprint changes and the test fails.</p>
+<p>Only update these fingerprints when the project intentionally changes the
+scientific result contract.</p>
+</section>
+<section id="benchmark-scorecard">
+<h2>Benchmark scorecard<a class="headerlink" href="#benchmark-scorecard" title="Link to this heading"></a></h2>
+<p>The benchmark scorecard is opt-in:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>tests/test_benchmark_contracts.py<span class="w"> </span>--run-benchmarks<span class="w"> </span>-s
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">ZEDPROFILER_RUN_BENCHMARKS</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>tests/test_benchmark_contracts.py<span class="w"> </span>-s
+</pre></div>
+</div>
+<p>The scorecard prints elapsed seconds, row count, column count, and the same
+result fingerprint for each feature family. It includes the small accuracy-lock
+level, a larger many-object synthetic scaling level, and a representative
+real-world data level from checked-in tutorial image data. Timing is
+intentionally not a hard gate yet because local machines and shared compute
+environments vary. Use the scorecard to compare before and after runs on the
+same environment.</p>
+</section>
+<section id="game-loop">
+<h2>Game loop<a class="headerlink" href="#game-loop" title="Link to this heading"></a></h2>
+<p>Use this loop for each performance pass:</p>
+<ol class="arabic simple">
+<li><p>Run the accuracy locks.</p></li>
+<li><p>Run the benchmark scorecard and keep the printed output.</p></li>
+<li><p>Optimize one hotspot.</p></li>
+<li><p>Re-run the accuracy locks.</p></li>
+<li><p>Re-run the benchmark scorecard in the same environment.</p></li>
+<li><p>Keep the optimization only when fingerprints stay fixed and scorecard timing
+improves enough to matter.</p></li>
+</ol>
+<p>For larger-scale runs, pair this with workflow-level characterization. Local
+scorecards explain feature-kernel cost, while workflow traces explain scheduling,
+batching, queue, and filesystem behavior.</p>
+</section>
+</section>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scalability.html" class="btn btn-neutral float-left" title="ZEDprofiler scalability" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
   <hr/>
 

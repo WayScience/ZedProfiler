@@ -357,6 +357,12 @@
 <p class="caption" role="heading"><span class="caption-text">A Note on Scalability</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../scalability.html">ZEDprofiler scalability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../benchmarking.html">Benchmarking and Accuracy Locks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../benchmarking.html#accuracy-locks">Accuracy locks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../benchmarking.html#benchmark-scorecard">Benchmark scorecard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../benchmarking.html#game-loop">Game loop</a></li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -394,6 +400,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">scipy.ndimage</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">skimage.measure</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">skimage.segmentation</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">zedprofiler.contracts</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_column_name_schema</span>
@@ -426,7 +433,7 @@
 
 <div class="viewcode-block" id="compute_intensity">
 <a class="viewcode-back" href="../../../api.html#zedprofiler.featurization.intensity.compute_intensity">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">compute_intensity</span><span class="p">(</span>  <span class="c1"># noqa: PLR0915</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_intensity</span><span class="p">(</span>  <span class="c1"># noqa: C901, PLR0915</span>
     <span class="n">object_loader</span><span class="p">:</span> <span class="n">ObjectLoader</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Measure the intensity of objects in a 3D image.</span>
@@ -456,58 +463,82 @@
         <span class="s2">&quot;compartment&quot;</span><span class="p">:</span> <span class="p">[],</span>
         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[],</span>
     <span class="p">}</span>
-    <span class="c1"># loop through each object and calculate measurements</span>
-    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
-        <span class="n">selected_label_object</span> <span class="o">=</span> <span class="n">label_object</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">selected_image_object</span> <span class="o">=</span> <span class="n">image_object</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-        <span class="n">selected_label_object</span><span class="p">[</span><span class="n">selected_label_object</span> <span class="o">!=</span> <span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">selected_label_object</span><span class="p">[</span><span class="n">selected_label_object</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="mi">1</span>  <span class="c1"># binarize the label for volume calcs</span>
+    <span class="n">props</span> <span class="o">=</span> <span class="n">skimage</span><span class="o">.</span><span class="n">measure</span><span class="o">.</span><span class="n">regionprops_table</span><span class="p">(</span>
+        <span class="n">label_object</span><span class="p">,</span>
+        <span class="n">properties</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;bbox&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">label_to_bbox</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">label</span><span class="p">):</span> <span class="p">(</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="s2">&quot;bbox-0&quot;</span><span class="p">][</span><span class="n">index</span><span class="p">]),</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="s2">&quot;bbox-1&quot;</span><span class="p">][</span><span class="n">index</span><span class="p">]),</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="s2">&quot;bbox-2&quot;</span><span class="p">][</span><span class="n">index</span><span class="p">]),</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="s2">&quot;bbox-3&quot;</span><span class="p">][</span><span class="n">index</span><span class="p">]),</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="s2">&quot;bbox-4&quot;</span><span class="p">][</span><span class="n">index</span><span class="p">]),</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="s2">&quot;bbox-5&quot;</span><span class="p">][</span><span class="n">index</span><span class="p">]),</span>
         <span class="p">)</span>
-        <span class="n">selected_image_object</span><span class="p">[</span><span class="n">selected_label_object</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">non_zero_pixels_object</span> <span class="o">=</span> <span class="n">selected_image_object</span><span class="p">[</span><span class="n">selected_image_object</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="p">[]))</span>
+    <span class="p">}</span>
+
+    <span class="c1"># loop through each object and calculate measurements</span>
+    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+        <span class="n">bbox</span> <span class="o">=</span> <span class="n">label_to_bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">bbox</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">bbox_min_z</span><span class="p">,</span> <span class="n">bbox_min_y</span><span class="p">,</span> <span class="n">bbox_min_x</span><span class="p">,</span> <span class="n">bbox_max_z</span><span class="p">,</span> <span class="n">bbox_max_y</span><span class="p">,</span> <span class="n">bbox_max_x</span> <span class="o">=</span> <span class="n">bbox</span>
+        <span class="c1"># regionprops bbox max coords are exclusive (half-open [min, max)),</span>
+        <span class="c1"># so the slices below need no +1. (The old code computed the bbox with</span>
+        <span class="c1"># numpy.max, which is an inclusive last index and required +1; the two</span>
+        <span class="c1"># produce the identical cropped region.)</span>
+        <span class="n">cropped_label_values</span> <span class="o">=</span> <span class="n">label_object</span><span class="p">[</span>
+            <span class="n">bbox_min_z</span><span class="p">:</span><span class="n">bbox_max_z</span><span class="p">,</span>
+            <span class="n">bbox_min_y</span><span class="p">:</span><span class="n">bbox_max_y</span><span class="p">,</span>
+            <span class="n">bbox_min_x</span><span class="p">:</span><span class="n">bbox_max_x</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">cropped_image_values</span> <span class="o">=</span> <span class="n">image_object</span><span class="p">[</span>
+            <span class="n">bbox_min_z</span><span class="p">:</span><span class="n">bbox_max_z</span><span class="p">,</span>
+            <span class="n">bbox_min_y</span><span class="p">:</span><span class="n">bbox_max_y</span><span class="p">,</span>
+            <span class="n">bbox_min_x</span><span class="p">:</span><span class="n">bbox_max_x</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="c1"># The bbox always bounds at least one voxel of ``label`` because it was</span>
+        <span class="c1"># derived from regionprops for that exact label, so ``object_mask`` is</span>
+        <span class="c1"># never empty here. Kept as a defensive guard; excluded from coverage.</span>
+        <span class="n">object_mask</span> <span class="o">=</span> <span class="n">cropped_label_values</span> <span class="o">==</span> <span class="n">label</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">object_mask</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+            <span class="k">continue</span>  <span class="c1"># pragma: no cover</span>
+
+        <span class="n">object_pixels</span> <span class="o">=</span> <span class="n">cropped_image_values</span><span class="p">[</span><span class="n">object_mask</span><span class="p">]</span>
+        <span class="n">non_zero_pixels_object</span> <span class="o">=</span> <span class="n">object_pixels</span><span class="p">[</span><span class="n">object_pixels</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">non_zero_pixels_object</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">non_zero_pixels_object</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-        <span class="n">mask_outlines</span> <span class="o">=</span> <span class="n">get_outline</span><span class="p">(</span><span class="n">selected_label_object</span><span class="p">)</span>
 
-        <span class="c1"># Extract only coordinates where object exists</span>
-        <span class="n">z_indices</span><span class="p">,</span> <span class="n">y_indices</span><span class="p">,</span> <span class="n">x_indices</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">selected_label_object</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">bbox_min_z</span><span class="p">,</span> <span class="n">bbox_max_z</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">z_indices</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">z_indices</span><span class="p">)</span>
-        <span class="n">bbox_min_y</span><span class="p">,</span> <span class="n">bbox_max_y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">y_indices</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">y_indices</span><span class="p">)</span>
-        <span class="n">bbox_min_x</span><span class="p">,</span> <span class="n">bbox_max_x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x_indices</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x_indices</span><span class="p">)</span>
+        <span class="n">cropped_label</span> <span class="o">=</span> <span class="n">object_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        <span class="n">cropped_image</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">object_mask</span><span class="p">,</span> <span class="n">cropped_image_values</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
-        <span class="c1"># Crop to bounding box for efficiency</span>
-        <span class="n">cropped_label</span> <span class="o">=</span> <span class="n">selected_label_object</span><span class="p">[</span>
-            <span class="n">bbox_min_z</span> <span class="p">:</span> <span class="n">bbox_max_z</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="n">bbox_min_y</span> <span class="p">:</span> <span class="n">bbox_max_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="n">bbox_min_x</span> <span class="p">:</span> <span class="n">bbox_max_x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="p">]</span>
-        <span class="n">cropped_image</span> <span class="o">=</span> <span class="n">selected_image_object</span><span class="p">[</span>
-            <span class="n">bbox_min_z</span> <span class="p">:</span> <span class="n">bbox_max_z</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="n">bbox_min_y</span> <span class="p">:</span> <span class="n">bbox_max_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="n">bbox_min_x</span> <span class="p">:</span> <span class="n">bbox_max_x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="p">]</span>
+        <span class="n">padded_label</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">cropped_label</span><span class="p">,</span> <span class="n">pad_width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">)</span>
+        <span class="n">mask_outlines</span> <span class="o">=</span> <span class="n">get_outline</span><span class="p">(</span><span class="n">padded_label</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="c1"># Create coordinate grids for the bounding box</span>
+        <span class="c1"># Create coordinate grids for the bounding box. Same exclusive</span>
+        <span class="c1"># bbox convention as the crops above: regionprops max coords are</span>
+        <span class="c1"># half-open [min, max), so no +1 is needed here either.</span>
         <span class="n">mesh_z</span><span class="p">,</span> <span class="n">mesh_y</span><span class="p">,</span> <span class="n">mesh_x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span>
-            <span class="n">bbox_min_z</span> <span class="p">:</span> <span class="n">bbox_max_z</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># + 1 to include the max index</span>
-            <span class="n">bbox_min_y</span> <span class="p">:</span> <span class="n">bbox_max_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="n">bbox_min_x</span> <span class="p">:</span> <span class="n">bbox_max_x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">bbox_min_z</span><span class="p">:</span><span class="n">bbox_max_z</span><span class="p">,</span>
+            <span class="n">bbox_min_y</span><span class="p">:</span><span class="n">bbox_max_y</span><span class="p">,</span>
+            <span class="n">bbox_min_x</span><span class="p">:</span><span class="n">bbox_max_x</span><span class="p">,</span>
         <span class="p">]</span>
 
         <span class="c1"># calculate the integrated intensity</span>
-        <span class="n">integrated_intensity</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
-            <span class="n">selected_image_object</span><span class="p">,</span>
-            <span class="n">selected_label_object</span><span class="p">,</span>
-            <span class="n">index</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">integrated_intensity</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">object_pixels</span><span class="p">)</span>
         <span class="c1"># calculate the volume</span>
-        <span class="n">volume</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">selected_label_object</span><span class="p">)</span>
+        <span class="n">volume</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">object_mask</span><span class="p">)</span>
 
-        <span class="c1"># Skip if volume is zero to avoid division by zero</span>
-        <span class="k">if</span> <span class="n">volume</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">continue</span>
+        <span class="c1"># Skip if volume is zero to avoid division by zero. Unreachable in</span>
+        <span class="c1"># practice because ``object_mask`` (label voxels within the bbox)</span>
+        <span class="c1"># always has at least one True voxel — the bbox is derived from</span>
+        <span class="c1"># regionprops for this exact label. Kept as a defensive guard;</span>
+        <span class="c1"># excluded from coverage.</span>
+        <span class="k">if</span> <span class="n">volume</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+            <span class="k">continue</span>  <span class="c1"># pragma: no cover</span>
 
         <span class="c1"># calculate the mean intensity</span>
         <span class="n">mean_intensity</span> <span class="o">=</span> <span class="n">integrated_intensity</span> <span class="o">/</span> <span class="n">volume</span>
@@ -524,12 +555,15 @@
         <span class="c1"># median intensity</span>
         <span class="n">median_intensity</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">non_zero_pixels_object</span><span class="p">)</span>
         <span class="c1"># location of maximum intensity pixel (z, y, x)</span>
-        <span class="n">max_intensity_z</span><span class="p">,</span> <span class="n">max_intensity_y</span><span class="p">,</span> <span class="n">max_intensity_x</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">maximum_position</span><span class="p">(</span><span class="n">selected_image_object</span><span class="p">)</span>
+        <span class="n">max_position</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span>
+            <span class="n">numpy</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">cropped_image</span><span class="p">),</span>
+            <span class="n">cropped_image</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="n">max_intensity_z</span> <span class="o">=</span> <span class="n">bbox_min_z</span> <span class="o">+</span> <span class="n">max_position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">max_intensity_y</span> <span class="o">=</span> <span class="n">bbox_min_y</span> <span class="o">+</span> <span class="n">max_position</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">max_intensity_x</span> <span class="o">=</span> <span class="n">bbox_min_x</span> <span class="o">+</span> <span class="n">max_position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
         <span class="c1"># Calculate center of mass (geometric center) using cropped arrays</span>
-        <span class="n">object_mask</span> <span class="o">=</span> <span class="n">cropped_label</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="n">cm_x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mesh_x</span><span class="p">[</span><span class="n">object_mask</span><span class="p">])</span>
         <span class="n">cm_y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mesh_y</span><span class="p">[</span><span class="n">object_mask</span><span class="p">])</span>
         <span class="n">cm_z</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mesh_z</span><span class="p">[</span><span class="n">object_mask</span><span class="p">])</span>
@@ -560,11 +594,12 @@
         <span class="c1"># mean absolute deviation</span>
         <span class="n">mad_intensity</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">non_zero_pixels_object</span> <span class="o">-</span> <span class="n">mean_intensity</span><span class="p">))</span>
         <span class="n">edge_count</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask_outlines</span><span class="p">)</span>
-        <span class="n">integrated_intensity_edge</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">selected_image_object</span><span class="p">[</span><span class="n">mask_outlines</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">edge_pixels</span> <span class="o">=</span> <span class="n">cropped_image</span><span class="p">[</span><span class="n">mask_outlines</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">integrated_intensity_edge</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">edge_pixels</span><span class="p">)</span>
         <span class="n">mean_intensity_edge</span> <span class="o">=</span> <span class="n">integrated_intensity_edge</span> <span class="o">/</span> <span class="n">edge_count</span>
-        <span class="n">std_intensity_edge</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">selected_image_object</span><span class="p">[</span><span class="n">mask_outlines</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
-        <span class="n">min_intensity_edge</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">selected_image_object</span><span class="p">[</span><span class="n">mask_outlines</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
-        <span class="n">max_intensity_edge</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">selected_image_object</span><span class="p">[</span><span class="n">mask_outlines</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">std_intensity_edge</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">edge_pixels</span><span class="p">)</span>
+        <span class="n">min_intensity_edge</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">edge_pixels</span><span class="p">)</span>
+        <span class="n">max_intensity_edge</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">edge_pixels</span><span class="p">)</span>
         <span class="n">measurements_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;IntegratedIntensity&quot;</span><span class="p">:</span> <span class="n">integrated_intensity</span><span class="p">,</span>
             <span class="s2">&quot;MeanIntensity&quot;</span><span class="p">:</span> <span class="n">mean_intensity</span><span class="p">,</span>

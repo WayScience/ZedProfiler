@@ -357,6 +357,12 @@
 <p class="caption" role="heading"><span class="caption-text">A Note on Scalability</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../scalability.html">ZEDprofiler scalability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../benchmarking.html">Benchmarking and Accuracy Locks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../benchmarking.html#accuracy-locks">Accuracy locks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../benchmarking.html#benchmark-scorecard">Benchmark scorecard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../benchmarking.html#game-loop">Game loop</a></li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -516,24 +522,35 @@
         <span class="s2">&quot;NeighborsCountAdjacent&quot;</span><span class="p">:</span> <span class="p">[],</span>
         <span class="sa">f</span><span class="s2">&quot;NeighborsCountByDistance-</span><span class="si">{</span><span class="n">distance_threshold</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="p">[],</span>
     <span class="p">}</span>
-    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
-        <span class="n">props_label</span> <span class="o">=</span> <span class="n">skimage</span><span class="o">.</span><span class="n">measure</span><span class="o">.</span><span class="n">regionprops_table</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">label_object</span> <span class="o">==</span> <span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span>
-            <span class="n">properties</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;bbox&quot;</span><span class="p">],</span>
+    <span class="n">props</span> <span class="o">=</span> <span class="n">skimage</span><span class="o">.</span><span class="n">measure</span><span class="o">.</span><span class="n">regionprops_table</span><span class="p">(</span>
+        <span class="n">label_object</span><span class="p">,</span>
+        <span class="n">properties</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;bbox&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">label_to_bbox</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">label</span><span class="p">):</span> <span class="p">(</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="s2">&quot;bbox-0&quot;</span><span class="p">][</span><span class="n">index</span><span class="p">]),</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="s2">&quot;bbox-1&quot;</span><span class="p">][</span><span class="n">index</span><span class="p">]),</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="s2">&quot;bbox-2&quot;</span><span class="p">][</span><span class="n">index</span><span class="p">]),</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="s2">&quot;bbox-3&quot;</span><span class="p">][</span><span class="n">index</span><span class="p">]),</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="s2">&quot;bbox-4&quot;</span><span class="p">][</span><span class="n">index</span><span class="p">]),</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="s2">&quot;bbox-5&quot;</span><span class="p">][</span><span class="n">index</span><span class="p">]),</span>
         <span class="p">)</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="p">[]))</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+        <span class="n">bbox_label</span> <span class="o">=</span> <span class="n">label_to_bbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">bbox_label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">continue</span>
         <span class="c1"># get the number of neighbors for each object</span>
         <span class="n">distance_x_y</span> <span class="o">=</span> <span class="n">distance_threshold</span>
         <span class="n">distance_z</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">distance_threshold</span> <span class="o">/</span> <span class="n">anisotropy_factor</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
         <span class="c1"># find how many other indexes are within a specified distance of the object</span>
         <span class="c1"># first expand the mask image by a specified distance</span>
-        <span class="n">z_min</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">z_max</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">props_label</span><span class="p">[</span><span class="s2">&quot;bbox-0&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-            <span class="n">props_label</span><span class="p">[</span><span class="s2">&quot;bbox-1&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-            <span class="n">props_label</span><span class="p">[</span><span class="s2">&quot;bbox-2&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-            <span class="n">props_label</span><span class="p">[</span><span class="s2">&quot;bbox-3&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-            <span class="n">props_label</span><span class="p">[</span><span class="s2">&quot;bbox-4&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-            <span class="n">props_label</span><span class="p">[</span><span class="s2">&quot;bbox-5&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="p">)</span>
+        <span class="c1"># regionprops bbox returns all min coords first then all max coords,</span>
+        <span class="c1"># in axis order (z, y, x): bbox-0/1/2 = min_z/y/x, bbox-3/4/5 =</span>
+        <span class="c1"># max_z/y/x. So this unpacks to each dimension&#39;s own min and max,</span>
+        <span class="c1"># all sourced from this label&#39;s bounding box.</span>
+        <span class="n">z_min</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">z_max</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">=</span> <span class="n">bbox_label</span>
         <span class="n">new_z_min</span><span class="p">,</span> <span class="n">new_z_max</span> <span class="o">=</span> <span class="n">neighbors_expand_box</span><span class="p">(</span>
             <span class="n">min_coor</span><span class="o">=</span><span class="n">image_global_min_coord_z</span><span class="p">,</span>
             <span class="n">max_coord</span><span class="o">=</span><span class="n">image_global_max_coord_z</span><span class="p">,</span>
@@ -557,9 +574,40 @@
         <span class="p">)</span>
         <span class="n">bbox</span> <span class="o">=</span> <span class="p">(</span><span class="n">new_z_min</span><span class="p">,</span> <span class="n">new_y_min</span><span class="p">,</span> <span class="n">new_x_min</span><span class="p">,</span> <span class="n">new_z_max</span><span class="p">,</span> <span class="n">new_y_max</span><span class="p">,</span> <span class="n">new_x_max</span><span class="p">)</span>
         <span class="n">croppped_neighbor_image</span> <span class="o">=</span> <span class="n">crop_3D_image</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">label_object</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="n">bbox</span><span class="p">)</span>
-        <span class="n">binary_mask</span> <span class="o">=</span> <span class="n">label_object</span> <span class="o">==</span> <span class="n">label</span>
+
+        <span class="n">adjacent_z_min</span><span class="p">,</span> <span class="n">adjacent_z_max</span> <span class="o">=</span> <span class="n">neighbors_expand_box</span><span class="p">(</span>
+            <span class="n">min_coor</span><span class="o">=</span><span class="n">image_global_min_coord_z</span><span class="p">,</span>
+            <span class="n">max_coord</span><span class="o">=</span><span class="n">image_global_max_coord_z</span><span class="p">,</span>
+            <span class="n">current_min</span><span class="o">=</span><span class="n">z_min</span><span class="p">,</span>
+            <span class="n">current_max</span><span class="o">=</span><span class="n">z_max</span><span class="p">,</span>
+            <span class="n">expand_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">adjacent_y_min</span><span class="p">,</span> <span class="n">adjacent_y_max</span> <span class="o">=</span> <span class="n">neighbors_expand_box</span><span class="p">(</span>
+            <span class="n">min_coor</span><span class="o">=</span><span class="n">image_global_min_coord_y</span><span class="p">,</span>
+            <span class="n">max_coord</span><span class="o">=</span><span class="n">image_global_max_coord_y</span><span class="p">,</span>
+            <span class="n">current_min</span><span class="o">=</span><span class="n">y_min</span><span class="p">,</span>
+            <span class="n">current_max</span><span class="o">=</span><span class="n">y_max</span><span class="p">,</span>
+            <span class="n">expand_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">adjacent_x_min</span><span class="p">,</span> <span class="n">adjacent_x_max</span> <span class="o">=</span> <span class="n">neighbors_expand_box</span><span class="p">(</span>
+            <span class="n">min_coor</span><span class="o">=</span><span class="n">image_global_min_coord_x</span><span class="p">,</span>
+            <span class="n">max_coord</span><span class="o">=</span><span class="n">image_global_max_coord_x</span><span class="p">,</span>
+            <span class="n">current_min</span><span class="o">=</span><span class="n">x_min</span><span class="p">,</span>
+            <span class="n">current_max</span><span class="o">=</span><span class="n">x_max</span><span class="p">,</span>
+            <span class="n">expand_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">adjacent_bbox</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">adjacent_z_min</span><span class="p">,</span>
+            <span class="n">adjacent_y_min</span><span class="p">,</span>
+            <span class="n">adjacent_x_min</span><span class="p">,</span>
+            <span class="n">adjacent_z_max</span><span class="p">,</span>
+            <span class="n">adjacent_y_max</span><span class="p">,</span>
+            <span class="n">adjacent_x_max</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">adjacent_label_crop</span> <span class="o">=</span> <span class="n">crop_3D_image</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">label_object</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="n">adjacent_bbox</span><span class="p">)</span>
+        <span class="n">binary_mask</span> <span class="o">=</span> <span class="n">adjacent_label_crop</span> <span class="o">==</span> <span class="n">label</span>
         <span class="n">dilated_mask</span> <span class="o">=</span> <span class="n">skimage</span><span class="o">.</span><span class="n">morphology</span><span class="o">.</span><span class="n">dilation</span><span class="p">(</span><span class="n">binary_mask</span><span class="p">)</span>
-        <span class="n">labels_in_dilation</span> <span class="o">=</span> <span class="n">label_object</span><span class="p">[</span><span class="n">dilated_mask</span><span class="p">]</span>
+        <span class="n">labels_in_dilation</span> <span class="o">=</span> <span class="n">adjacent_label_crop</span><span class="p">[</span><span class="n">dilated_mask</span><span class="p">]</span>
         <span class="n">adjacent_labels</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels_in_dilation</span><span class="p">)</span>
         <span class="n">n_neighbors_adjacent</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
             <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">adjacent_labels</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">adjacent_labels</span> <span class="o">!=</span> <span class="n">label</span><span class="p">))</span>

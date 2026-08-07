@@ -49,4 +49,5 @@ api
 :maxdepth: 2
 :caption: A Note on Scalability
 scalability
+benchmarking
 ```

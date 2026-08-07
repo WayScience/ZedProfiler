@@ -357,6 +357,12 @@
 <p class="caption" role="heading"><span class="caption-text">A Note on Scalability</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../scalability.html">ZEDprofiler scalability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../benchmarking.html">Benchmarking and Accuracy Locks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../benchmarking.html#accuracy-locks">Accuracy locks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../benchmarking.html#benchmark-scorecard">Benchmark scorecard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../benchmarking.html#game-loop">Game loop</a></li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -403,7 +409,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandera.pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pa</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">beartype</span><span class="w"> </span><span class="kn">import</span> <span class="n">beartype</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -1018,44 +1023,39 @@
                 <span class="sa">f</span><span class="s2">&quot;underscores, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span><span class="si">}</span><span class="s2"> parts in &#39;</span><span class="si">{</span><span class="n">column_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span>
-    <span class="n">feature_components</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-        <span class="p">[</span>
-            <span class="p">{</span>
-                <span class="s2">&quot;compartment&quot;</span><span class="p">:</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                <span class="s2">&quot;channel&quot;</span><span class="p">:</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                <span class="s2">&quot;feature&quot;</span><span class="p">:</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-            <span class="p">},</span>
-        <span class="p">],</span>
-    <span class="p">)</span>
-
-    <span class="n">feature_component_schema</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">DataFrameSchema</span><span class="p">(</span>
-        <span class="p">{</span>
-            <span class="s2">&quot;compartment&quot;</span><span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
-                <span class="nb">str</span><span class="p">,</span>
-                <span class="n">checks</span><span class="o">=</span><span class="n">pa</span><span class="o">.</span><span class="n">Check</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">expected_values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;compartments&quot;</span><span class="p">,</span> <span class="p">[])),</span>
-                <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">coerce</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">),</span>
-            <span class="s2">&quot;channel&quot;</span><span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
-                <span class="nb">str</span><span class="p">,</span>
-                <span class="n">checks</span><span class="o">=</span><span class="n">pa</span><span class="o">.</span><span class="n">Check</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">expected_values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;channels&quot;</span><span class="p">,</span> <span class="p">[])),</span>
-                <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">coerce</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">),</span>
-            <span class="s2">&quot;feature&quot;</span><span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
-                <span class="nb">str</span><span class="p">,</span>
-                <span class="n">checks</span><span class="o">=</span><span class="n">pa</span><span class="o">.</span><span class="n">Check</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">expected_values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="p">[])),</span>
-                <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">coerce</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">),</span>
-        <span class="p">},</span>
-        <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">feature_component_schema</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">feature_components</span><span class="p">)</span>
-    <span class="k">except</span> <span class="p">(</span><span class="n">pa</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">SchemaError</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">SchemaErrors</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">ContractError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Column name schema validation failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+    <span class="c1"># Validate the non-metadata column&#39;s compartment/channel/feature components.</span>
+    <span class="c1">#</span>
+    <span class="c1"># This is equivalent to the prior pandera DataFrameSchema check</span>
+    <span class="c1"># (Check.isin with coerce=True, nullable=False, strict=True applied to</span>
+    <span class="c1"># parts[0..2]) but expressed as a plain set-membership test. ``parts`` are</span>
+    <span class="c1"># always strings produced by ``column_name.split(&quot;_&quot;)``, so the pandera</span>
+    <span class="c1"># ``coerce`` (str cast), ``nullable`` (no NaN), and ``strict`` (exactly</span>
+    <span class="c1"># three components) considerations are no-ops here, and pass/fail semantics</span>
+    <span class="c1"># are identical.</span>
+    <span class="c1">#</span>
+    <span class="c1"># The motivation is overhead: this function is called once per output</span>
+    <span class="c1"># column by every feature module&#39;s tail validation loop, and rebuilding a</span>
+    <span class="c1"># pandas DataFrame plus a pandera DataFrameSchema and running ``.validate``</span>
+    <span class="c1"># on a one-row frame per column dominated feature extraction time (e.g.</span>
+    <span class="c1"># ~67% of texture runtime). A direct membership check removes that cost</span>
+    <span class="c1"># without changing any feature value, column name, or row identity.</span>
+    <span class="n">feature_components</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;compartment&quot;</span><span class="p">:</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s2">&quot;channel&quot;</span><span class="p">:</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="s2">&quot;feature&quot;</span><span class="p">:</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">component</span><span class="p">,</span> <span class="n">allowed_key</span> <span class="ow">in</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s2">&quot;compartment&quot;</span><span class="p">,</span> <span class="s2">&quot;compartments&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;channel&quot;</span><span class="p">,</span> <span class="s2">&quot;channels&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;feature&quot;</span><span class="p">,</span> <span class="s2">&quot;features&quot;</span><span class="p">),</span>
+    <span class="p">):</span>
+        <span class="n">allowed</span> <span class="o">=</span> <span class="n">expected_values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">allowed_key</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="n">feature_components</span><span class="p">[</span><span class="n">component</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowed</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ContractError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Column name schema validation failed: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">component</span><span class="si">}</span><span class="s2"> &#39;</span><span class="si">{</span><span class="n">feature_components</span><span class="p">[</span><span class="n">component</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39; in &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">column_name</span><span class="si">}</span><span class="s2">&#39; is not in allowed </span><span class="si">{</span><span class="n">allowed_key</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">allowed</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
 
     <span class="k">return</span> <span class="kc">True</span></div>
 
