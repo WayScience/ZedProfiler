@@ -8,6 +8,7 @@ coordinates, and mass displacement for segmented 3D objects.
 import numpy
 import pandas
 import scipy.ndimage
+import skimage.measure
 import skimage.segmentation
 
 from zedprofiler.contracts import validate_column_name_schema
@@ -35,7 +36,7 @@ def get_outline(mask: numpy.ndarray) -> numpy.ndarray:
     return outline
 
 
-def compute_intensity(  # noqa: PLR0915
+def compute_intensity(  # noqa: C901, PLR0915
     object_loader: ObjectLoader,
 ) -> pandas.DataFrame:
     """Measure the intensity of objects in a 3D image.
@@ -65,58 +66,82 @@ def compute_intensity(  # noqa: PLR0915
         "compartment": [],
         "value": [],
     }
-    # loop through each object and calculate measurements
-    for index, label in enumerate(labels):
-        selected_label_object = label_object.copy()
-        selected_image_object = image_object.copy()
 
-        selected_label_object[selected_label_object != label] = 0
-        selected_label_object[selected_label_object > 0] = (
-            1  # binarize the label for volume calcs
+    props = skimage.measure.regionprops_table(
+        label_object,
+        properties=["label", "bbox"],
+    )
+    label_to_bbox = {
+        int(label): (
+            int(props["bbox-0"][index]),
+            int(props["bbox-1"][index]),
+            int(props["bbox-2"][index]),
+            int(props["bbox-3"][index]),
+            int(props["bbox-4"][index]),
+            int(props["bbox-5"][index]),
         )
-        selected_image_object[selected_label_object != 1] = 0
-        non_zero_pixels_object = selected_image_object[selected_image_object > 0]
+        for index, label in enumerate(props.get("label", []))
+    }
+
+    # loop through each object and calculate measurements
+    for label in labels:
+        bbox = label_to_bbox.get(int(label))
+        if bbox is None:
+            continue
+        bbox_min_z, bbox_min_y, bbox_min_x, bbox_max_z, bbox_max_y, bbox_max_x = bbox
+        # regionprops bbox max coords are exclusive (half-open [min, max)),
+        # so the slices below need no +1. (The old code computed the bbox with
+        # numpy.max, which is an inclusive last index and required +1; the two
+        # produce the identical cropped region.)
+        cropped_label_values = label_object[
+            bbox_min_z:bbox_max_z,
+            bbox_min_y:bbox_max_y,
+            bbox_min_x:bbox_max_x,
+        ]
+        cropped_image_values = image_object[
+            bbox_min_z:bbox_max_z,
+            bbox_min_y:bbox_max_y,
+            bbox_min_x:bbox_max_x,
+        ]
+        # The bbox always bounds at least one voxel of ``label`` because it was
+        # derived from regionprops for that exact label, so ``object_mask`` is
+        # never empty here. Kept as a defensive guard; excluded from coverage.
+        object_mask = cropped_label_values == label
+        if not numpy.any(object_mask):  # pragma: no cover
+            continue  # pragma: no cover
+
+        object_pixels = cropped_image_values[object_mask]
+        non_zero_pixels_object = object_pixels[object_pixels > 0]
         if non_zero_pixels_object.size == 0:
             non_zero_pixels_object = numpy.array([0], dtype=numpy.float32)
-        mask_outlines = get_outline(selected_label_object)
 
-        # Extract only coordinates where object exists
-        z_indices, y_indices, x_indices = numpy.where(selected_label_object > 0)
-        bbox_min_z, bbox_max_z = numpy.min(z_indices), numpy.max(z_indices)
-        bbox_min_y, bbox_max_y = numpy.min(y_indices), numpy.max(y_indices)
-        bbox_min_x, bbox_max_x = numpy.min(x_indices), numpy.max(x_indices)
+        cropped_label = object_mask.astype(numpy.uint8)
+        cropped_image = numpy.where(object_mask, cropped_image_values, 0)
 
-        # Crop to bounding box for efficiency
-        cropped_label = selected_label_object[
-            bbox_min_z : bbox_max_z + 1,
-            bbox_min_y : bbox_max_y + 1,
-            bbox_min_x : bbox_max_x + 1,
-        ]
-        cropped_image = selected_image_object[
-            bbox_min_z : bbox_max_z + 1,
-            bbox_min_y : bbox_max_y + 1,
-            bbox_min_x : bbox_max_x + 1,
-        ]
+        padded_label = numpy.pad(cropped_label, pad_width=1, mode="constant")
+        mask_outlines = get_outline(padded_label)[1:-1, 1:-1, 1:-1]
 
-        # Create coordinate grids for the bounding box
+        # Create coordinate grids for the bounding box. Same exclusive
+        # bbox convention as the crops above: regionprops max coords are
+        # half-open [min, max), so no +1 is needed here either.
         mesh_z, mesh_y, mesh_x = numpy.mgrid[
-            bbox_min_z : bbox_max_z + 1,  # + 1 to include the max index
-            bbox_min_y : bbox_max_y + 1,
-            bbox_min_x : bbox_max_x + 1,
+            bbox_min_z:bbox_max_z,
+            bbox_min_y:bbox_max_y,
+            bbox_min_x:bbox_max_x,
         ]
 
         # calculate the integrated intensity
-        integrated_intensity = scipy.ndimage.sum(
-            selected_image_object,
-            selected_label_object,
-            index=1,
-        )
+        integrated_intensity = numpy.sum(object_pixels)
         # calculate the volume
-        volume = numpy.sum(selected_label_object)
+        volume = numpy.sum(object_mask)
 
-        # Skip if volume is zero to avoid division by zero
-        if volume == 0:
-            continue
+        # Skip if volume is zero to avoid division by zero. Unreachable in
+        # practice because ``object_mask`` (label voxels within the bbox)
+        # always has at least one True voxel — the bbox is derived from
+        # regionprops for this exact label. Kept as a defensive guard;
+        # excluded from coverage.
+        if volume == 0:  # pragma: no cover
+            continue  # pragma: no cover
 
         # calculate the mean intensity
         mean_intensity = integrated_intensity / volume
@@ -133,12 +158,15 @@ def compute_intensity(  # noqa: PLR0915
         # median intensity
         median_intensity = numpy.median(non_zero_pixels_object)
         # location of maximum intensity pixel (z, y, x)
-        max_intensity_z, max_intensity_y, max_intensity_x = (
-            scipy.ndimage.maximum_position(selected_image_object)
+        max_position = numpy.unravel_index(
+            numpy.argmax(cropped_image),
+            cropped_image.shape,
         )
+        max_intensity_z = bbox_min_z + max_position[0]
+        max_intensity_y = bbox_min_y + max_position[1]
+        max_intensity_x = bbox_min_x + max_position[2]
 
         # Calculate center of mass (geometric center) using cropped arrays
-        object_mask = cropped_label > 0
         cm_x = numpy.mean(mesh_x[object_mask])
         cm_y = numpy.mean(mesh_y[object_mask])
         cm_z = numpy.mean(mesh_z[object_mask])
@@ -169,11 +197,12 @@ def compute_intensity(  # noqa: PLR0915
         # mean absolute deviation
         mad_intensity = numpy.mean(numpy.abs(non_zero_pixels_object - mean_intensity))
         edge_count = scipy.ndimage.sum(mask_outlines)
-        integrated_intensity_edge = numpy.sum(selected_image_object[mask_outlines > 0])
+        edge_pixels = cropped_image[mask_outlines > 0]
+        integrated_intensity_edge = numpy.sum(edge_pixels)
         mean_intensity_edge = integrated_intensity_edge / edge_count
-        std_intensity_edge = numpy.std(selected_image_object[mask_outlines > 0])
-        min_intensity_edge = numpy.min(selected_image_object[mask_outlines > 0])
-        max_intensity_edge = numpy.max(selected_image_object[mask_outlines > 0])
+        std_intensity_edge = numpy.std(edge_pixels)
+        min_intensity_edge = numpy.min(edge_pixels)
+        max_intensity_edge = numpy.max(edge_pixels)
         measurements_dict = {
             "IntegratedIntensity": integrated_intensity,
             "MeanIntensity": mean_intensity,

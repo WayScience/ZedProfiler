@@ -598,15 +598,28 @@ def compute_colocalization(  # noqa: C901, PLR0912
     if channel1 is None or channel2 is None:
         raise ValueError("channel1 and channel2 must be provided for feature naming.")
     list_of_dfs = []
-    for object_id in two_object_loader.object_ids:
-        cropped_image1, cropped_image2 = prepare_two_images_for_colocalization(
-            label_object1=two_object_loader.label_image,
-            label_object2=two_object_loader.label_image,
-            image_object1=two_object_loader.image1,
-            image_object2=two_object_loader.image2,
-            object_id1=object_id,
-            object_id2=object_id,
+    props = skimage.measure.regionprops_table(
+        two_object_loader.label_image,
+        properties=["label", "bbox"],
+    )
+    label_to_bbox = {
+        int(label): (
+            int(props["bbox-0"][index]),
+            int(props["bbox-1"][index]),
+            int(props["bbox-2"][index]),
+            int(props["bbox-3"][index]),
+            int(props["bbox-4"][index]),
+            int(props["bbox-5"][index]),
         )
+        for index, label in enumerate(props.get("label", []))
+    }
+
+    for object_id in two_object_loader.object_ids:
+        bbox = label_to_bbox.get(int(object_id))
+        if bbox is None:
+            continue
+        cropped_image1 = crop_3D_image(two_object_loader.image1, bbox)
+        cropped_image2 = crop_3D_image(two_object_loader.image2, bbox)
         colocalization_features = calculate_colocalization(
             cropped_image_1=cropped_image1,
             cropped_image_2=cropped_image2,

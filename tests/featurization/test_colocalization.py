@@ -346,3 +346,33 @@ def test_calculate_colocalization_identical_images() -> None:
     # Manders should be non-negative
     assert results["MandersCoeffM1"] >= 0.0
     assert results["MandersCoeffM2"] >= 0.0
+
+
+@pytest.mark.parametrize("shape,center", [((7, 7, 7), (3, 3, 3))])
+def test_compute_colocalization_skips_phantom_object_id_without_bbox(
+    shape: tuple[int, int, int],
+    center: tuple[int, int, int],
+) -> None:
+    """Object ids absent from the label image are skipped via the bbox guard.
+
+    ``compute_colocalization`` looks up each requested object id in the
+    ``regionprops`` bbox table and skips ids with no matching region via the
+    ``if bbox is None: continue`` guard. Requesting a phantom id (99)
+    alongside a real one (1) exercises that guard: only object 1 should appear
+    in the output, with no crash.
+    """
+    imgset = ImageSetLoaderModel()
+    label, im1, im2 = make_pair(shape, center)
+    loader = TwoObjectLoaderModel(
+        image_set_loader=imgset,
+        compartment="Cell",
+        image1=im1,
+        image2=im2,
+        label_image=label,
+        object_ids=[1, 99],
+    )
+
+    df = compute_colocalization(loader, channel1="A", channel2="B")
+
+    returned_ids = sorted(int(x) for x in df["Metadata_Object_ObjectID"].tolist())
+    assert returned_ids == [1]

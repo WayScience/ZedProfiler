@@ -6,11 +6,50 @@ feature dictionaries, and metadata patterns used across the test suite.
 
 from __future__ import annotations
 
+import os
+
 import numpy as np
 import pytest
 
 # Import dataclass from test_data_profiles
 from test_data_profiles import Profile
+
+
+def pytest_addoption(parser: pytest.Parser) -> None:
+    """Add opt-in benchmark execution flag."""
+    parser.addoption(
+        "--run-benchmarks",
+        action="store_true",
+        default=False,
+        help="Run opt-in benchmark scorecard tests.",
+    )
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    """Register local test markers."""
+    config.addinivalue_line(
+        "markers",
+        "benchmark: opt-in performance scorecard tests",
+    )
+
+
+def pytest_collection_modifyitems(
+    config: pytest.Config,
+    items: list[pytest.Item],
+) -> None:
+    """Skip benchmark scorecards unless explicitly requested."""
+    should_run = config.getoption("--run-benchmarks") or (
+        os.environ.get("ZEDPROFILER_RUN_BENCHMARKS") == "1"
+    )
+    if should_run:
+        return
+
+    skip_benchmark = pytest.mark.skip(
+        reason="benchmark scorecards require --run-benchmarks",
+    )
+    for item in items:
+        if "benchmark" in item.keywords:
+            item.add_marker(skip_benchmark)
 
 
 @pytest.fixture

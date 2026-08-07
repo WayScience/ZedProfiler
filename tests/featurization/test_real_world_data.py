@@ -111,6 +111,7 @@ class LoadedNucleiCase:
 
     @property
     def object_ids(self) -> list[int]:
+        """The segmented object ids loaded for this image case."""
         return self.object_loader.object_ids
 
 
@@ -124,6 +125,7 @@ class FeatureRunner:
 
 
 def _cellprofiler_tutorial_image_case(image_name: str) -> RealImageCase:
+    """Build a RealImageCase pointing at a named tutorial image and its mask."""
     return RealImageCase(
         image_name=image_name,
         image_path=CELLPROFILER_TUTORIAL_ROOT / "input" / f"{image_name}.tif",
@@ -188,14 +190,17 @@ COLOCALIZATION_CASES = (
 
 
 def _feature_runner_id(runner: FeatureRunner) -> str:
+    """pytest id for a FeatureRunner parametrization."""
     return runner.name
 
 
 def _dataset_case_id(dataset_case: RealDatasetCase) -> str:
+    """pytest id for a RealDatasetCase parametrization."""
     return dataset_case.name
 
 
 def _image_case_id(case: tuple[RealDatasetCase, RealImageCase]) -> str:
+    """pytest id for a (dataset, image) parametrization pair."""
     dataset_case, image_case = case
     return f"{dataset_case.name}-{image_case.image_name}"
 
@@ -203,6 +208,7 @@ def _image_case_id(case: tuple[RealDatasetCase, RealImageCase]) -> str:
 def _colocalization_case_id(
     case: tuple[RealDatasetCase, RealColocalizationCase],
 ) -> str:
+    """pytest id for a (dataset, colocalization) parametrization pair."""
     dataset_case, colocalization_case = case
     return f"{dataset_case.name}-{colocalization_case.name}"
 
@@ -211,6 +217,7 @@ def _load_nuclei_case(
     dataset_case: RealDatasetCase,
     image_case: RealImageCase,
 ) -> LoadedNucleiCase:
+    """Load a real image/mask pair into loaders from in-memory arrays."""
     image = tifffile.imread(image_case.image_path)
     label = tifffile.imread(image_case.label_path)
     image_set_loader = ImageSetLoader(
@@ -247,6 +254,7 @@ def _load_nuclei_case_from_paths(
     dataset_case: RealDatasetCase,
     image_case: RealImageCase,
 ) -> LoadedNucleiCase:
+    """Load a real image/mask pair into loaders from on-disk file paths."""
     image_set_loader = ImageSetLoader(
         image_set_path=image_case.image_path.parent,
         label_set_path=image_case.label_path.parent,
@@ -278,6 +286,7 @@ def _load_nuclei_case_from_paths(
 def _load_colocalization_case(
     colocalization_case: RealColocalizationCase,
 ) -> TwoObjectLoader:
+    """Pair two real single-channel images into a TwoObjectLoader for colocalization."""
     label = tifffile.imread(colocalization_case.label_image_case.label_path)
     image_set_loader = ImageSetLoader.from_image_dict(
         {
@@ -303,6 +312,7 @@ def _load_colocalization_case(
 
 
 def _expected_volumes_from_label(label: np.ndarray) -> dict[int, int]:
+    """Ground-truth object id -> voxel count, computed directly from the label mask."""
     return {
         int(object_id): int(np.count_nonzero(label == object_id))
         for object_id in np.unique(label)
@@ -315,6 +325,7 @@ def _assert_real_feature_frame_matches_objects(
     loaded_case: LoadedNucleiCase,
     expected_column_token: str,
 ) -> None:
+    """Assert a feature frame has expected objects, columns, and finite values."""
     assert isinstance(df, pd.DataFrame)
     assert df.shape[0] == loaded_case.dataset_case.expected_object_count
     assert "Metadata_Object_ObjectID" in df.columns

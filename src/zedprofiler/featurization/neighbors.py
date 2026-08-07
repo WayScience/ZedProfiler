@@ -122,24 +122,35 @@ def compute_neighbors(
         "NeighborsCountAdjacent": [],
         f"NeighborsCountByDistance-{distance_threshold}": [],
     }
-    for index, label in enumerate(labels):
-        props_label = skimage.measure.regionprops_table(
-            (label_object == label).astype(numpy.uint8),
-            properties=["bbox"],
+    props = skimage.measure.regionprops_table(
+        label_object,
+        properties=["label", "bbox"],
+    )
+    label_to_bbox = {
+        int(label): (
+            int(props["bbox-0"][index]),
+            int(props["bbox-1"][index]),
+            int(props["bbox-2"][index]),
+            int(props["bbox-3"][index]),
+            int(props["bbox-4"][index]),
+            int(props["bbox-5"][index]),
         )
+        for index, label in enumerate(props.get("label", []))
+    }
+    for label in labels:
+        bbox_label = label_to_bbox.get(int(label))
+        if bbox_label is None:
+            continue
         # get the number of neighbors for each object
         distance_x_y = distance_threshold
         distance_z = numpy.ceil(distance_threshold / anisotropy_factor).astype(int)
         # find how many other indexes are within a specified distance of the object
         # first expand the mask image by a specified distance
-        z_min, y_min, x_min, z_max, y_max, x_max = (
-            props_label["bbox-0"][0],
-            props_label["bbox-1"][0],
-            props_label["bbox-2"][0],
-            props_label["bbox-3"][0],
-            props_label["bbox-4"][0],
-            props_label["bbox-5"][0],
-        )
+        # regionprops bbox returns all min coords first then all max coords,
+        # in axis order (z, y, x): bbox-0/1/2 = min_z/y/x, bbox-3/4/5 =
+        # max_z/y/x. So this unpacks to each dimension's own min and max,
+        # all sourced from this label's bounding box.
+        z_min, y_min, x_min, z_max, y_max, x_max = bbox_label
         new_z_min, new_z_max = neighbors_expand_box(
             min_coor=image_global_min_coord_z,
             max_coord=image_global_max_coord_z,
@@ -163,9 +174,40 @@ def compute_neighbors(
         )
         bbox = (new_z_min, new_y_min, new_x_min, new_z_max, new_y_max, new_x_max)
         croppped_neighbor_image = crop_3D_image(image=label_object, bbox=bbox)
-        binary_mask = label_object == label
+
+        adjacent_z_min, adjacent_z_max = neighbors_expand_box(
+            min_coor=image_global_min_coord_z,
+            max_coord=image_global_max_coord_z,
+            current_min=z_min,
+            current_max=z_max,
+            expand_by=1,
+        )
+        adjacent_y_min, adjacent_y_max = neighbors_expand_box(
+            min_coor=image_global_min_coord_y,
+            max_coord=image_global_max_coord_y,
+            current_min=y_min,
+            current_max=y_max,
+            expand_by=1,
+        )
+        adjacent_x_min, adjacent_x_max = neighbors_expand_box(
+            min_coor=image_global_min_coord_x,
+            max_coord=image_global_max_coord_x,
+            current_min=x_min,
+            current_max=x_max,
+            expand_by=1,
+        )
+        adjacent_bbox = (
+            adjacent_z_min,
+            adjacent_y_min,
+            adjacent_x_min,
+            adjacent_z_max,
+            adjacent_y_max,
+            adjacent_x_max,
+        )
+        adjacent_label_crop = crop_3D_image(image=label_object, bbox=adjacent_bbox)
+        binary_mask = adjacent_label_crop == label
         dilated_mask = skimage.morphology.dilation(binary_mask)
-        labels_in_dilation = label_object[dilated_mask]
+        labels_in_dilation = adjacent_label_crop[dilated_mask]
         adjacent_labels = numpy.unique(labels_in_dilation)
         n_neighbors_adjacent = int(
             numpy.sum((adjacent_labels != 0) & (adjacent_labels != label))
