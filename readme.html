@@ -49,6 +49,13 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">ZEDprofiler  </a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#install-environment">Install environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#data-contract">Data Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#command-line-interface">Command-line interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#arguments">Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#feature-types">Feature types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#two-channel-colocalization-example">Two-channel colocalization example</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#quality-gates">Quality Gates</a></li>
 </ul>
 </li>
@@ -254,9 +261,14 @@
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.IO.feature_writing_utils.remove_underscores_from_string"><code class="docutils literal notranslate"><span class="pre">remove_underscores_from_string()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.IO.feature_writing_utils.save_features_as_parquet"><code class="docutils literal notranslate"><span class="pre">save_features_as_parquet()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.field_of_view"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.field_of_view</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.image_id"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.image_id</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.image_set_name"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.image_set_name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.label_key_name"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.label_key_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.patient_tumor"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.patient_tumor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.plate"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.plate</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.raw_image_key_name"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.raw_image_key_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.well"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.well</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader</span></code></a><ul>
@@ -268,6 +280,7 @@
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.unique_compartment_objects"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.unique_compartment_objects</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.image_names"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.image_names</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.compartments"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.compartments</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.from_image_dict"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.from_image_dict()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.get_anisotropy"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.get_anisotropy()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.get_compartments"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.get_compartments()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.get_image"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.get_image()</span></code></a></li>
@@ -421,6 +434,105 @@ The <code class="docutils literal notranslate"><span class="pre">x</span></code>
 <ul class="simple">
 <li><p>Single channel: <code class="docutils literal notranslate"><span class="pre">(z,</span> <span class="pre">y,</span> <span class="pre">x)</span></code></p></li>
 </ul>
+</section>
+<section id="command-line-interface">
+<h2>Command-line interface<a class="headerlink" href="#command-line-interface" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">ZedProfiler</span> <span class="pre">run</span></code> extracts features for a single well/field-of-view (FOV) shard: it loads one image set from explicit file paths, runs a selected subset of featurizers, and writes one Parquet per feature table to an output directory. It is the command a workflow manager (for example Nextflow via SLURM <code class="docutils literal notranslate"><span class="pre">sbatch</span></code>) dispatches once per shard.</p>
+<p>After <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">sync</span></code> (or <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">.</span></code>) the <code class="docutils literal notranslate"><span class="pre">ZedProfiler</span></code> console script is available; from a checkout you can also use <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">run</span> <span class="pre">ZedProfiler</span> <span class="pre">run</span> <span class="pre">...</span></code>. Run <code class="docutils literal notranslate"><span class="pre">ZedProfiler</span> <span class="pre">run</span> <span class="pre">--help</span></code> for the authoritative, up-to-date list of arguments.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ZedProfiler<span class="w"> </span>run<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--image<span class="o">=</span><span class="nv">DNA</span><span class="o">=</span>/path/to/channel1.tif<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--label<span class="o">=</span><span class="nv">Nuclei</span><span class="o">=</span>/path/to/nuclei_mask.tiff<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--anisotropy-spacing<span class="w"> </span><span class="m">1</span>.0<span class="w"> </span><span class="m">1</span>.0<span class="w"> </span><span class="m">1</span>.0<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--patient-tumor<span class="w"> </span>NF0014_T1<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--plate<span class="w"> </span>PLATE01<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--well<span class="w"> </span>A1<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--fov<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--out-dir<span class="w"> </span>./shard_output<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--features<span class="w"> </span>Intensity
+</pre></div>
+</div>
+<section id="arguments">
+<h3>Arguments<a class="headerlink" href="#arguments" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Argument</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--image=NAME=PATH</span></code></p></td>
+<td><p>yes (&gt;=1, repeatable)</p></td>
+<td><p>A channel image as <code class="docutils literal notranslate"><span class="pre">NAME=PATH</span></code>. Repeat for multi-channel shards.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--label=NAME=PATH</span></code></p></td>
+<td><p>yes (&gt;=1, repeatable)</p></td>
+<td><p>A compartment label mask as <code class="docutils literal notranslate"><span class="pre">NAME=PATH</span></code>. Repeat for multiple compartments.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--anisotropy-spacing</span> <span class="pre">Z</span> <span class="pre">Y</span> <span class="pre">X</span></code></p></td>
+<td><p>yes</p></td>
+<td><p>Z, Y, X voxel spacing (three floats).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--patient-tumor</span></code></p></td>
+<td><p>yes</p></td>
+<td><p>Patient-tumor identifier (e.g. <code class="docutils literal notranslate"><span class="pre">NF0014_T1</span></code>).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--plate</span></code></p></td>
+<td><p>yes</p></td>
+<td><p>Plate identifier.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--well</span></code></p></td>
+<td><p>yes</p></td>
+<td><p>Well identifier (e.g. <code class="docutils literal notranslate"><span class="pre">A1</span></code>).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--fov</span></code></p></td>
+<td><p>yes</p></td>
+<td><p>Field-of-view index or identifier.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--out-dir</span></code></p></td>
+<td><p>yes</p></td>
+<td><p>Shard output directory (created if needed).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--features</span></code></p></td>
+<td><p>no</p></td>
+<td><p>Comma-separated feature types to run (selector). With no <code class="docutils literal notranslate"><span class="pre">--feature</span></code> flags, runs these types over the channel x compartment cross-product; with <code class="docutils literal notranslate"><span class="pre">--feature</span></code> flags, restricts those requests by type. Default: all single-channel types, plus <code class="docutils literal notranslate"><span class="pre">Colocalization</span></code> when &gt;=2 channels are declared.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--feature=TYPE[,key=value,...]</span></code></p></td>
+<td><p>no (repeatable)</p></td>
+<td><p>An explicit feature request, e.g. <code class="docutils literal notranslate"><span class="pre">Intensity,channel=DNA,compartment=Nuclei</span></code> or <code class="docutils literal notranslate"><span class="pre">Colocalization,channel1=DNA1,channel2=DNA2,compartment=Nuclei,fast_costes=Faster</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--skip-existing</span></code></p></td>
+<td><p>no</p></td>
+<td><p>Skip a feature request whose output Parquet already exists.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--force</span></code></p></td>
+<td><p>no</p></td>
+<td><p>Overwrite even when the output exists (writes are still atomic).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="feature-types">
+<h3>Feature types<a class="headerlink" href="#feature-types" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">VolumeSizeShape</span></code>, <code class="docutils literal notranslate"><span class="pre">Intensity</span></code>, <code class="docutils literal notranslate"><span class="pre">Neighbors</span></code>, <code class="docutils literal notranslate"><span class="pre">Texture</span></code>, and <code class="docutils literal notranslate"><span class="pre">Granularity</span></code> are single-channel features run per channel x compartment. <code class="docutils literal notranslate"><span class="pre">Colocalization</span></code> is a two-channel feature run per ordered channel pair x compartment.</p>
+</section>
+<section id="outputs">
+<h3>Outputs<a class="headerlink" href="#outputs" title="Link to this heading"></a></h3>
+<p>Each request writes <code class="docutils literal notranslate"><span class="pre">{compartment}_{channel}_{feature_type}_cpu_features.parquet</span></code> into <code class="docutils literal notranslate"><span class="pre">--out-dir</span></code>. Every table carries <code class="docutils literal notranslate"><span class="pre">Metadata_Imaging_ImageID</span></code> (deterministically built from the patient-tumor, plate, well, and FOV coordinates) and <code class="docutils literal notranslate"><span class="pre">Metadata_Experiment_ImageSet</span></code> so downstream tables can rejoin. Writes are atomic (temp file + replace), so a crashed shard never leaves a partial file that <code class="docutils literal notranslate"><span class="pre">--skip-existing</span></code> would mistake for a complete one.</p>
+</section>
+<section id="two-channel-colocalization-example">
+<h3>Two-channel colocalization example<a class="headerlink" href="#two-channel-colocalization-example" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ZedProfiler<span class="w"> </span>run<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--image<span class="o">=</span><span class="nv">DNA1</span><span class="o">=</span>/path/to/channel1.tif<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--image<span class="o">=</span><span class="nv">DNA2</span><span class="o">=</span>/path/to/channel2.tif<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--label<span class="o">=</span><span class="nv">Nuclei</span><span class="o">=</span>/path/to/nuclei_mask.tiff<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--anisotropy-spacing<span class="w"> </span><span class="m">1</span>.0<span class="w"> </span><span class="m">1</span>.0<span class="w"> </span><span class="m">1</span>.0<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--patient-tumor<span class="w"> </span>NF0014_T1<span class="w"> </span>--plate<span class="w"> </span>PLATE01<span class="w"> </span>--well<span class="w"> </span>A1<span class="w"> </span>--fov<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--out-dir<span class="w"> </span>./shard_output<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--feature<span class="o">=</span>Colocalization,channel1<span class="o">=</span>DNA1,channel2<span class="o">=</span>DNA2,compartment<span class="o">=</span>Nuclei,fast_costes<span class="o">=</span>Faster
+</pre></div>
+</div>
+</section>
 </section>
 <section id="quality-gates">
 <h2>Quality Gates<a class="headerlink" href="#quality-gates" title="Link to this heading"></a></h2>

@@ -46,6 +46,13 @@
 <li class="toctree-l1"><a class="reference internal" href="readme.html">ZEDprofiler  </a><ul>
 <li class="toctree-l2"><a class="reference internal" href="readme.html#install-environment">Install environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="readme.html#data-contract">Data Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="readme.html#command-line-interface">Command-line interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="readme.html#arguments">Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="readme.html#feature-types">Feature types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="readme.html#outputs">Outputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="readme.html#two-channel-colocalization-example">Two-channel colocalization example</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="readme.html#quality-gates">Quality Gates</a></li>
 </ul>
 </li>
@@ -251,9 +258,14 @@
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.IO.feature_writing_utils.remove_underscores_from_string"><code class="docutils literal notranslate"><span class="pre">remove_underscores_from_string()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.IO.feature_writing_utils.save_features_as_parquet"><code class="docutils literal notranslate"><span class="pre">save_features_as_parquet()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.field_of_view"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.field_of_view</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.image_id"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.image_id</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.image_set_name"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.image_set_name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.label_key_name"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.label_key_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.patient_tumor"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.patient_tumor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.plate"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.plate</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.raw_image_key_name"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.raw_image_key_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.well"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.well</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader</span></code></a><ul>
@@ -265,6 +277,7 @@
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.unique_compartment_objects"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.unique_compartment_objects</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.image_names"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.image_names</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.compartments"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.compartments</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.from_image_dict"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.from_image_dict()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.get_anisotropy"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.get_anisotropy()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.get_compartments"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.get_compartments()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.get_image"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.get_image()</span></code></a></li>
@@ -410,6 +423,7 @@
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
  | <a href="#V"><strong>V</strong></a>
+ | <a href="#W"><strong>W</strong></a>
  | <a href="#Z"><strong>Z</strong></a>
  
 </div>
@@ -554,17 +568,21 @@
 </li>
       <li><a href="api.html#zedprofiler.contracts.FeatureDictModel">FeatureDictModel (class in zedprofiler.contracts)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#zedprofiler.IO.feature_writing_utils.FeatureMetadata">FeatureMetadata (class in zedprofiler.IO.feature_writing_utils)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#zedprofiler.contracts.ExpectedFeatureNameValues.features">features (zedprofiler.contracts.ExpectedFeatureNameValues attribute)</a>
 
       <ul>
         <li><a href="api.html#zedprofiler.contracts.FeatureDictModel.features">(zedprofiler.contracts.FeatureDictModel attribute)</a>
 </li>
       </ul></li>
+      <li><a href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.field_of_view">field_of_view (zedprofiler.IO.loading_classes.ImageSetConfig attribute)</a>
+</li>
       <li><a href="api.html#zedprofiler.IO.feature_writing_utils.format_morphology_feature_name">format_morphology_feature_name() (in module zedprofiler.IO.feature_writing_utils)</a>
+</li>
+      <li><a href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.from_image_dict">from_image_dict() (zedprofiler.IO.loading_classes.ImageSetLoader class method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -606,6 +624,8 @@
         <li><a href="api.html#zedprofiler.IO.loading_classes.TwoObjectLoader.image2">(zedprofiler.IO.loading_classes.TwoObjectLoader attribute)</a>
 </li>
       </ul></li>
+      <li><a href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.image_id">image_id (zedprofiler.IO.loading_classes.ImageSetConfig property)</a>
+</li>
       <li><a href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.image_names">image_names (zedprofiler.IO.loading_classes.ImageSetLoader attribute)</a>
 </li>
       <li><a href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.image_set_dict">image_set_dict (zedprofiler.IO.loading_classes.ImageSetLoader attribute)</a>
@@ -749,8 +769,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#zedprofiler.contracts.ColumnNameModel.parse_column_name">parse_column_name() (zedprofiler.contracts.ColumnNameModel method)</a>
 </li>
+      <li><a href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.patient_tumor">patient_tumor (zedprofiler.IO.loading_classes.ImageSetConfig attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.plate">plate (zedprofiler.IO.loading_classes.ImageSetConfig attribute)</a>
+</li>
       <li><a href="api.html#zedprofiler.featurization.neighbors.plot_distance_distributions">plot_distance_distributions() (in module zedprofiler.featurization.neighbors)</a>
 </li>
       <li><a href="api.html#zedprofiler.featurization.colocalization.prepare_two_images_for_colocalization">prepare_two_images_for_colocalization() (in module zedprofiler.featurization.colocalization)</a>
@@ -854,6 +878,14 @@
       <li><a href="api.html#zedprofiler.contracts.validate_return_with_pydantic">validate_return_with_pydantic() (in module zedprofiler.contracts)</a>
 </li>
       <li><a href="api.html#zedprofiler.featurization.neighbors.visualize_organoid_shells">visualize_organoid_shells() (in module zedprofiler.featurization.neighbors)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.well">well (zedprofiler.IO.loading_classes.ImageSetConfig attribute)</a>
 </li>
   </ul></td>
 </tr></table>

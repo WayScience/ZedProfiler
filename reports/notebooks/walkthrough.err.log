@@ -1,0 +1,136 @@
+Traceback (most recent call last):
+  File "/home/runner/work/ZedProfiler/ZedProfiler/.venv/lib/python3.13/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+    ~~~~~~~~~^
+        nb,
+        ^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/ZedProfiler/ZedProfiler/.venv/lib/python3.13/site-packages/nbclient/client.py", line 1323, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/runner/work/ZedProfiler/ZedProfiler/.venv/lib/python3.13/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/home/runner/work/_temp/uv-python-dir/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py", line 726, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/home/runner/work/ZedProfiler/ZedProfiler/.venv/lib/python3.13/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+        cell, index, execution_count=self.code_cells_executed + 1
+    )
+  File "/home/runner/work/ZedProfiler/ZedProfiler/.venv/lib/python3.13/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/runner/work/ZedProfiler/ZedProfiler/.venv/lib/python3.13/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+columns_to_merge = ["Metadata_Experiment_ImageSet", "Metadata_Object_ObjectID"]
+
+for df in [
+    coloc_df,
+    granularity_df,
+    intensity_df,
+    neighbors_df,
+    texture_df,
+    volume_size_shape_df,
+]:
+    if not all(col in df.columns for col in columns_to_merge):
+        raise ValueError(
+            f"DataFrame is missing required columns for merging: {columns_to_merge}"
+        )
+# merge all features into a single DataFrame
+all_features_df = pd.merge(
+    coloc_df,
+    pd.merge(
+        granularity_df,
+        pd.merge(
+            intensity_df,
+            pd.merge(
+                neighbors_df,
+                pd.merge(
+                    texture_df, volume_size_shape_df, on=columns_to_merge, how="inner"
+                ),
+                on=columns_to_merge,
+                how="inner",
+            ),
+            on=columns_to_merge,
+            how="inner",
+        ),
+        on=columns_to_merge,
+        how="inner",
+    ),
+    on=columns_to_merge,
+    how="inner",
+)
+if all_features_df.shape[1] != expected_num_columns:
+    raise ValueError(
+        f"""
+        Merged DataFrame has {all_features_df.shape[1]} columns
+        but expected {expected_num_columns} based on individual DataFrames"""
+    )
+print(
+    f"Shape: {all_features_df.shape[0]} objects x {all_features_df.shape[1]} features"
+)
+show(all_features_df)
+------------------
+
+
+[31m---------------------------------------------------------------------------[39m
+[31mMergeError[39m                                Traceback (most recent call last)
+[36mCell[39m[36m [39m[32mIn[15][39m[32m, line 20[39m
+[32m     16[39m all_features_df = pd.merge(
+[32m     17[39m     coloc_df,
+[32m     18[39m     pd.merge(
+[32m     19[39m         granularity_df,
+[32m---> [39m[32m20[39m         pd.merge(
+[32m     21[39m             intensity_df,
+[32m     22[39m             pd.merge(
+[32m     23[39m                 neighbors_df,
+
+[36mFile [39m[32m~/work/ZedProfiler/ZedProfiler/.venv/lib/python3.13/site-packages/pandas/core/reshape/merge.py:399[39m, in [36mmerge[39m[34m(left, right, how, on, left_on, right_on, left_index, right_index, sort, suffixes, copy, indicator, validate)[39m
+[32m    384[39m [38;5;28;01melse[39;00m:
+[32m    385[39m     op = _MergeOperation(
+[32m    386[39m         left_df,
+[32m    387[39m         right_df,
+[32m   (...)[39m[32m    397[39m         validate=validate,
+[32m    398[39m     )
+[32m--> [39m[32m399[39m     [38;5;28;01mreturn[39;00m [30;43mop[39;49m[30;43m.[39;49m[30;43mget_result[39;49m[30;43m([39;49m[30;43m)[39;49m
+
+[36mFile [39m[32m~/work/ZedProfiler/ZedProfiler/.venv/lib/python3.13/site-packages/pandas/core/reshape/merge.py:1143[39m, in [36m_MergeOperation.get_result[39m[34m(self)[39m
+[32m   1139[39m     [38;5;28mself[39m.left, [38;5;28mself[39m.right = [38;5;28mself[39m._indicator_pre_merge([38;5;28mself[39m.left, [38;5;28mself[39m.right)
+[32m   1141[39m join_index, left_indexer, right_indexer = [38;5;28mself[39m._get_join_info()
+[32m-> [39m[32m1143[39m result = [30;43mself[39;49m[30;43m.[39;49m[30;43m_reindex_and_concat[39;49m[30;43m([39;49m[30;43mjoin_index[39;49m[30;43m,[39;49m[30;43m [39;49m[30;43mleft_indexer[39;49m[30;43m,[39;49m[30;43m [39;49m[30;43mright_indexer[39;49m[30;43m)[39;49m
+[32m   1145[39m [38;5;28;01mif[39;00m [38;5;28mself[39m.indicator:
+[32m   1146[39m     result = [38;5;28mself[39m._indicator_post_merge(result)
+
+[36mFile [39m[32m~/work/ZedProfiler/ZedProfiler/.venv/lib/python3.13/site-packages/pandas/core/reshape/merge.py:1094[39m, in [36m_MergeOperation._reindex_and_concat[39m[34m(self, join_index, left_indexer, right_indexer)[39m
+[32m   1091[39m left = [38;5;28mself[39m.left[:]
+[32m   1092[39m right = [38;5;28mself[39m.right[:]
+[32m-> [39m[32m1094[39m llabels, rlabels = [30;43m_items_overlap_with_suffix[39;49m[30;43m([39;49m
+[32m   1095[39m [30;43m    [39;49m[30;43mself[39;49m[30;43m.[39;49m[30;43mleft[39;49m[30;43m.[39;49m[30;43m_info_axis[39;49m[30;43m,[39;49m[30;43m [39;49m[30;43mself[39;49m[30;43m.[39;49m[30;43mright[39;49m[30;43m.[39;49m[30;43m_info_axis[39;49m[30;43m,[39;49m[30;43m [39;49m[30;43mself[39;49m[30;43m.[39;49m[30;43msuffixes[39;49m
+[32m   1096[39m [30;43m[39;49m[30;43m)[39;49m
+[32m   1098[39m [38;5;28;01mif[39;00m left_indexer [38;5;129;01mis[39;00m [38;5;129;01mnot[39;00m [38;5;28;01mNone[39;00m [38;5;129;01mand[39;00m [38;5;129;01mnot[39;00m is_range_indexer(left_indexer, [38;5;28mlen[39m(left)):
+[32m   1099[39m     [38;5;66;03m# Pinning the index here (and in the right code just below) is not[39;00m
+[32m   1100[39m     [38;5;66;03m#  necessary, but makes the `.take` more performant if we have e.g.[39;00m
+[32m   1101[39m     [38;5;66;03m#  a MultiIndex for left.index.[39;00m
+[32m   1102[39m     lmgr = left._mgr.reindex_indexer(
+[32m   1103[39m         join_index,
+[32m   1104[39m         left_indexer,
+[32m   (...)[39m[32m   1108[39m         use_na_proxy=[38;5;28;01mTrue[39;00m,
+[32m   1109[39m     )
+
+[36mFile [39m[32m~/work/ZedProfiler/ZedProfiler/.venv/lib/python3.13/site-packages/pandas/core/reshape/merge.py:3131[39m, in [36m_items_overlap_with_suffix[39m[34m(left, right, suffixes)[39m
+[32m   3129[39m dups.extend(rlabels.intersection(left.difference(to_rename)).tolist())
+[32m   3130[39m [38;5;28;01mif[39;00m dups:
+[32m-> [39m[32m3131[39m     [38;5;28;01mraise[39;00m MergeError(
+[32m   3132[39m         [33mf[39m[33m"[39m[33mPassing [39m[33m'[39m[33msuffixes[39m[33m'[39m[33m which cause duplicate columns [39m[38;5;132;01m{[39;00m[38;5;28mset[39m(dups)[38;5;132;01m}[39;00m[33m is [39m[33m"[39m
+[32m   3133[39m         [33m"[39m[33mnot allowed.[39m[33m"[39m,
+[32m   3134[39m     )
+[32m   3136[39m [38;5;28;01mreturn[39;00m llabels, rlabels
+
+[31mMergeError[39m: Passing 'suffixes' which cause duplicate columns {'Metadata_Imaging_ImageID_x', 'Metadata_Imaging_ImageID_y'} is not allowed.
+

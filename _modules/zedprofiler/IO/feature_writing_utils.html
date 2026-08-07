@@ -46,6 +46,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../readme.html">ZEDprofiler  </a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../readme.html#install-environment">Install environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../readme.html#data-contract">Data Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../readme.html#command-line-interface">Command-line interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../readme.html#arguments">Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../readme.html#feature-types">Feature types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../readme.html#outputs">Outputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../readme.html#two-channel-colocalization-example">Two-channel colocalization example</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../../readme.html#quality-gates">Quality Gates</a></li>
 </ul>
 </li>
@@ -251,9 +258,14 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.IO.feature_writing_utils.remove_underscores_from_string"><code class="docutils literal notranslate"><span class="pre">remove_underscores_from_string()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.IO.feature_writing_utils.save_features_as_parquet"><code class="docutils literal notranslate"><span class="pre">save_features_as_parquet()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ImageSetConfig"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ImageSetConfig.field_of_view"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.field_of_view</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ImageSetConfig.image_id"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.image_id</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ImageSetConfig.image_set_name"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.image_set_name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ImageSetConfig.label_key_name"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.label_key_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ImageSetConfig.patient_tumor"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.patient_tumor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ImageSetConfig.plate"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.plate</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ImageSetConfig.raw_image_key_name"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.raw_image_key_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ImageSetConfig.well"><code class="docutils literal notranslate"><span class="pre">ImageSetConfig.well</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ImageSetLoader"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader</span></code></a><ul>
@@ -265,6 +277,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ImageSetLoader.unique_compartment_objects"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.unique_compartment_objects</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ImageSetLoader.image_names"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.image_names</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ImageSetLoader.compartments"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.compartments</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ImageSetLoader.from_image_dict"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.from_image_dict()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ImageSetLoader.get_anisotropy"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.get_anisotropy()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ImageSetLoader.get_compartments"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.get_compartments()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.IO.loading_classes.ImageSetLoader.get_image"><code class="docutils literal notranslate"><span class="pre">ImageSetLoader.get_image()</span></code></a></li>
@@ -398,6 +411,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">dataclasses</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span>
@@ -584,6 +598,7 @@
     <span class="n">parent_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span>
     <span class="n">df</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">metadata</span><span class="p">:</span> <span class="n">FeatureMetadata</span><span class="p">,</span>
+    <span class="n">atomic</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Save features as parquet files in a consistent way.</span>
 
@@ -599,6 +614,12 @@
 <span class="sd">    metadata : FeatureMetadata</span>
 <span class="sd">        Metadata for the feature output (compartment, channel, feature_type,</span>
 <span class="sd">        cpu_or_gpu).</span>
+<span class="sd">    atomic : bool</span>
+<span class="sd">        When True, write to a sibling ``.tmp`` file then atomically replace</span>
+<span class="sd">        the destination via ``os.replace``. This prevents a crashed write</span>
+<span class="sd">        from leaving a partial parquet file that a restartable caller (using</span>
+<span class="sd">        ``--skip-existing``) could mistake for a complete one. Default False</span>
+<span class="sd">        preserves the existing direct-write behavior.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -613,7 +634,12 @@
         <span class="n">metadata</span><span class="o">.</span><span class="n">cpu_or_gpu</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">save_path</span> <span class="o">=</span> <span class="n">parent_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_features.parquet&quot;</span>
-    <span class="n">validated_df</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">atomic</span><span class="p">:</span>
+        <span class="n">tmp_path</span> <span class="o">=</span> <span class="n">save_path</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="n">save_path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">+</span> <span class="s2">&quot;.tmp&quot;</span><span class="p">)</span>
+        <span class="n">validated_df</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="n">save_path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">validated_df</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">save_path</span></div>
 
 </pre></div>
