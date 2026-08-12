@@ -9,6 +9,7 @@ from beartype import beartype
 from pydantic import BaseModel, ConfigDict, field_validator
 
 from zedprofiler.featurization.granularity import (
+    _labeled_voxel_positions,
     _subsample_3d,
     _upsample_3d,
     compute_granularity,
@@ -231,3 +232,82 @@ def test_compute_granularity_preserves_sparse_label_ids() -> None:
     df = compute_granularity(Dummy(), radius=1, granular_spectrum_length=2)
     assert isinstance(df, pd.DataFrame)
     assert sorted(df["Metadata_Object_ObjectID"].tolist()) == [257, 514]
+
+
+def test_labeled_voxel_positions_matches_full_array_scan() -> None:
+    """Gathering only labeled voxels must match scanning the whole array.
+
+    This pins the core equivalence the granularity per-scale loop relies on
+    for its performance optimization: scipy.ndimage.mean(image, labels,
+    label_range) run on the full array must equal the same call restricted
+    to _labeled_voxel_positions's gathered coordinates/label ids, for
+    arbitrary (including sparse, non-contiguous) label placement.
+    """
+    rng = np.random.default_rng(0)
+    shape = (6, 10, 12)
+    labels = np.zeros(shape, dtype=int)
+    labels[1, 2, 3] = 5
+    labels[1, 2, 4] = 5
+    labels[4, 8, 9] = 9
+    image = rng.uniform(0, 100, size=shape)
+    label_range = np.array([5, 9])
+
+    coords, label_ids = _labeled_voxel_positions(labels)
+
+    full_means = scipy.ndimage.mean(image, labels, label_range)
+    gathered_means = scipy.ndimage.mean(image[coords], label_ids, label_range)
+
+    np.testing.assert_allclose(full_means, gathered_means)
+
+
+def test_labeled_voxel_positions_empty_when_no_labels() -> None:
+    """An all-background label image yields empty coordinates/labels, not a crash."""
+    labels = np.zeros((4, 4, 4), dtype=int)
+    coords, label_ids = _labeled_voxel_positions(labels)
+    assert label_ids.size == 0
+    assert all(c.size == 0 for c in coords)
+
+
+@pytest.mark.parametrize("shape,center", [((24, 48, 48), (12, 22, 32))])
+def test_compute_granularity_sparse_object_in_larger_image(
+    shape: tuple[int, int, int],
+    center: tuple[int, int, int],
+) -> None:
+    """A small object far from the edges of a much larger, subsampled image.
+
+    This is the scenario the labeled-voxel-only upsampling optimization
+    targets: a labeled object occupying a small fraction of the image, with
+    subsampling active (the production-default code path). Exercises a
+    shape/object-size ratio far more extreme than the small synthetic cases
+    elsewhere in this file, where the object is a large fraction of the image.
+    """
+    img, lab = make_image_and_label(shape, center)
+    imgset = ImageSetLoaderModel()
+    loader = ObjectLoaderModel(
+        image=img,
+        label_image=lab,
+        object_ids=[1],
+        image_set_loader=imgset,
+    )
+
+    df = compute_granularity(
+        loader,
+        radius=2,
+        granular_spectrum_length=4,
+        subsample_size=0.5,
+        image_sample_size=0.5,
+    )
+
+    assert len(df) == 1
+    value_cols = [
+        c
+        for c in df.columns
+        if c
+        not in (
+            "Metadata_Object_ObjectID",
+            "Metadata_Imaging_ImageID",
+            "Metadata_Experiment_ImageSet",
+        )
+    ]
+    assert value_cols
+    assert np.isfinite(df[value_cols].to_numpy(dtype=float)).all()

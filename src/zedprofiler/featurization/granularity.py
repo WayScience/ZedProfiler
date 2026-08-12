@@ -74,6 +74,35 @@ def _subsample_3d(
     return scipy.ndimage.map_coordinates(data, (k, i, j), order=order)
 
 
+def _labeled_voxel_positions(
+    masked_labels: numpy.ndarray,
+) -> tuple[tuple[numpy.ndarray, ...], numpy.ndarray]:
+    """Return coordinates and label ids for every voxel in a labeled object.
+
+    ``scipy.ndimage.mean(image, masked_labels, label_range)`` only ever reads
+    voxels where ``masked_labels`` is nonzero; everything else is discarded.
+    Precomputing just those voxel coordinates (and the label id at each one)
+    lets a per-scale loop upsample/scan only what will actually be used,
+    instead of the whole image, without changing the result.
+
+    Parameters
+    ----------
+    masked_labels : numpy.ndarray
+        Label image with 0 marking background/unlabeled voxels.
+
+    Returns
+    -------
+    tuple[tuple[numpy.ndarray, ...], numpy.ndarray]
+        ``(coords, label_ids)`` where ``coords`` is a per-axis tuple of index
+        arrays (as returned by ``numpy.nonzero``) and ``label_ids`` is the
+        label value at each of those coordinates, i.e.
+        ``masked_labels[coords]``.
+
+    """
+    coords = numpy.nonzero(masked_labels)
+    return coords, masked_labels[coords]
+
+
 def _upsample_3d(
     data: numpy.ndarray,
     subsampled_shape: numpy.ndarray,
@@ -381,20 +410,26 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
             f"Spectrum length: {granular_spectrum_length}",
         )
 
-    # Precompute the upsample coordinate grids once before the spectrum loop.
-    # They depend only on the fixed subsampled/original shapes (not on the
-    # per-scale ``rec``), so rebuilding three full-resolution float arrays via
-    # ``numpy.mgrid`` on every scale (as ``_upsample_3d`` does internally) is
-    # wasted work. Reuse the same coordinate tuple for every
-    # ``map_coordinates`` call below. Only needed when subsampling is active
-    # and there are objects to measure.
+    # Precomputing labeled-voxel positions once (instead of upsampling/
+    # scanning the whole image every scale in the loop below) gives identical
+    # per-object means for a fraction of the work when labeled objects cover
+    # a small part of the image -- the common case. Coordinates depend only
+    # on the fixed subsampled/original shapes (not on the per-scale ``rec``),
+    # so this is computed once and reused for every ``map_coordinates`` call
+    # below. See ``_labeled_voxel_positions`` for why this is equivalent.
+    labeled_voxel_coords: tuple[numpy.ndarray, ...] = ()
+    labeled_voxel_labels = numpy.array([], dtype=original_labels.dtype)
+    if nobjects > 0:
+        labeled_voxel_coords, labeled_voxel_labels = _labeled_voxel_positions(
+            masked_labels,
+        )
+    have_labeled_voxels = labeled_voxel_labels.size > 0
+
     upsample_coords: tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray] | None = None
     if subsample_size < 1.0 and nobjects > 0:
-        k, i, j = numpy.mgrid[
-            0 : original_shape[0],
-            0 : original_shape[1],
-            0 : original_shape[2],
-        ].astype(float)
+        k = labeled_voxel_coords[0].astype(float)
+        i = labeled_voxel_coords[1].astype(float)
+        j = labeled_voxel_coords[2].astype(float)
         if original_shape[0] > 1:
             k *= float(new_shape[0] - 1) / float(original_shape[0] - 1)
         if original_shape[1] > 1:
@@ -430,23 +465,31 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
             print(f"Scale 1 - gs: {gs:.4f}, currentmean: {currentmean:.6f}")
 
         # ----------------------------------------------------------
-        # Per-object granularity: upsample rec to original shape,
-        # then compute per-label means using masked_labels.
+        # Per-object granularity: upsample rec to original shape at only the
+        # voxels that belong to a labeled object, then compute per-label
+        # means using those voxels' label ids. Equivalent to upsampling the
+        # whole image and calling scipy.ndimage.mean(rec_full, masked_labels,
+        # label_range), since that call already discards everything outside
+        # labeled_voxel_coords -- just without doing the discarded work.
         # ----------------------------------------------------------
         if nobjects > 0:
             if upsample_coords is not None:
-                rec_full = scipy.ndimage.map_coordinates(
+                rec_at_object_voxels = scipy.ndimage.map_coordinates(
                     rec,
                     upsample_coords,
                     order=1,
                 )
             else:
-                rec_full = rec
+                rec_at_object_voxels = rec[labeled_voxel_coords]
 
             # Single-pass per-object mean via scipy.ndimage.mean
-            if numpy.any(masked_labels > 0):
+            if have_labeled_voxels:
                 new_object_means = _fix_scipy_ndimage_result(
-                    scipy.ndimage.mean(rec_full, masked_labels, label_range),
+                    scipy.ndimage.mean(
+                        rec_at_object_voxels,
+                        labeled_voxel_labels,
+                        label_range,
+                    ),
                 )
             else:
                 new_object_means = numpy.zeros(len(label_range))

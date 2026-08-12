@@ -320,6 +320,10 @@ def _load_real_world_two_object_loader() -> TwoObjectLoader:
     object_ids = [int(x) for x in np.unique(label) if x != 0]
     image_set_loader = ImageSetLoader.__new__(ImageSetLoader)
     image_set_loader.image_set_name = "real-world-dr90-c00-c90"
+    # Mirrors ImageSetLoader.image_id, which falls back to image_set_name
+    # when no identifier fields are set (see BenchmarkImageSet above). This
+    # loader bypasses __init__ via __new__, so nothing sets it otherwise.
+    image_set_loader.image_id = image_set_loader.image_set_name
     image_set_loader.image_set_dict = {
         "DNA1": tifffile.imread(
             CELLPROFILER_TUTORIAL_ROOT / "input" / f"{first_image_name}.tif",
