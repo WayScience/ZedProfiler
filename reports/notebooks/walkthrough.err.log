@@ -132,5 +132,5 @@ show(all_features_df)
 [32m   3134[39m     )
 [32m   3136[39m [38;5;28;01mreturn[39;00m llabels, rlabels
 
-[31mMergeError[39m: Passing 'suffixes' which cause duplicate columns {'Metadata_Imaging_ImageID_y', 'Metadata_Imaging_ImageID_x'} is not allowed.
+[31mMergeError[39m: Passing 'suffixes' which cause duplicate columns {'Metadata_Imaging_ImageID_x', 'Metadata_Imaging_ImageID_y'} is not allowed.
 
