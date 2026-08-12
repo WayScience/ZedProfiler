@@ -417,6 +417,14 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
     # on the fixed subsampled/original shapes (not on the per-scale ``rec``),
     # so this is computed once and reused for every ``map_coordinates`` call
     # below. See ``_labeled_voxel_positions`` for why this is equivalent.
+    # When nobjects == 0 (no labeled objects at all) this block is skipped,
+    # leaving labeled_voxel_coords/labeled_voxel_labels at their empty
+    # defaults; upsample_coords below and the per-object branch in the
+    # spectrum loop are both also gated on nobjects > 0, so no per-object
+    # work is attempted and object_measurements stays empty. This mirrors
+    # pre-optimization behavior: the returned DataFrame has zero rows but
+    # keeps its Metadata_* columns (see
+    # test_compute_granularity_zero_objects_returns_empty_dataframe).
     labeled_voxel_coords: tuple[numpy.ndarray, ...] = ()
     labeled_voxel_labels = numpy.array([], dtype=original_labels.dtype)
     if nobjects > 0:

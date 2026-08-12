@@ -268,6 +268,77 @@ def test_labeled_voxel_positions_empty_when_no_labels() -> None:
     assert all(c.size == 0 for c in coords)
 
 
+def test_sparse_upsample_matches_full_array_upsample() -> None:
+    """Upsampling only labeled voxels must match upsampling the whole array.
+
+    This pins the other equivalence the granularity per-scale loop's
+    optimization relies on (the mean-gathering side is pinned by
+    test_labeled_voxel_positions_matches_full_array_scan above): evaluating
+    scipy.ndimage.map_coordinates only at the coordinates of labeled voxels,
+    scaled into the subsampled array's coordinate space, must equal
+    upsampling the *entire* subsampled array with _upsample_3d (the
+    pre-optimization approach) and then indexing at those same voxels.
+    """
+    original_shape = (10, 14, 16)
+    subsampled_shape = np.array([5.0, 7.0, 8.0])
+    rng = np.random.default_rng(1)
+    rec = rng.uniform(0, 100, size=(5, 7, 8))
+
+    labels = np.zeros(original_shape, dtype=int)
+    labels[1, 2, 3] = 5
+    labels[1, 2, 4] = 5
+    labels[8, 12, 14] = 9
+
+    coords, _label_ids = _labeled_voxel_positions(labels)
+
+    # Reference (pre-optimization): upsample the whole subsampled array,
+    # then index at the labeled voxels.
+    full_upsampled = _upsample_3d(rec, subsampled_shape, original_shape)
+    expected = full_upsampled[coords]
+
+    # Optimized: scale only the labeled voxels' coordinates into the
+    # subsampled array's space, then map_coordinates just those points.
+    k, i, j = (c.astype(float) for c in coords)
+    if original_shape[0] > 1:
+        k *= float(subsampled_shape[0] - 1) / float(original_shape[0] - 1)
+    if original_shape[1] > 1:
+        i *= float(subsampled_shape[1] - 1) / float(original_shape[1] - 1)
+    if original_shape[2] > 1:
+        j *= float(subsampled_shape[2] - 1) / float(original_shape[2] - 1)
+    actual = scipy.ndimage.map_coordinates(rec, (k, i, j), order=1)
+
+    np.testing.assert_allclose(actual, expected)
+
+
+def test_compute_granularity_zero_objects_returns_empty_dataframe() -> None:
+    """No labeled objects (nobjects == 0) must not crash the per-scale loop.
+
+    Answers https://github.com/WayScience/ZedProfiler/pull/51#discussion_r3766497646:
+    with an all-background label image, every ``nobjects > 0`` branch in
+    compute_granularity is skipped, so no per-object measurements are ever
+    recorded. The result is a zero-row DataFrame that still carries its
+    Metadata_* columns, matching pre-optimization behavior.
+    """
+    shape = (8, 8, 8)
+    img = np.zeros(shape, dtype=float)
+    lab = np.zeros(shape, dtype=int)  # no labeled objects
+
+    class Dummy:
+        image = img
+        label_image = lab
+        object_ids: ClassVar[list[int]] = []
+        image_set_loader = type("ISL", (), {"image_set_name": "s", "image_id": "s"})()
+        compartment = "Cell"
+        channel = "Ch1"
+
+    df = compute_granularity(Dummy(), radius=1, granular_spectrum_length=3)
+    assert isinstance(df, pd.DataFrame)
+    assert len(df) == 0
+    assert "Metadata_Object_ObjectID" in df.columns
+    assert "Metadata_Imaging_ImageID" in df.columns
+    assert "Metadata_Experiment_ImageSet" in df.columns
+
+
 @pytest.mark.parametrize("shape,center", [((24, 48, 48), (12, 22, 32))])
 def test_compute_granularity_sparse_object_in_larger_image(
     shape: tuple[int, int, int],
@@ -290,10 +361,11 @@ def test_compute_granularity_sparse_object_in_larger_image(
         image_set_loader=imgset,
     )
 
+    granular_spectrum_length = 4
     df = compute_granularity(
         loader,
         radius=2,
-        granular_spectrum_length=4,
+        granular_spectrum_length=granular_spectrum_length,
         subsample_size=0.5,
         image_sample_size=0.5,
     )
@@ -309,5 +381,16 @@ def test_compute_granularity_sparse_object_in_larger_image(
             "Metadata_Experiment_ImageSet",
         )
     ]
-    assert value_cols
+    # This is an end-to-end smoke test for the sparse-object code path, not a
+    # value-equivalence check: erosion/reconstruction spectra don't have a
+    # simple closed-form expected value to assert against here. Exact
+    # numeric equivalence of the optimization itself (gathering only labeled
+    # voxels instead of scanning/upsampling the whole image) is pinned
+    # directly by test_labeled_voxel_positions_matches_full_array_scan and
+    # test_sparse_upsample_matches_full_array_upsample above. So here we only
+    # check that the pipeline produces one granularity column per requested
+    # scale (granular_spectrum_length) and that none of them are NaN/inf,
+    # which would indicate the sparse-voxel path silently dropped or
+    # corrupted a scale's measurement.
+    assert len(value_cols) == granular_spectrum_length
     assert np.isfinite(df[value_cols].to_numpy(dtype=float)).all()
