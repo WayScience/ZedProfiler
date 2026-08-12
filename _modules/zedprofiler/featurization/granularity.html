@@ -479,6 +479,35 @@
     <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">map_coordinates</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_labeled_voxel_positions</span><span class="p">(</span>
+    <span class="n">masked_labels</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return coordinates and label ids for every voxel in a labeled object.</span>
+
+<span class="sd">    ``scipy.ndimage.mean(image, masked_labels, label_range)`` only ever reads</span>
+<span class="sd">    voxels where ``masked_labels`` is nonzero; everything else is discarded.</span>
+<span class="sd">    Precomputing just those voxel coordinates (and the label id at each one)</span>
+<span class="sd">    lets a per-scale loop upsample/scan only what will actually be used,</span>
+<span class="sd">    instead of the whole image, without changing the result.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    masked_labels : numpy.ndarray</span>
+<span class="sd">        Label image with 0 marking background/unlabeled voxels.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple[tuple[numpy.ndarray, ...], numpy.ndarray]</span>
+<span class="sd">        ``(coords, label_ids)`` where ``coords`` is a per-axis tuple of index</span>
+<span class="sd">        arrays (as returned by ``numpy.nonzero``) and ``label_ids`` is the</span>
+<span class="sd">        label value at each of those coordinates, i.e.</span>
+<span class="sd">        ``masked_labels[coords]``.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">masked_labels</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">coords</span><span class="p">,</span> <span class="n">masked_labels</span><span class="p">[</span><span class="n">coords</span><span class="p">]</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">_upsample_3d</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">subsampled_shape</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -788,20 +817,34 @@
             <span class="sa">f</span><span class="s2">&quot;Spectrum length: </span><span class="si">{</span><span class="n">granular_spectrum_length</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="c1"># Precompute the upsample coordinate grids once before the spectrum loop.</span>
-    <span class="c1"># They depend only on the fixed subsampled/original shapes (not on the</span>
-    <span class="c1"># per-scale ``rec``), so rebuilding three full-resolution float arrays via</span>
-    <span class="c1"># ``numpy.mgrid`` on every scale (as ``_upsample_3d`` does internally) is</span>
-    <span class="c1"># wasted work. Reuse the same coordinate tuple for every</span>
-    <span class="c1"># ``map_coordinates`` call below. Only needed when subsampling is active</span>
-    <span class="c1"># and there are objects to measure.</span>
+    <span class="c1"># Precomputing labeled-voxel positions once (instead of upsampling/</span>
+    <span class="c1"># scanning the whole image every scale in the loop below) gives identical</span>
+    <span class="c1"># per-object means for a fraction of the work when labeled objects cover</span>
+    <span class="c1"># a small part of the image -- the common case. Coordinates depend only</span>
+    <span class="c1"># on the fixed subsampled/original shapes (not on the per-scale ``rec``),</span>
+    <span class="c1"># so this is computed once and reused for every ``map_coordinates`` call</span>
+    <span class="c1"># below. See ``_labeled_voxel_positions`` for why this is equivalent.</span>
+    <span class="c1"># When nobjects == 0 (no labeled objects at all) this block is skipped,</span>
+    <span class="c1"># leaving labeled_voxel_coords/labeled_voxel_labels at their empty</span>
+    <span class="c1"># defaults; upsample_coords below and the per-object branch in the</span>
+    <span class="c1"># spectrum loop are both also gated on nobjects &gt; 0, so no per-object</span>
+    <span class="c1"># work is attempted and object_measurements stays empty. This mirrors</span>
+    <span class="c1"># pre-optimization behavior: the returned DataFrame has zero rows but</span>
+    <span class="c1"># keeps its Metadata_* columns (see</span>
+    <span class="c1"># test_compute_granularity_zero_objects_returns_empty_dataframe).</span>
+    <span class="n">labeled_voxel_coords</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="n">labeled_voxel_labels</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">original_labels</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">nobjects</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">labeled_voxel_coords</span><span class="p">,</span> <span class="n">labeled_voxel_labels</span> <span class="o">=</span> <span class="n">_labeled_voxel_positions</span><span class="p">(</span>
+            <span class="n">masked_labels</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">have_labeled_voxels</span> <span class="o">=</span> <span class="n">labeled_voxel_labels</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
     <span class="n">upsample_coords</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="n">subsample_size</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="ow">and</span> <span class="n">nobjects</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span>
-            <span class="mi">0</span> <span class="p">:</span> <span class="n">original_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-            <span class="mi">0</span> <span class="p">:</span> <span class="n">original_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-            <span class="mi">0</span> <span class="p">:</span> <span class="n">original_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-        <span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">labeled_voxel_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">labeled_voxel_coords</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">labeled_voxel_coords</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">original_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">k</span> <span class="o">*=</span> <span class="nb">float</span><span class="p">(</span><span class="n">new_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">original_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">original_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -837,23 +880,31 @@
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scale 1 - gs: </span><span class="si">{</span><span class="n">gs</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, currentmean: </span><span class="si">{</span><span class="n">currentmean</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># ----------------------------------------------------------</span>
-        <span class="c1"># Per-object granularity: upsample rec to original shape,</span>
-        <span class="c1"># then compute per-label means using masked_labels.</span>
+        <span class="c1"># Per-object granularity: upsample rec to original shape at only the</span>
+        <span class="c1"># voxels that belong to a labeled object, then compute per-label</span>
+        <span class="c1"># means using those voxels&#39; label ids. Equivalent to upsampling the</span>
+        <span class="c1"># whole image and calling scipy.ndimage.mean(rec_full, masked_labels,</span>
+        <span class="c1"># label_range), since that call already discards everything outside</span>
+        <span class="c1"># labeled_voxel_coords -- just without doing the discarded work.</span>
         <span class="c1"># ----------------------------------------------------------</span>
         <span class="k">if</span> <span class="n">nobjects</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">upsample_coords</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">rec_full</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">map_coordinates</span><span class="p">(</span>
+                <span class="n">rec_at_object_voxels</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">map_coordinates</span><span class="p">(</span>
                     <span class="n">rec</span><span class="p">,</span>
                     <span class="n">upsample_coords</span><span class="p">,</span>
                     <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">rec_full</span> <span class="o">=</span> <span class="n">rec</span>
+                <span class="n">rec_at_object_voxels</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="n">labeled_voxel_coords</span><span class="p">]</span>
 
             <span class="c1"># Single-pass per-object mean via scipy.ndimage.mean</span>
-            <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">masked_labels</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">have_labeled_voxels</span><span class="p">:</span>
                 <span class="n">new_object_means</span> <span class="o">=</span> <span class="n">_fix_scipy_ndimage_result</span><span class="p">(</span>
-                    <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rec_full</span><span class="p">,</span> <span class="n">masked_labels</span><span class="p">,</span> <span class="n">label_range</span><span class="p">),</span>
+                    <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+                        <span class="n">rec_at_object_voxels</span><span class="p">,</span>
+                        <span class="n">labeled_voxel_labels</span><span class="p">,</span>
+                        <span class="n">label_range</span><span class="p">,</span>
+                    <span class="p">),</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">new_object_means</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">label_range</span><span class="p">))</span>
