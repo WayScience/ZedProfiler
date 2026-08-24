@@ -54,7 +54,13 @@ def compute_intensity(  # noqa: C901, PLR0915
 
     """
     if object_loader.label_image is None or object_loader.image is None:
-        return pandas.DataFrame()
+        return pandas.DataFrame(
+            {
+                "Metadata_Experiment_ImageSet": [],
+                "Metadata_Imaging_ImageID": [],
+                "Metadata_Object_ObjectID": [],
+            },
+        )
     image_object = object_loader.image
     label_object = object_loader.label_image
     labels = object_loader.object_ids

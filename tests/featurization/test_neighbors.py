@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from types import SimpleNamespace
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -74,6 +76,30 @@ def test_compute_neighbors_counts(
     df = compute_neighbors(loader, distance_threshold=5, anisotropy_factor=1)
     assert isinstance(df, pd.DataFrame)
     assert "Metadata_Object_ObjectID" in df.columns
+
+
+def test_none_label_image_returns_well_formed_empty_frame() -> None:
+    """A degenerate loader with no label image must not return a malformed frame.
+
+    ObjectLoader sets ``label_image`` to None when its compartment is missing
+    for a given image set. Before the fix, compute_neighbors returned a bare
+    ``pandas.DataFrame()`` with no columns at all in this case, which crashes
+    any downstream merge that expects an ID column to key on.
+    """
+    imgset = SimpleNamespace(image_set_name="neighbors", image_id="neighbors")
+    loader = SimpleNamespace(
+        label_image=None,
+        object_ids=[],
+        image_set_loader=imgset,
+        compartment="Cell",
+        channel="Ch1",
+    )
+
+    df = compute_neighbors(loader, distance_threshold=5, anisotropy_factor=1)
+
+    assert isinstance(df, pd.DataFrame)
+    assert "Metadata_Object_ObjectID" in df.columns
+    assert len(df) == 0
 
 
 def test_neighbors_expand_box_bounds() -> None:

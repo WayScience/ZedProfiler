@@ -216,7 +216,13 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
 
     # Get original data
     if object_loader.image is None or object_loader.label_image is None:
-        return pandas.DataFrame()
+        return pandas.DataFrame(
+            {
+                "Metadata_Experiment_ImageSet": [],
+                "Metadata_Imaging_ImageID": [],
+                "Metadata_Object_ObjectID": [],
+            },
+        )
     original_pixels = object_loader.image
     original_labels = object_loader.label_image
     original_shape = original_pixels.shape

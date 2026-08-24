@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from types import SimpleNamespace
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -67,6 +69,32 @@ def test_compute_texture_basic(
     df = compute_texture(loader, distance=1, grayscale=256)
     assert isinstance(df, pd.DataFrame)
     assert "Metadata_Object_ObjectID" in df.columns
+
+
+def test_none_image_returns_well_formed_empty_frame() -> None:
+    """A degenerate loader with no image must not return a malformed frame.
+
+    ObjectLoader sets ``image`` (and ``label_image``) to None when its channel
+    (or compartment) is missing for a given image set — a real, not
+    contrived, degenerate input. Before the fix, compute_texture returned a
+    bare ``pandas.DataFrame()`` with no columns at all in this case, which
+    crashes any downstream merge that expects an ID column to key on.
+    """
+    imgset = SimpleNamespace(image_set_name="texture", image_id="texture")
+    loader = SimpleNamespace(
+        image=None,
+        label_image=None,
+        object_ids=[],
+        image_set_loader=imgset,
+        compartment="Cell",
+        channel="Ch1",
+    )
+
+    df = compute_texture(loader, distance=1, grayscale=256)
+
+    assert isinstance(df, pd.DataFrame)
+    assert "Metadata_Object_ObjectID" in df.columns
+    assert len(df) == 0
 
 
 def test_value_error_in_one_object_does_not_corrupt_others() -> None:

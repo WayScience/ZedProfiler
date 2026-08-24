@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from types import SimpleNamespace
 from typing import ClassVar
 
 import numpy as np
@@ -71,6 +72,32 @@ def test_compute_granularity_basic(
     assert isinstance(df, (pd.DataFrame,))
     # Expect Metadata_Object_ObjectID column
     assert "Metadata_Object_ObjectID" in df.columns
+
+
+def test_none_image_returns_well_formed_empty_frame() -> None:
+    """A degenerate loader with no image must not return a malformed frame.
+
+    ObjectLoader sets ``image`` (and ``label_image``) to None when its channel
+    (or compartment) is missing for a given image set. Before the fix,
+    compute_granularity returned a bare ``pandas.DataFrame()`` with no columns
+    at all in this case, which crashes any downstream merge that expects an
+    ID column to key on.
+    """
+    imgset = SimpleNamespace(image_set_name="gran", image_id="gran")
+    loader = SimpleNamespace(
+        image=None,
+        label_image=None,
+        object_ids=[],
+        image_set_loader=imgset,
+        compartment="Cell",
+        channel="Ch1",
+    )
+
+    df = compute_granularity(loader, radius=1, granular_spectrum_length=4)
+
+    assert isinstance(df, pd.DataFrame)
+    assert "Metadata_Object_ObjectID" in df.columns
+    assert len(df) == 0
 
 
 def test_subsample_and_upsample_roundtrip() -> None:

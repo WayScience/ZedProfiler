@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from types import SimpleNamespace
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -184,6 +186,32 @@ def test_compute_intensity_skips_phantom_object_id_without_bbox() -> None:
 
     returned_ids = sorted(int(x) for x in df["Metadata_Object_ObjectID"].tolist())
     assert returned_ids == [1]
+
+
+def test_none_image_returns_well_formed_empty_frame() -> None:
+    """A degenerate loader with no image must not return a malformed frame.
+
+    ObjectLoader sets ``image`` (and ``label_image``) to None when its channel
+    (or compartment) is missing for a given image set. Before the fix,
+    compute_intensity returned a bare ``pandas.DataFrame()`` with no columns
+    at all in this case, which crashes any downstream merge that expects an
+    ID column to key on.
+    """
+    imgset = SimpleNamespace(image_set_name="intensity", image_id="intensity")
+    loader = SimpleNamespace(
+        image=None,
+        label_image=None,
+        object_ids=[],
+        image_set_loader=imgset,
+        compartment="Cell",
+        channel="Ch1",
+    )
+
+    df = compute_intensity(loader)
+
+    assert isinstance(df, pd.DataFrame)
+    assert "Metadata_Object_ObjectID" in df.columns
+    assert len(df) == 0
 
 
 def test_compute_intensity_handles_all_zero_intensity_object() -> None:

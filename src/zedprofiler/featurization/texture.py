@@ -93,7 +93,13 @@ def compute_texture(  # noqa: C901
 
     """
     if object_loader.label_image is None or object_loader.image is None:
-        return pandas.DataFrame()
+        return pandas.DataFrame(
+            {
+                "Metadata_Experiment_ImageSet": [],
+                "Metadata_Imaging_ImageID": [],
+                "Metadata_Object_ObjectID": [],
+            },
+        )
     label_object = object_loader.label_image
     labels = object_loader.object_ids
     feature_names = [

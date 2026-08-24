@@ -64,6 +64,36 @@ def test_compute_colocalization_basic(
     assert any("Colocalization" in c for c in df.columns)
 
 
+@pytest.mark.parametrize("shape,center", [((7, 7, 7), (3, 3, 3))])
+def test_zero_objects_returns_well_formed_empty_frame(
+    shape: tuple[int, int, int],
+    center: tuple[int, int, int],
+) -> None:
+    """A degenerate loader with zero objects must not return a malformed frame.
+
+    Before the fix, compute_colocalization returned a bare
+    ``pandas.DataFrame()`` with no columns at all when no object pairs were
+    found, which crashes any downstream merge that expects an ID column to
+    key on.
+    """
+    imgset = ImageSetLoaderModel()
+    label, im1, im2 = make_pair(shape, center)
+    loader = TwoObjectLoaderModel(
+        image_set_loader=imgset,
+        compartment="Cell",
+        image1=im1,
+        image2=im2,
+        label_image=label,
+        object_ids=[],
+    )
+
+    df = compute_colocalization(loader, channel1="A", channel2="B")
+
+    assert isinstance(df, pd.DataFrame)
+    assert "Metadata_Object_ObjectID" in df.columns
+    assert len(df) == 0
+
+
 def test_linear_and_bisection_costes_thresholds_basic() -> None:
     # simple linear relationship between channels
     x = np.linspace(1.0, 100.0, 200)

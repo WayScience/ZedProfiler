@@ -106,7 +106,13 @@ def compute_neighbors(
 
     """
     if object_loader.label_image is None:
-        return pandas.DataFrame()
+        return pandas.DataFrame(
+            {
+                "Metadata_Object_ObjectID": [],
+                "NeighborsCountAdjacent": [],
+                f"NeighborsCountByDistance-{distance_threshold}": [],
+            },
+        )
     label_object = object_loader.label_image
     labels = object_loader.object_ids
     # set image global min and max coordinates
