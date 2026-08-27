@@ -112,7 +112,7 @@ def resample_to_isotropic(
     )
 
 
-def compute_texture(  # noqa: C901
+def compute_texture(  # noqa: C901, PLR0915
     object_loader: ObjectLoader,
     distance: int = 1,
     grayscale: int = 256,
