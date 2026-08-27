@@ -77,6 +77,10 @@ root = "."
 [tool.ruff]
 target-version = "py311"
 line-length = 88
+# ignore all linting in the theoretical_explainations directory, which is used for testing and development of new features
+extend-exclude = [
+  "theorectical_explainations/notebooks/interpolation_edge_demo.ipynb",
+]  # Ignore `E501` (line too long) for Jupyter notebooks
 fix = true
 lint.select = [
   # flake8-builtins
@@ -101,9 +105,10 @@ lint.select = [
   "SIM",
   "W",
 ]
-# Ignore `E501` (line too long) for Jupyter notebooks
 lint.per-file-ignores."*.ipynb" = [ "C408", "E402", "E501" ]
 lint.per-file-ignores."src/**/__init__.py" = [ "F401" ]
+lint.per-file-ignores."src/zedprofiler/featurization/neighbors.py" = [ "PLR0913", "PLR0917" ]
+lint.per-file-ignores."src/zedprofiler/featurization/texture.py" = [ "RUF046" ]
 
 [tool.codespell]
 ignore-words-list = "doesnot,inout"

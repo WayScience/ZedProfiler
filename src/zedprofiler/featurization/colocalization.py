@@ -659,7 +659,13 @@ def compute_colocalization(  # noqa: C901, PLR0912
 
     # Convert list of row-dicts into a dict-of-lists with stable ordering
     if not list_of_dfs:
-        return pandas.DataFrame()
+        return pandas.DataFrame(
+            {
+                "Metadata_Object_ObjectID": [],
+                "Metadata_Experiment_ImageSet": [],
+                "Metadata_Imaging_ImageID": [],
+            },
+        )
 
     # Collect other metric keys preserving first-seen ordering
     other_keys: list[str] = []

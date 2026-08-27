@@ -55,6 +55,13 @@ from zedprofiler.IO.loading_classes import (
 
 tifffile = pytest.importorskip("tifffile")
 
+ANISOTROPY_SPACINGS = [
+    (1.0, 1.0, 1.0),
+    (2.0, 1.0, 1.0),
+    (5.0, 1.0, 1.0),
+    (10.0, 1.0, 1.0),
+]
+
 CELLPROFILER_TUTORIAL_ROOT = (
     Path(__file__).resolve().parents[1]
     / "data"
@@ -216,6 +223,7 @@ def _colocalization_case_id(
 def _load_nuclei_case(
     dataset_case: RealDatasetCase,
     image_case: RealImageCase,
+    anisotropy_spacing: tuple[float, float, float] = (1.0, 1.0, 1.0),
 ) -> LoadedNucleiCase:
     """Load a real image/mask pair into loaders from in-memory arrays."""
     image = tifffile.imread(image_case.image_path)
@@ -225,7 +233,7 @@ def _load_nuclei_case(
         label_set_path=None,
         image_set_array=image,
         label_set_array=label,
-        anisotropy_spacing=(1.0, 1.0, 1.0),
+        anisotropy_spacing=anisotropy_spacing,
         channel_mapping={
             image_case.channel: image_case.image_name,
             image_case.compartment: "SegmentationMask",
@@ -414,9 +422,11 @@ def test_real_dataset_files_are_static(dataset_case: RealDatasetCase) -> None:
 
 @pytest.mark.parametrize("case", IMAGE_CASES, ids=_image_case_id)
 @pytest.mark.parametrize("feature_runner", FEATURE_RUNNERS, ids=_feature_runner_id)
+@pytest.mark.parametrize("anisotropy_spacing", ANISOTROPY_SPACINGS)
 def test_real_world_nuclei_feature_extractors(
     case: tuple[RealDatasetCase, RealImageCase],
     feature_runner: FeatureRunner,
+    anisotropy_spacing: tuple[float, float, float],
 ) -> None:
     """Each single-channel extractor yields a valid per-object frame on real nuclei.
 
@@ -425,7 +435,7 @@ def test_real_world_nuclei_feature_extractors(
     column token, and only finite feature values.
     """
     dataset_case, image_case = case
-    loaded_case = _load_nuclei_case(dataset_case, image_case)
+    loaded_case = _load_nuclei_case(dataset_case, image_case, anisotropy_spacing)
 
     df = feature_runner.run(loaded_case)
 

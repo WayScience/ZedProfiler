@@ -60,7 +60,19 @@ def test_crop_3d_image_returns_expected_subvolume() -> None:
     np.testing.assert_array_equal(cropped, image[1:3, 2:5, 1:5])
 
 
-def test_single_3d_image_expand_bbox_adjusts_for_anisotropy_and_bounds() -> None:
+@pytest.mark.parametrize(
+    ("anisotropy_factor", "expected"),
+    [
+        (1, (0, 0, 0, 5, 9, 9)),
+        (2, (0, 0, 0, 4, 9, 9)),
+        (5, (0, 0, 0, 3, 9, 9)),
+        (10, (0, 0, 0, 3, 9, 9)),
+    ],
+)
+def test_single_3d_image_expand_bbox_adjusts_for_anisotropy_and_bounds(
+    anisotropy_factor: int,
+    expected: tuple[int, int, int, int, int, int],
+) -> None:
     image = np.zeros((5, 10, 10))
     bbox = (1, 3, 3, 2, 5, 5)
 
@@ -68,10 +80,10 @@ def test_single_3d_image_expand_bbox_adjusts_for_anisotropy_and_bounds() -> None
         image=image,
         bbox=bbox,
         expand_pixels=4,
-        anisotropy_factor=2,
+        anisotropy_factor=anisotropy_factor,
     )
 
-    assert expanded == (0, 0, 0, 4, 9, 9)
+    assert expanded == expected
 
 
 def test_check_for_xy_squareness_returns_ratio() -> None:

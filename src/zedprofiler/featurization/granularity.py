@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import math
+
 import numpy
 import pandas
 import scipy.ndimage
@@ -10,6 +12,56 @@ import skimage.morphology
 from zedprofiler.contracts import validate_column_name_schema
 from zedprofiler.IO.feature_writing_utils import format_morphology_feature_name
 from zedprofiler.IO.loading_classes import ObjectLoader
+
+
+def anisotropic_ball(
+    radius: int,
+    spacing: tuple[float, float, float] | None = None,
+) -> numpy.ndarray:
+    """Build a spherical structuring element that is physically isotropic.
+
+    Parameters
+    ----------
+    radius : int
+        Radius of the structuring element in voxel units.
+    spacing : tuple[float, float, float] or None
+        Physical spacing of the image in (z, y, x) order.
+        If None, the structuring element is isotropic in voxel space.
+        If provided, the structuring element will be isotropic
+        in physical space, taking into account the anisotropy
+        of the voxel spacing.
+
+    Returns
+    -------
+    numpy.ndarray
+        A boolean array representing the structuring element,
+        where True values indicate the presence of the struct
+        during element and False values indicate the absence.
+
+    ...
+    """
+    if spacing is None:
+        return skimage.morphology.ball(radius, dtype=bool)
+
+    z_spacing, y_spacing, x_spacing = spacing
+    if z_spacing == y_spacing == x_spacing:
+        return skimage.morphology.ball(radius, dtype=bool)
+
+    min_spacing = min(z_spacing, y_spacing, x_spacing)
+    physical_radius = radius * min_spacing
+
+    # Largest voxel offset on each axis that can still land within the
+    # physical radius. floor() (not round()) so a coarse axis correctly
+    # collapses to 0 when even one voxel step overshoots the radius.
+    rz = math.floor(physical_radius / z_spacing)
+    ry = math.floor(physical_radius / y_spacing)
+    rx = math.floor(physical_radius / x_spacing)
+
+    zz, yy, xx = numpy.ogrid[-rz : rz + 1, -ry : ry + 1, -rx : rx + 1]
+    physical_dist_sq = (
+        (zz * z_spacing) ** 2 + (yy * y_spacing) ** 2 + (xx * x_spacing) ** 2
+    )
+    return physical_dist_sq <= physical_radius**2
 
 
 def _fix_scipy_ndimage_result(result: float | list | numpy.ndarray) -> numpy.ndarray:
@@ -156,11 +208,17 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
 ) -> pandas.DataFrame:
     """Calculate the granularity spectrum of a 3D image.
 
-    Follows the CellProfiler MeasureGranularity algorithm exactly for 3D:
+    Based on the CellProfiler MeasureGranularity algorithm, generalized to 3D:
     1. Subsample the image uniformly (same factor for Z, Y, X).
     2. Further subsample for background tophat removal.
-    3. Iteratively erode with ball(1) and reconstruct, measuring
-    signal lost at each scale as image-level and per-object values.
+    3. Iteratively erode with a spherical structuring element and
+    reconstruct, measuring signal lost at each scale as image-level and
+    per-object values.
+
+    The structuring elements used for background removal and the erosion
+    spectrum are physically isotropic spheres (see ``anisotropic_ball``),
+    not raw voxel-space spheres, so results are correct rather than biased
+    when z-spacing differs from x/y-spacing.
 
     Parameters
     ----------
@@ -216,10 +274,17 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
 
     # Get original data
     if object_loader.image is None or object_loader.label_image is None:
-        return pandas.DataFrame()
+        return pandas.DataFrame(
+            {
+                "Metadata_Experiment_ImageSet": [],
+                "Metadata_Imaging_ImageID": [],
+                "Metadata_Object_ObjectID": [],
+            },
+        )
     original_pixels = object_loader.image
     original_labels = object_loader.label_image
     original_shape = original_pixels.shape
+    spacing = object_loader.image_set_loader.anisotropy_spacing
 
     # Mask: CellProfiler uses im.mask (typically all-True for unmasked images)
     if image_mask is None:
@@ -265,24 +330,24 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
     # ------------------------------------------------------------------
     # Step 2: Background removal via tophat filter
     #
-    # CellProfiler 3D BUG (replicated for compatibility):
-    #   The 3D branch uses new_shape for grid bounds and subsample_size
-    #   for coordinate division, instead of back_shape and
-    #   image_sample_size as the 2D branch does. This means:
-    #   - back_pixels has the SAME shape as pixels (not smaller)
-    #   - Many coordinates are out of bounds → map_coordinates returns 0
-    #   We replicate this exactly to match CellProfiler output.
+    # Downsample the (already subsampled) image and mask to back_shape
+    # for the background estimate, exactly mirroring CellProfiler's 2D
+    # branch: grid bounds are back_shape, and coordinates are divided by
+    # image_sample_size to map back into the new_shape-sized `pixels`
+    # array. CellProfiler's actual 3D implementation uses new_shape /
+    # subsample_size here instead, a bug that leaves back_pixels the same
+    # size as pixels (mostly zero-filled from out-of-bounds sampling) and
+    # applies the tophat radius at the wrong scale. We intentionally do
+    # not replicate that 3D bug.
     # ------------------------------------------------------------------
     if image_sample_size < 1.0:
         back_shape = new_shape * image_sample_size
 
-        # CellProfiler 3D: mgrid[0:new_shape] / subsample_size
-        # (NOT mgrid[0:back_shape] / image_sample_size as 2D does)
         k, i, j = (
-            numpy.mgrid[0 : new_shape[0], 0 : new_shape[1], 0 : new_shape[2]].astype(
+            numpy.mgrid[0 : back_shape[0], 0 : back_shape[1], 0 : back_shape[2]].astype(
                 float,
             )
-            / subsample_size
+            / image_sample_size
         )
         back_pixels = scipy.ndimage.map_coordinates(pixels, (k, i, j), order=1)
         back_mask = (
@@ -302,7 +367,7 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
         back_shape = new_shape
 
     # Tophat filter: masked erosion + masked dilation
-    footprint_bg = skimage.morphology.ball(radius, dtype=bool)
+    footprint_bg = anisotropic_ball(radius, spacing)
 
     back_pixels_masked = numpy.zeros_like(back_pixels)
     back_pixels_masked[back_mask] = back_pixels[back_mask]
@@ -315,10 +380,10 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
         footprint=footprint_bg,
     )
 
-    # Upsample background back to subsampled image size
+    # Upsample background back to subsampled image size: grid over
+    # new_shape, with coordinates scaled by (back_shape - 1) / (new_shape - 1)
+    # to map back into the back_shape-sized back_pixels array.
     if image_sample_size < 1.0:
-        # CellProfiler 3D: mgrid[0:new_shape] with coords scaled by
-        # (back_shape - 1) / (new_shape - 1)
         k, i, j = numpy.mgrid[
             0 : new_shape[0],
             0 : new_shape[1],
@@ -400,8 +465,9 @@ def compute_granularity(  # noqa: C901, PLR0912, PLR0913, PLR0915
     ero[~mask] = 0
     currentmean = startmean
 
-    # CellProfiler uses ball(1) for the iterative erosion/reconstruction loop
-    footprint = skimage.morphology.ball(1, dtype=bool)
+    # Physically-isotropic radius-1 structuring element for the iterative
+    # erosion/reconstruction loop (see anisotropic_ball).
+    footprint = anisotropic_ball(1, spacing)
 
     if verbose:
         print(

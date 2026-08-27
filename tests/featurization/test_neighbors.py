@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from types import SimpleNamespace
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -18,6 +20,8 @@ from zedprofiler.featurization.neighbors import (
     plot_distance_distributions,
     visualize_organoid_shells,
 )
+
+ANISOTROPY_FACTORS = [1, 2, 5, 10]
 
 
 class ImageSetLoaderModel(BaseModel):
@@ -58,9 +62,11 @@ def make_two_labels(
         ((10, 10, 10), [(3, 3, 3), (6, 6, 6)]),
     ],
 )
+@pytest.mark.parametrize("anisotropy_factor", ANISOTROPY_FACTORS)
 def test_compute_neighbors_counts(
     shape: tuple[int, int, int],
     centers: list[tuple[int, int, int]],
+    anisotropy_factor: int,
 ) -> None:
     lab = make_two_labels(shape, centers)
     imgset = ImageSetLoaderModel()
@@ -71,9 +77,37 @@ def test_compute_neighbors_counts(
         image_set_loader=imgset,
     )
 
-    df = compute_neighbors(loader, distance_threshold=5, anisotropy_factor=1)
+    df = compute_neighbors(
+        loader,
+        distance_threshold=5,
+        anisotropy_factor=anisotropy_factor,
+    )
     assert isinstance(df, pd.DataFrame)
     assert "Metadata_Object_ObjectID" in df.columns
+
+
+def test_none_label_image_returns_well_formed_empty_frame() -> None:
+    """A degenerate loader with no label image must not return a malformed frame.
+
+    ObjectLoader sets ``label_image`` to None when its compartment is missing
+    for a given image set. Before the fix, compute_neighbors returned a bare
+    ``pandas.DataFrame()`` with no columns at all in this case, which crashes
+    any downstream merge that expects an ID column to key on.
+    """
+    imgset = SimpleNamespace(image_set_name="neighbors", image_id="neighbors")
+    loader = SimpleNamespace(
+        label_image=None,
+        object_ids=[],
+        image_set_loader=imgset,
+        compartment="Cell",
+        channel="Ch1",
+    )
+
+    df = compute_neighbors(loader, distance_threshold=5, anisotropy_factor=1)
+
+    assert isinstance(df, pd.DataFrame)
+    assert "Metadata_Object_ObjectID" in df.columns
+    assert len(df) == 0
 
 
 def test_neighbors_expand_box_bounds() -> None:
@@ -144,7 +178,10 @@ def test_mahalanobis_small_and_regularized_and_singular() -> None:
 EXPECTED_MULTIPLE_NEIGHBORS = 2
 
 
-def test_neighbors_count_adjacent_detects_touching_cells() -> None:
+@pytest.mark.parametrize("anisotropy_factor", ANISOTROPY_FACTORS)
+def test_neighbors_count_adjacent_detects_touching_cells(
+    anisotropy_factor: int,
+) -> None:
     """NeighborsCountAdjacent must be > 0 for two directly touching objects (Bug 5).
 
     Before the fix, adjacency was detected by cropping to the regionprops bbox
@@ -170,7 +207,11 @@ def test_neighbors_count_adjacent_detects_touching_cells() -> None:
         image_set_loader=imgset,
     )
 
-    df = compute_neighbors(loader, distance_threshold=5, anisotropy_factor=1)
+    df = compute_neighbors(
+        loader,
+        distance_threshold=5,
+        anisotropy_factor=anisotropy_factor,
+    )
     obj1_row = df[df["Metadata_Object_ObjectID"] == 1]
     adjacent_col = [c for c in df.columns if "NeighborsCountAdjacent" in c]
     assert adjacent_col, "NeighborsCountAdjacent column not found in output"
@@ -182,7 +223,10 @@ def test_neighbors_count_adjacent_detects_touching_cells() -> None:
     )
 
 
-def test_neighbors_count_adjacent_detects_multiple_neighbors() -> None:
+@pytest.mark.parametrize("anisotropy_factor", ANISOTROPY_FACTORS)
+def test_neighbors_count_adjacent_detects_multiple_neighbors(
+    anisotropy_factor: int,
+) -> None:
     """NeighborsCountAdjacent must count more than one neighbour.
 
     Object 1 is face-adjacent to two separate objects: object 2 along the z
@@ -203,7 +247,11 @@ def test_neighbors_count_adjacent_detects_multiple_neighbors() -> None:
         image_set_loader=imgset,
     )
 
-    df = compute_neighbors(loader, distance_threshold=5, anisotropy_factor=1)
+    df = compute_neighbors(
+        loader,
+        distance_threshold=5,
+        anisotropy_factor=anisotropy_factor,
+    )
     obj1_row = df[df["Metadata_Object_ObjectID"] == 1]
     adjacent_col = [c for c in df.columns if "NeighborsCountAdjacent" in c]
     assert adjacent_col, "NeighborsCountAdjacent column not found in output"
@@ -243,7 +291,10 @@ def test_create_results_dataframe_and_errors_and_plots() -> None:
     assert hasattr(fig2, "axes")
 
 
-def test_compute_neighbors_skips_phantom_object_id_without_bbox() -> None:
+@pytest.mark.parametrize("anisotropy_factor", ANISOTROPY_FACTORS)
+def test_compute_neighbors_skips_phantom_object_id_without_bbox(
+    anisotropy_factor: int,
+) -> None:
     """Object ids absent from the label image are skipped via the bbox guard.
 
     ``compute_neighbors`` looks up each requested object id in the
@@ -263,7 +314,11 @@ def test_compute_neighbors_skips_phantom_object_id_without_bbox() -> None:
         image_set_loader=imgset,
     )
 
-    df = compute_neighbors(loader, distance_threshold=5, anisotropy_factor=1)
+    df = compute_neighbors(
+        loader,
+        distance_threshold=5,
+        anisotropy_factor=anisotropy_factor,
+    )
 
     returned_ids = sorted(int(x) for x in df["Metadata_Object_ObjectID"].tolist())
     assert returned_ids == [1]

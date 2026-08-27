@@ -10,6 +10,13 @@ from zedprofiler.featurization.volumesizeshape import (
     compute_volume_size_shape,
 )
 
+ANISOTROPY_SPACINGS = [
+    (1.0, 1.0, 1.0),
+    (2.0, 1.0, 1.0),
+    (5.0, 1.0, 1.0),
+    (10.0, 1.0, 1.0),
+]
+
 
 class ImageSetLoaderModel(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
@@ -55,11 +62,13 @@ def make_label_image(
         ((8, 8, 8), [(2, 2, 2), (5, 5, 5)]),
     ],
 )
+@pytest.mark.parametrize("anisotropy_spacing", ANISOTROPY_SPACINGS)
 def test_compute_volume_size_shape_returns_dataframe(
     shape: tuple[int, int, int],
     centers: list[tuple[int, int, int]],
+    anisotropy_spacing: tuple[float, float, float],
 ) -> None:
-    imgset = ImageSetLoaderModel(anisotropy_spacing=(1.0, 1.0, 1.0))
+    imgset = ImageSetLoaderModel(anisotropy_spacing=anisotropy_spacing)
     label = make_label_image(shape, centers)
     obj_ids = sorted(set(label.ravel()) - {0})
     loader = ObjectLoaderModel(
@@ -79,7 +88,10 @@ def test_compute_volume_size_shape_returns_dataframe(
     assert returned_ids == obj_ids
 
 
-def test_compute_volume_size_shape_skips_phantom_object_id_without_props() -> None:
+@pytest.mark.parametrize("anisotropy_spacing", ANISOTROPY_SPACINGS)
+def test_compute_volume_size_shape_skips_phantom_object_id_without_props(
+    anisotropy_spacing: tuple[float, float, float],
+) -> None:
     """Object ids absent from the label image are skipped via the props guard.
 
     ``measure_3D_volume_size_shape`` builds a label->index map from
@@ -88,7 +100,7 @@ def test_compute_volume_size_shape_skips_phantom_object_id_without_props() -> No
     id (99) alongside a real one (1) exercises that guard: only object 1
     should appear in the output, with no crash.
     """
-    imgset = ImageSetLoaderModel(anisotropy_spacing=(1.0, 1.0, 1.0))
+    imgset = ImageSetLoaderModel(anisotropy_spacing=anisotropy_spacing)
     label = make_label_image((7, 7, 7), [(3, 3, 3)])
     loader = ObjectLoaderModel(
         label_image=label,

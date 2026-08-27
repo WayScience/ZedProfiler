@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from types import SimpleNamespace
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -8,12 +10,21 @@ from pydantic import BaseModel, ConfigDict, field_validator
 
 from zedprofiler.featurization.intensity import compute_intensity
 
+ANISOTROPY_SPACINGS = [
+    (1.0, 1.0, 1.0),
+    (2.0, 1.0, 1.0),
+    (5.0, 1.0, 1.0),
+    (10.0, 1.0, 1.0),
+]
+
 
 class ImageSetLoaderModel(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     image_set_name: str = "intensity"
     # mirrors ImageSetLoader.image_id (falls back to image_set_name)
     image_id: str = "intensity"
+    # mirrors ImageSetLoader.anisotropy_spacing (z, y, x spacing)
+    anisotropy_spacing: tuple[float, float, float] = (1.0, 1.0, 1.0)
 
 
 class ObjectLoaderModel(BaseModel):
@@ -138,12 +149,14 @@ def test_integrated_intensity_is_per_object_not_global() -> None:
 
 
 @pytest.mark.parametrize("shape,center", [((6, 6, 6), (3, 3, 3))])
+@pytest.mark.parametrize("anisotropy_spacing", ANISOTROPY_SPACINGS)
 def test_compute_intensity_basic(
     shape: tuple[int, int, int],
     center: tuple[int, int, int],
+    anisotropy_spacing: tuple[float, float, float],
 ) -> None:
     img, lab = make_label_and_image(shape, center)
-    imgset = ImageSetLoaderModel()
+    imgset = ImageSetLoaderModel(anisotropy_spacing=anisotropy_spacing)
     loader = ObjectLoaderModel(
         image=img,
         label_image=lab,
@@ -156,7 +169,56 @@ def test_compute_intensity_basic(
     assert "Metadata_Object_ObjectID" in df.columns
 
 
-def test_compute_intensity_skips_phantom_object_id_without_bbox() -> None:
+@pytest.mark.parametrize("anisotropy_spacing", ANISOTROPY_SPACINGS)
+def test_compute_intensity_mass_displacement_scales_with_z_spacing(
+    anisotropy_spacing: tuple[float, float, float],
+) -> None:
+    """MassDisplacement must scale the z-offset by the physical z-spacing.
+
+    A single centered voxel is always symmetric (geometric center equals
+    intensity-weighted center regardless of spacing), so it never exercises
+    the z-spacing scaling in ``compute_intensity``. This uses a two-voxel
+    object, offset only along z with unequal intensities, so the geometric
+    and intensity-weighted centers diverge along z and MassDisplacement has
+    a spacing-dependent expected value.
+    """
+    shape = (6, 6, 6)
+    image = np.zeros(shape, dtype=float)
+    label = np.zeros(shape, dtype=int)
+    image[1, 2, 2] = 1.0
+    image[4, 2, 2] = 3.0
+    label[1, 2, 2] = 1
+    label[4, 2, 2] = 1
+
+    imgset = ImageSetLoaderModel(anisotropy_spacing=anisotropy_spacing)
+    loader = ObjectLoaderModel(
+        image=image,
+        label_image=label,
+        object_ids=[1],
+        image_set_loader=imgset,
+    )
+
+    df = compute_intensity(loader)
+    md_col = [c for c in df.columns if "MassDisplacement" in c]
+    assert md_col, "MassDisplacement column not found in output"
+
+    row = df[df["Metadata_Object_ObjectID"] == 1]
+    mass_displacement = float(row[md_col[0]].values[0])
+
+    z_spacing, _y_spacing, _x_spacing = anisotropy_spacing
+    cm_z = (1 + 4) / 2
+    cmi_z = (1 * 1.0 + 4 * 3.0) / (1.0 + 3.0)
+    expected = abs(cm_z - cmi_z) * z_spacing
+    assert np.isclose(mass_displacement, expected, atol=1e-6), (
+        f"MassDisplacement = {mass_displacement}, expected {expected} for "
+        f"anisotropy_spacing={anisotropy_spacing}."
+    )
+
+
+@pytest.mark.parametrize("anisotropy_spacing", ANISOTROPY_SPACINGS)
+def test_compute_intensity_skips_phantom_object_id_without_bbox(
+    anisotropy_spacing: tuple[float, float, float],
+) -> None:
     """Object ids absent from the label image are skipped, not crashed on.
 
     ``compute_intensity`` looks up each requested object id in the
@@ -172,7 +234,7 @@ def test_compute_intensity_skips_phantom_object_id_without_bbox() -> None:
     image[3:7, 3:7, 3:7] = 100.0
     label[3:7, 3:7, 3:7] = 1
 
-    imgset = ImageSetLoaderModel()
+    imgset = ImageSetLoaderModel(anisotropy_spacing=anisotropy_spacing)
     loader = ObjectLoaderModel(
         image=image,
         label_image=label,
@@ -184,6 +246,32 @@ def test_compute_intensity_skips_phantom_object_id_without_bbox() -> None:
 
     returned_ids = sorted(int(x) for x in df["Metadata_Object_ObjectID"].tolist())
     assert returned_ids == [1]
+
+
+def test_none_image_returns_well_formed_empty_frame() -> None:
+    """A degenerate loader with no image must not return a malformed frame.
+
+    ObjectLoader sets ``image`` (and ``label_image``) to None when its channel
+    (or compartment) is missing for a given image set. Before the fix,
+    compute_intensity returned a bare ``pandas.DataFrame()`` with no columns
+    at all in this case, which crashes any downstream merge that expects an
+    ID column to key on.
+    """
+    imgset = SimpleNamespace(image_set_name="intensity", image_id="intensity")
+    loader = SimpleNamespace(
+        image=None,
+        label_image=None,
+        object_ids=[],
+        image_set_loader=imgset,
+        compartment="Cell",
+        channel="Ch1",
+    )
+
+    df = compute_intensity(loader)
+
+    assert isinstance(df, pd.DataFrame)
+    assert "Metadata_Object_ObjectID" in df.columns
+    assert len(df) == 0
 
 
 def test_compute_intensity_handles_all_zero_intensity_object() -> None:

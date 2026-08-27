@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from types import SimpleNamespace
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -13,6 +15,12 @@ from zedprofiler.featurization.texture import compute_texture, scale_image  # no
 
 LABEL_OBJ_1 = 1
 LABEL_OBJ_2 = 2
+ANISOTROPY_SPACINGS = [
+    (1.0, 1.0, 1.0),
+    (2.0, 1.0, 1.0),
+    (5.0, 1.0, 1.0),
+    (10.0, 1.0, 1.0),
+]
 
 
 class ImageSetLoaderModel(BaseModel):
@@ -20,6 +28,8 @@ class ImageSetLoaderModel(BaseModel):
     image_set_name: str = "texture"
     # mirrors ImageSetLoader.image_id (falls back to image_set_name)
     image_id: str = "texture"
+    # mirrors ImageSetLoader.anisotropy_spacing (z, y, x spacing)
+    anisotropy_spacing: tuple[float, float, float] = (1.0, 1.0, 1.0)
 
 
 class ObjectLoaderModel(BaseModel):
@@ -51,12 +61,14 @@ def make_texture_image(
 
 
 @pytest.mark.parametrize("shape,center", [((15, 15, 15), (7, 7, 7))])
+@pytest.mark.parametrize("anisotropy_spacing", ANISOTROPY_SPACINGS)
 def test_compute_texture_basic(
     shape: tuple[int, int, int],
     center: tuple[int, int, int],
+    anisotropy_spacing: tuple[float, float, float],
 ) -> None:
     image, label = make_texture_image(shape, center)
-    imgset = ImageSetLoaderModel()
+    imgset = ImageSetLoaderModel(anisotropy_spacing=anisotropy_spacing)
     loader = ObjectLoaderModel(
         image=image,
         label_image=label,
@@ -67,6 +79,32 @@ def test_compute_texture_basic(
     df = compute_texture(loader, distance=1, grayscale=256)
     assert isinstance(df, pd.DataFrame)
     assert "Metadata_Object_ObjectID" in df.columns
+
+
+def test_none_image_returns_well_formed_empty_frame() -> None:
+    """A degenerate loader with no image must not return a malformed frame.
+
+    ObjectLoader sets ``image`` (and ``label_image``) to None when its channel
+    (or compartment) is missing for a given image set — a real, not
+    contrived, degenerate input. Before the fix, compute_texture returned a
+    bare ``pandas.DataFrame()`` with no columns at all in this case, which
+    crashes any downstream merge that expects an ID column to key on.
+    """
+    imgset = SimpleNamespace(image_set_name="texture", image_id="texture")
+    loader = SimpleNamespace(
+        image=None,
+        label_image=None,
+        object_ids=[],
+        image_set_loader=imgset,
+        compartment="Cell",
+        channel="Ch1",
+    )
+
+    df = compute_texture(loader, distance=1, grayscale=256)
+
+    assert isinstance(df, pd.DataFrame)
+    assert "Metadata_Object_ObjectID" in df.columns
+    assert len(df) == 0
 
 
 def test_value_error_in_one_object_does_not_corrupt_others() -> None:

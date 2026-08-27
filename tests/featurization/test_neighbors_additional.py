@@ -22,6 +22,8 @@ from zedprofiler.IO.feature_writing_utils import format_morphology_feature_name
 scipy = pytest.importorskip("scipy")
 skimage = pytest.importorskip("skimage")
 
+ANISOTROPY_FACTORS = [1, 2, 5, 10]
+
 
 def test_neighbors_expand_box_bounds() -> None:
     # current_min - expand_by < min_coor -> clipped to min_coor
@@ -40,7 +42,8 @@ def test_crop_3d_image_basic() -> None:
     assert cropped.shape == (2, 2, 2)
 
 
-def test_compute_neighbors_distance_counts() -> None:
+@pytest.mark.parametrize("anisotropy_factor", ANISOTROPY_FACTORS)
+def test_compute_neighbors_distance_counts(anisotropy_factor: int) -> None:
     # Create a label image with three objects: two nearby, one far
     lab = np.zeros((12, 12, 12), dtype=int)
     lab[2, 2, 2] = 1
@@ -54,7 +57,11 @@ def test_compute_neighbors_distance_counts() -> None:
         compartment = "Cell"
         channel = "Ch1"
 
-    df = compute_neighbors(Dummy(), distance_threshold=3, anisotropy_factor=1)
+    df = compute_neighbors(
+        Dummy(),
+        distance_threshold=3,
+        anisotropy_factor=anisotropy_factor,
+    )
     assert isinstance(df, pd.DataFrame)
     # For object 1 and 2, distance-based neighbors should count each other
     distance_threshold = 3

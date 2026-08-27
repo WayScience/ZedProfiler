@@ -20,8 +20,13 @@ from zedprofiler.IO.loading_classes import (
 ZERO_LABEL = 0
 ONE_LABEL = 1
 TWO_LABEL = 2
-EXPECTED_ANISOTROPY = 2.0
 ORIGINAL_DNA_PIXEL = 10
+ANISOTROPY_SPACINGS = [
+    (1.0, 1.0, 1.0),
+    (2.0, 1.0, 1.0),
+    (5.0, 1.0, 1.0),
+    (10.0, 1.0, 1.0),
+]
 
 
 class TestImageSetConfig:
@@ -203,24 +208,32 @@ class TestImageSetLoaderMethods:
         loader.get_unique_objects_in_compartments()
         assert loader.unique_compartment_objects == {}
 
-    def test_get_image_and_get_anisotropy(self) -> None:
+    @pytest.mark.parametrize("anisotropy_spacing", ANISOTROPY_SPACINGS)
+    def test_get_image_and_get_anisotropy(
+        self,
+        anisotropy_spacing: tuple[float, float, float],
+    ) -> None:
         """Simple accessors return the expected image and anisotropy ratio."""
         loader = ImageSetLoader.__new__(ImageSetLoader)
         arr = np.arange(8).reshape((2, 2, 2))
         loader.image_set_dict = {"DNA": arr}
-        loader.anisotropy_spacing = (2.0, 1.0, 1.0)
+        loader.anisotropy_spacing = anisotropy_spacing
 
         assert np.array_equal(loader.get_image("DNA"), arr)
-        assert loader.get_anisotropy() == EXPECTED_ANISOTROPY
+        assert loader.get_anisotropy() == (
+            anisotropy_spacing[0] / anisotropy_spacing[1]
+        )
 
 
 class TestImageSetLoaderInit:
     """Tests that exercise ImageSetLoader __init__ with mocked reads."""
 
+    @pytest.mark.parametrize("anisotropy_spacing", ANISOTROPY_SPACINGS)
     def test_init_loads_channel_and_label_images(
         self,
         monkeypatch: pytest.MonkeyPatch,
         tmp_path: Path,
+        anisotropy_spacing: tuple[float, float, float],
     ) -> None:
         """Initialization should load matching files and build derived attributes."""
         image_dir = tmp_path / "images"
@@ -249,7 +262,7 @@ class TestImageSetLoaderInit:
         loader = ImageSetLoader(
             image_set_path=image_dir,
             label_set_path=label_dir,
-            anisotropy_spacing=(2.0, 1.0, 1.0),
+            anisotropy_spacing=anisotropy_spacing,
             channel_mapping={"DNA": "dna_raw", "Nuclei_label": "nuc_label"},
             config=ImageSetConfig(
                 image_set_name="set-01",
@@ -259,7 +272,9 @@ class TestImageSetLoaderInit:
         )
 
         assert loader.image_set_name == "set-01"
-        assert loader.anisotropy_factor == EXPECTED_ANISOTROPY
+        assert loader.anisotropy_factor == (
+            anisotropy_spacing[0] / anisotropy_spacing[1]
+        )
         assert set(loader.image_set_dict.keys()) == {"DNA", "Nuclei_label"}
         assert loader.compartments == ["Nuclei_label"]
         assert loader.image_names == ["DNA"]
@@ -433,16 +448,22 @@ class TestFromImageDict:
             "Nuclei": label,
         }
 
-    def test_builds_working_multi_channel_loader(self) -> None:
+    @pytest.mark.parametrize("anisotropy_spacing", ANISOTROPY_SPACINGS)
+    def test_builds_working_multi_channel_loader(
+        self,
+        anisotropy_spacing: tuple[float, float, float],
+    ) -> None:
         """from_image_dict resolves compartments and channels from the dict."""
         loader = ImageSetLoader.from_image_dict(
             self._build_dict(),
-            anisotropy_spacing=(2.0, 1.0, 1.0),
+            anisotropy_spacing=anisotropy_spacing,
             image_set_name="shard-01",
             label_key_names=["Nuclei"],
         )
         assert loader.image_set_name == "shard-01"
-        assert loader.anisotropy_factor == EXPECTED_ANISOTROPY
+        assert loader.anisotropy_factor == (
+            anisotropy_spacing[0] / anisotropy_spacing[1]
+        )
         assert loader.compartments == ["Nuclei"]
         assert sorted(loader.image_names) == ["AGP", "DNA"]
         assert loader.unique_compartment_objects["Nuclei"] == [

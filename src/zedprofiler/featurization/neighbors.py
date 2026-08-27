@@ -17,6 +17,48 @@ BBox3D = tuple[BBoxCoord, BBoxCoord, BBoxCoord, BBoxCoord, BBoxCoord, BBoxCoord]
 SMALL_SAMPLE_THRESHOLD = 20
 
 
+def adjacency_footprint(anisotropy_factor: float) -> numpy.ndarray:
+    """Build a 6-connectivity dilation footprint sized to represent one
+    physical unit of "touching" distance in each direction.
+
+    ``skimage.morphology.dilation``'s default footprint expands 1 voxel in
+    every axis, which only means the same physical distance in every
+    direction when voxels are isotropic. When z-spacing is coarser than
+    x/y-spacing (``anisotropy_factor`` > 1), 1 z-voxel already represents
+    ``anisotropy_factor`` times more physical distance than 1 x/y-voxel, so
+    the x/y arms are extended by that same factor to match.
+
+    At ``anisotropy_factor == 1`` this reduces to exactly the same 6-connected
+    cross skimage uses by default.
+
+    Parameters
+    ----------
+    anisotropy_factor : float
+        Ratio of z-spacing to x/y-spacing.
+
+    Returns
+    -------
+    numpy.ndarray
+        Boolean footprint of shape ``(3, 2*xy_radius + 1, 2*xy_radius + 1)``.
+
+    """
+    z_radius = 1  # the next slice essentially represents the
+    # same physical distance as 1 z-voxel, so always expand by 1 in z
+    # if the objects are touching it will be caught in this discrete
+    # scale. No need to interpolate here
+
+    xy_radius = max(1, int(numpy.ceil(anisotropy_factor)))
+    footprint = numpy.zeros(
+        (2 * z_radius + 1, 2 * xy_radius + 1, 2 * xy_radius + 1),
+        dtype=bool,
+    )
+    cz, cy, cx = z_radius, xy_radius, xy_radius
+    footprint[:, cy, cx] = True
+    footprint[cz, :, cx] = True
+    footprint[cz, cy, :] = True
+    return footprint
+
+
 def neighbors_expand_box(
     min_coor: int,
     max_coord: int,
@@ -106,7 +148,13 @@ def compute_neighbors(
 
     """
     if object_loader.label_image is None:
-        return pandas.DataFrame()
+        return pandas.DataFrame(
+            {
+                "Metadata_Object_ObjectID": [],
+                "NeighborsCountAdjacent": [],
+                f"NeighborsCountByDistance-{distance_threshold}": [],
+            },
+        )
     label_object = object_loader.label_image
     labels = object_loader.object_ids
     # set image global min and max coordinates
@@ -206,7 +254,10 @@ def compute_neighbors(
         )
         adjacent_label_crop = crop_3D_image(image=label_object, bbox=adjacent_bbox)
         binary_mask = adjacent_label_crop == label
-        dilated_mask = skimage.morphology.dilation(binary_mask)
+        dilated_mask = skimage.morphology.dilation(
+            binary_mask,
+            footprint=adjacency_footprint(anisotropy_factor),
+        )
         labels_in_dilation = adjacent_label_crop[dilated_mask]
         adjacent_labels = numpy.unique(labels_in_dilation)
         n_neighbors_adjacent = int(
@@ -296,12 +347,14 @@ def get_coordinates(
     }
 
     for obj_id in object_ids:
+        if obj_id == 0:
+            continue  # skip background
         z, y, x = numpy.where(nuclei_mask == obj_id)
-        centroid = (numpy.mean(x), numpy.mean(y), numpy.mean(z))
+        centroid = (numpy.mean(z), numpy.mean(y), numpy.mean(x))
         coords["Metadata_Object_ObjectID"].append(obj_id)
-        coords["x"].append(centroid[0])
+        coords["z"].append(centroid[0])
         coords["y"].append(centroid[1])
-        coords["z"].append(centroid[2])
+        coords["x"].append(centroid[2])
 
     return pandas.DataFrame(coords)
 
@@ -314,10 +367,30 @@ def calculate_centroid(coords: pandas.DataFrame) -> numpy.ndarray:
 def euclidean_distance_from_centroid(
     coords: numpy.ndarray,
     centroid: numpy.ndarray,
+    spacing: tuple[float, float, float] | None = None,
 ) -> numpy.ndarray:
-    """Calculate Euclidean distance from centroid for each cell."""
+    """Calculate Euclidean distance from centroid for each cell.
+
+    Parameters
+    ----------
+    coords : ndarray
+        Cell coordinates (n_cells, 3), in (z, y, x) order.
+    centroid : ndarray
+        Centroid coordinates (3,), in (z, y, x) order.
+    spacing : tuple[float, float, float] or None
+        Physical voxel spacing in (z, y, x) order, matching ``coords``. If
+        None (default), coordinates are treated as already isotropic (all
+        axes weighted equally). Pass this whenever ``coords`` are raw voxel
+        indices from an anisotropic volume, so distances reflect physical
+        space rather than voxel counts.
+
+    """
     coords = numpy.asarray(coords, dtype=float)
     centroid = numpy.asarray(centroid, dtype=float)
+    if spacing is not None:
+        spacing_arr = numpy.asarray(spacing, dtype=float)
+        coords = coords * spacing_arr
+        centroid = centroid * spacing_arr
     return numpy.sqrt(numpy.sum((coords - centroid) ** 2, axis=1))
 
 
@@ -325,6 +398,7 @@ def mahalanobis_distance_from_centroid(
     coords: numpy.ndarray,
     centroid: numpy.ndarray,
     min_cells_threshold: int = 50,
+    spacing: tuple[float, float, float] | None = None,
 ) -> numpy.ndarray:
     """Calculate Mahalanobis distance from centroid for each cell.
     This accounts for the covariance structure (shape) of the organoid.
@@ -334,11 +408,17 @@ def mahalanobis_distance_from_centroid(
     Parameters
     ----------
     coords : ndarray
-        Cell coordinates (n_cells, 3)
+        Cell coordinates (n_cells, 3), in (z, y, x) order.
     centroid : ndarray
-        Centroid coordinates (3,)
+        Centroid coordinates (3,), in (z, y, x) order.
     min_cells_threshold : int
         Minimum cells needed for reliable Mahalanobis (default: 50)
+    spacing : tuple[float, float, float] or None
+        Physical voxel spacing in (z, y, x) order, matching ``coords``. If
+        None (default), coordinates are treated as already isotropic. Pass
+        this whenever ``coords`` are raw voxel indices from an anisotropic
+        volume, so both the covariance structure and the distance reflect
+        physical space rather than voxel counts.
 
     Returns
     -------
@@ -348,6 +428,10 @@ def mahalanobis_distance_from_centroid(
     """
     coords = numpy.asarray(coords, dtype=float)
     centroid = numpy.asarray(centroid, dtype=float)
+    if spacing is not None:
+        spacing_arr = numpy.asarray(spacing, dtype=float)
+        coords = coords * spacing_arr
+        centroid = centroid * spacing_arr
 
     n_cells = len(coords)
 
@@ -396,6 +480,7 @@ def classify_cells_into_shells(
     method: str = "mahalanobis",
     min_cells_per_shell: int = 3,
     centroid: numpy.ndarray | None = None,
+    spacing: tuple[float, float, float] | None = None,
 ) -> tuple[dict, numpy.ndarray | None]:
     """Classify cells into radial shells based on distance from centroid.
 
@@ -404,7 +489,7 @@ def classify_cells_into_shells(
     Parameters
     ----------
     coords : pandas.DataFrame or dict
-        Cell coordinates with /keys: object_id, x, y, z
+        Cell coordinates with /keys: object_id, z, y, x
     n_shells : int
         Number of concentric shells to create (will be adjusted if needed)
     method : str
@@ -413,6 +498,11 @@ def classify_cells_into_shells(
         Minimum average cells per shell (default: 3)
     centroid : numpy.ndarray, optional
         Pre-calculated centroid (if None, will be calculated from coords)
+    spacing : tuple[float, float, float], optional
+        Physical voxel spacing in (z, y, x) order, matching ``coords``. Pass
+        this when the volume has anisotropic spacing so that distances (and
+        therefore shell assignments) reflect physical space rather than raw
+        voxel counts. Defaults to None (isotropic, all axes weighted equally).
 
     Returns
     -------
@@ -427,10 +517,10 @@ def classify_cells_into_shells(
     # Handle both DataFrame and dict input
     if isinstance(coords, pandas.DataFrame):
         object_ids = coords["Metadata_Object_ObjectID"].to_numpy()
-        coords_array = coords[["x", "y", "z"]].to_numpy()
+        coords_array = coords[["z", "y", "x"]].to_numpy()
     else:
         object_ids = numpy.array(coords["Metadata_Object_ObjectID"])
-        coords_array = numpy.column_stack([coords["x"], coords["y"], coords["z"]])
+        coords_array = numpy.column_stack([coords["z"], coords["y"], coords["x"]])
     if len(coords_array) == 0:
         results: dict = {
             "Metadata_Object_ObjectID": [],
@@ -457,9 +547,17 @@ def classify_cells_into_shells(
 
     # Calculate distances based on method
     if method == "mahalanobis":
-        distances = mahalanobis_distance_from_centroid(coords_array, centroid)
+        distances = mahalanobis_distance_from_centroid(
+            coords_array,
+            centroid,
+            spacing=spacing,
+        )
     else:  # euclidean
-        distances = euclidean_distance_from_centroid(coords_array, centroid)
+        distances = euclidean_distance_from_centroid(
+            coords_array,
+            centroid,
+            spacing=spacing,
+        )
 
     # Normalize distances to 0-1 range
     max_distance = numpy.percentile(
@@ -531,7 +629,7 @@ def visualize_organoid_shells(
     Parameters
     ----------
     coords : pandas.DataFrame or dict
-        Cell coordinates with columns/keys: object_id, x, y, z
+        Cell coordinates with columns/keys: object_id, z, y, x
     classification_results : dict
         Results from classify_cells_into_shells
     title : str
@@ -540,13 +638,13 @@ def visualize_organoid_shells(
     """
     # Handle both DataFrame and dict input
     if isinstance(coords, pandas.DataFrame):
-        x_coords = coords["x"].to_numpy()
-        y_coords = coords["y"].to_numpy()
         z_coords = coords["z"].to_numpy()
+        y_coords = coords["y"].to_numpy()
+        x_coords = coords["x"].to_numpy()
     else:
-        x_coords = numpy.array(coords["x"])
-        y_coords = numpy.array(coords["y"])
         z_coords = numpy.array(coords["z"])
+        y_coords = numpy.array(coords["y"])
+        x_coords = numpy.array(coords["x"])
 
     fig = plt.figure(figsize=(14, 6))
 
@@ -566,9 +664,9 @@ def visualize_organoid_shells(
         mask = shell_assignments == shell
         if numpy.sum(mask) > 0:  # Only plot if shell has cells
             ax1.scatter(  # type: ignore[misc]
-                x_coords[mask],
-                y_coords[mask],
                 z_coords[mask],
+                y_coords[mask],
+                x_coords[mask],
                 c=[colors[shell]],
                 label=f"Shell {shell + 1} (n={numpy.sum(mask)})",
                 s=50,
@@ -588,9 +686,9 @@ def visualize_organoid_shells(
             linewidths=2,
         )
 
-    ax1.set_xlabel("X")
+    ax1.set_xlabel("Z")
     ax1.set_ylabel("Y")
-    ax1.set_zlabel("Z")  # type: ignore[attr-defined]
+    ax1.set_zlabel("X")  # type: ignore[attr-defined]
     ax1.set_title(title)
     ax1.legend(loc="upper right", fontsize=8)
 

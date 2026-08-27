@@ -12,10 +12,14 @@ import warnings
 import mahotas
 import numpy
 import pandas
+import scipy.ndimage
 import skimage
 import skimage.measure
 
-from zedprofiler.contracts import validate_column_name_schema
+from zedprofiler.contracts import (
+    validate_anisotropy_factor_with_pydantic,
+    validate_column_name_schema,
+)
 from zedprofiler.IO.feature_writing_utils import format_morphology_feature_name
 from zedprofiler.IO.loading_classes import ObjectLoader
 
@@ -58,6 +62,56 @@ def scale_image(image: numpy.ndarray, num_gray_levels: int = 256) -> numpy.ndarr
     )
 
 
+def resample_to_isotropic(
+    image: numpy.ndarray,
+    anisotropy_factor: float,
+    order: int = 3,
+) -> numpy.ndarray:
+    """Resample a (z, y, x) volume to isotropic voxel spacing along z.
+    This function is written to be used for both the signal image
+    and the mask image.
+    The order parameter controls the interpolation
+    for the resampling.
+    For the signal image, we use cubic spline interpolation (order=3).
+    For the mask image, we use nearest neighbor interpolation (order=0).
+
+    mahotas.features.haralick's ``distance`` parameter is a voxel count, not
+    a physical length, and several of its 13 directions step along z. If z
+    spacing is coarser than x/y spacing (the common microscopy case), those
+    directions sample a larger physical distance than the in-plane
+    directions, which biases the resulting Haralick features. Stretching the
+    z axis by the anisotropy factor before computing texture makes "1 voxel"
+    represent the same physical distance in every direction.
+
+    Parameters
+    ----------
+    image : numpy.ndarray
+        3D array in (z, y, x) order.
+    anisotropy_factor : float
+        Ratio of z-spacing to x/y-spacing (assumes isotropic x/y spacing).
+    order : int, optional
+        Interpolation order for the resampling, by default 1 (linear).
+
+    Returns
+    -------
+    numpy.ndarray
+        The volume resampled so that voxels are isotropic in physical space.
+
+    """
+    if anisotropy_factor == 1:
+        return image
+
+    input_dtype = image.dtype
+    if numpy.issubdtype(input_dtype, numpy.integer):
+        image = image.astype(numpy.float32)
+
+    return scipy.ndimage.zoom(
+        image,
+        zoom=(anisotropy_factor, 1.0, 1.0),
+        order=order,
+    )
+
+
 def compute_texture(  # noqa: C901
     object_loader: ObjectLoader,
     distance: int = 1,
@@ -93,9 +147,22 @@ def compute_texture(  # noqa: C901
 
     """
     if object_loader.label_image is None or object_loader.image is None:
-        return pandas.DataFrame()
+        return pandas.DataFrame(
+            {
+                "Metadata_Experiment_ImageSet": [],
+                "Metadata_Imaging_ImageID": [],
+                "Metadata_Object_ObjectID": [],
+            },
+        )
     label_object = object_loader.label_image
     labels = object_loader.object_ids
+    # Haralick's `distance` is a voxel count, not a physical length, so
+    # anisotropic z-spacing must be corrected for before computing texture
+    # (see resample_to_isotropic).
+    z_spacing, y_spacing, _x_spacing = object_loader.image_set_loader.anisotropy_spacing
+    anisotropy_factor = validate_anisotropy_factor_with_pydantic(
+        z_spacing / y_spacing,
+    ).anisotropy_factor
     feature_names = [
         "AngularSecondMoment",
         "Contrast",
@@ -160,6 +227,39 @@ def compute_texture(  # noqa: C901
         if not numpy.any(object_mask):
             continue
         image_object[~object_mask] = 0
+
+        # order of operations here are as follows:
+        # 1. resample to isotropic voxel spacing
+        # a. this will interpolate the image, which will bleed over
+        # the object edges into the background, so we need to remask
+        # the image after resampling
+        # 2. resample the mask to isotropic
+        # voxel spacing (nearest neighbor)
+        # 3. remask the resampled image to ensure background is zero
+        #    this removes the bleed over from the interpolation
+        # of the object edges
+        # 4. mahotas can now use the resampled image and mask to
+        # compute the Haralick features for this object
+
+        # resample to isotropic after getting the object,
+        # this avoid the need to interpolate the mask
+        # image interpolation is done with
+        # cubic spline interpolation (order=3)
+        # mask interpolation is done with nearest neighbor (order=0)
+        image_object = resample_to_isotropic(
+            image_object,
+            anisotropy_factor=anisotropy_factor,
+            order=3,  # cubic spline interpolation for image
+        )
+        resampled_mask = resample_to_isotropic(
+            object_mask,
+            anisotropy_factor=anisotropy_factor,
+            order=0,  # nearest neighbor for mask
+        )
+        # remask the resampled image to ensure background is zero
+        # this removes the bleed over from the interpolation of the object edges
+        image_object[~resampled_mask.astype(bool)] = 0
+
         image_object = scale_image(image_object, num_gray_levels=grayscale)
         try:
             # calculates 13 Haralick features for each direction (13)

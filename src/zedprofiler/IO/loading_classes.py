@@ -11,7 +11,10 @@ import bioio
 import numpy
 from beartype import beartype
 
-from zedprofiler.contracts import ImageArrayModel
+from zedprofiler.contracts import (
+    ImageArrayModel,
+    validate_anisotropy_factor_with_pydantic,
+)
 from zedprofiler.identifiers import build_image_id
 
 logging.basicConfig(level=logging.INFO)
@@ -216,7 +219,11 @@ class ImageSetLoader:
         channel_tokens = [str(value) for value in channel_mapping.values()]
         self._label_key_names = list(config.label_key_name or [])
         self.anisotropy_spacing = anisotropy_spacing
-        self.anisotropy_factor = self.anisotropy_spacing[0] / self.anisotropy_spacing[1]
+        self.anisotropy_factor = validate_anisotropy_factor_with_pydantic(
+            self.anisotropy_spacing[0] / self.anisotropy_spacing[1],
+            y_spacing=self.anisotropy_spacing[1],
+            x_spacing=self.anisotropy_spacing[2],
+        ).anisotropy_factor
         self.image_set_name = config.image_set_name
         self.label_set_path = label_set_path
         # Deterministic imaging identifier for the warehouse join key
@@ -298,7 +305,11 @@ class ImageSetLoader:
             self.image_set_dict[key] = ImageArrayModel(array=array).array
         self._label_key_names = list(label_key_names or [])
         self.anisotropy_spacing = anisotropy_spacing
-        self.anisotropy_factor = self.anisotropy_spacing[0] / self.anisotropy_spacing[1]
+        self.anisotropy_factor = validate_anisotropy_factor_with_pydantic(
+            self.anisotropy_spacing[0] / self.anisotropy_spacing[1],
+            y_spacing=self.anisotropy_spacing[1],
+            x_spacing=self.anisotropy_spacing[2],
+        ).anisotropy_factor
         self.image_set_name = image_set_name
         self.label_set_path = None
         config = ImageSetConfig(
@@ -538,7 +549,11 @@ class ImageSetLoader:
             Ratio of z-spacing to y-spacing.
 
         """
-        return self.anisotropy_spacing[0] / self.anisotropy_spacing[1]
+        return validate_anisotropy_factor_with_pydantic(
+            self.anisotropy_spacing[0] / self.anisotropy_spacing[1],
+            y_spacing=self.anisotropy_spacing[1],
+            x_spacing=self.anisotropy_spacing[2],
+        ).anisotropy_factor
 
 
 class ObjectLoader:

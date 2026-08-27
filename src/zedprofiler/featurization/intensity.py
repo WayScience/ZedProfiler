@@ -30,10 +30,7 @@ def get_outline(mask: numpy.ndarray) -> numpy.ndarray:
         The outline of the mask.
 
     """
-    outline = numpy.zeros_like(mask)
-    for z in range(mask.shape[0]):
-        outline[z] = skimage.segmentation.find_boundaries(mask[z], mode="inner")
-    return outline
+    return skimage.segmentation.find_boundaries(mask, mode="inner")
 
 
 def compute_intensity(  # noqa: C901, PLR0915
@@ -54,7 +51,13 @@ def compute_intensity(  # noqa: C901, PLR0915
 
     """
     if object_loader.label_image is None or object_loader.image is None:
-        return pandas.DataFrame()
+        return pandas.DataFrame(
+            {
+                "Metadata_Experiment_ImageSet": [],
+                "Metadata_Imaging_ImageID": [],
+                "Metadata_Object_ObjectID": [],
+            },
+        )
     image_object = object_loader.image
     label_object = object_loader.label_image
     labels = object_loader.object_ids
@@ -189,9 +192,16 @@ def compute_intensity(  # noqa: C901, PLR0915
         else:
             cmi_x = cmi_y = cmi_z = numpy.nan
         # calculate the center of mass distance
-        diff_x = cm_x - cmi_x
-        diff_y = cm_y - cmi_y
-        diff_z = cm_z - cmi_z
+        # Scale each axis by its physical voxel spacing before combining into
+        # one Euclidean distance -- diff_x/diff_y/diff_z are raw voxel-index
+        # offsets, and mixing them unscaled would bias the result whenever
+        # z-spacing differs from x/y-spacing.
+        z_spacing, y_spacing, x_spacing = (
+            object_loader.image_set_loader.anisotropy_spacing
+        )
+        diff_x = (cm_x - cmi_x) * x_spacing
+        diff_y = (cm_y - cmi_y) * y_spacing
+        diff_z = (cm_z - cmi_z) * z_spacing
         # mass displacement
         mass_displacement = numpy.sqrt(diff_x**2 + diff_y**2 + diff_z**2)
         # mean absolute deviation

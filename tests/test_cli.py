@@ -287,7 +287,17 @@ def test_validate_rejects_undeclared_colocalization_channel() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _tiny_image_set_loader() -> ImageSetLoader:
+ANISOTROPY_SPACINGS = [
+    (1.0, 1.0, 1.0),
+    (2.0, 1.0, 1.0),
+    (5.0, 1.0, 1.0),
+    (10.0, 1.0, 1.0),
+]
+
+
+def _tiny_image_set_loader(
+    anisotropy_spacing: tuple[float, float, float] = (2.0, 1.0, 1.0),
+) -> ImageSetLoader:
     """A small multi-channel loader for exercising dispatch branches quickly."""
     rng = np.random.default_rng(0)
     label = np.zeros((6, 6, 6), dtype=np.int32)
@@ -297,7 +307,7 @@ def _tiny_image_set_loader() -> ImageSetLoader:
     image2 = rng.integers(0, 200, size=(6, 6, 6)).astype(np.float32)
     return ImageSetLoader.from_image_dict(
         {"DNA": image, "AGP": image2, "Nuclei": label},
-        anisotropy_spacing=(2.0, 1.0, 1.0),
+        anisotropy_spacing=anisotropy_spacing,
         image_set_name="tiny",
         label_key_names=["Nuclei"],
     )
@@ -307,10 +317,17 @@ def _tiny_image_set_loader() -> ImageSetLoader:
     "feature_type",
     ["Neighbors", "Texture", "Granularity", "VolumeSizeShape"],
 )
-def test_run_single_channel_dispatches_each_type(feature_type: str) -> None:
+@pytest.mark.parametrize("anisotropy_spacing", ANISOTROPY_SPACINGS)
+def test_run_single_channel_dispatches_each_type(
+    feature_type: str,
+    anisotropy_spacing: tuple[float, float, float],
+) -> None:
     """Each single-channel dispatch branch runs and returns a framed result."""
     request = {"type": feature_type, "channel": "DNA", "compartment": "Nuclei"}
-    channel, ran_type, df = _run_single_channel(_tiny_image_set_loader(), dict(request))
+    channel, ran_type, df = _run_single_channel(
+        _tiny_image_set_loader(anisotropy_spacing),
+        dict(request),
+    )
     assert channel == "DNA"
     assert ran_type == feature_type
     assert len(df) == EXPECTED_TINY_OBJECT_COUNT  # two objects in the tiny label mask

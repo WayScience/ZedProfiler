@@ -14,6 +14,7 @@ The package accepts:
 
 from __future__ import annotations
 
+import math
 from typing import Any
 
 import numpy as np
@@ -29,6 +30,7 @@ from pydantic import (
 
 from zedprofiler.exceptions import ContractError
 
+MIN_ANISOTROPY_FACTOR = 1
 EXPECTED_SPATIAL_DIMS = 3
 TWO_DIMENSIONAL = 2
 FOUR_DIMENSIONAL = 4
@@ -126,6 +128,52 @@ class ImageArrayModel(BaseModel):
                 f"Input array with dtype {arr.dtype} failed type contract validation.",
             )
         return arr
+
+
+class AnisotropyFactorModel(BaseModel):
+    """Pydantic model for validating the anisotropy factor.
+
+    Feature modules (e.g. texture, neighbors) assume the z-spacing is never
+    finer than the x/y-spacing, so ``anisotropy_factor`` (z_spacing /
+    y_spacing) must be 1 or greater. ``anisotropy_factor`` collapses to a
+    single z/y ratio, so it is only meaningful when the transverse (y, x)
+    spacings are equal; ``y_spacing``/``x_spacing`` are optional and, when
+    both are provided, are checked for equality.
+    """
+
+    anisotropy_factor: float
+    y_spacing: float | None = None
+    x_spacing: float | None = None
+
+    @field_validator("anisotropy_factor", mode="after")
+    @classmethod
+    def validate_at_least_one(_cls, value: float) -> float:
+        """Ensure the anisotropy factor is finite and 1 or greater."""
+        if not math.isfinite(value):
+            raise ValueError(
+                f"Anisotropy factor must be a finite number, got {value}.",
+            )
+        if value < MIN_ANISOTROPY_FACTOR:
+            raise ValueError(
+                f"Anisotropy factor must be {MIN_ANISOTROPY_FACTOR} or greater, "
+                f"got {value}.",
+            )
+        return value
+
+    @model_validator(mode="after")
+    def validate_transverse_spacing_equal(self) -> AnisotropyFactorModel:
+        """Ensure y/x spacing are equal, when both are provided."""
+        if (
+            self.y_spacing is not None
+            and self.x_spacing is not None
+            and self.y_spacing != self.x_spacing
+        ):
+            raise ValueError(
+                "anisotropy_factor is a single z/y ratio and requires equal "
+                f"transverse spacing, got y_spacing={self.y_spacing} and "
+                f"x_spacing={self.x_spacing}.",
+            )
+        return self
 
 
 class FeatureDictModel(BaseModel):
@@ -367,6 +415,51 @@ def validate_return_with_pydantic(
         msg = (
             "Return schema validation failed. Please ensure that the data "
             f"fit the expected schema: {e}"
+        )
+        raise ContractError(msg)
+
+
+def validate_anisotropy_factor_with_pydantic(
+    anisotropy_factor: float,
+    y_spacing: float | None = None,
+    x_spacing: float | None = None,
+) -> AnisotropyFactorModel:
+    """Validate the anisotropy factor using a Pydantic model.
+
+    Parameters
+    ----------
+    anisotropy_factor : float
+        Ratio of z-spacing to y-spacing to validate.
+    y_spacing : float | None, optional
+        Y (transverse) spacing. When provided along with ``x_spacing``, they
+        are checked for equality since ``anisotropy_factor`` only captures a
+        single z/y ratio.
+    x_spacing : float | None, optional
+        X (transverse) spacing. See ``y_spacing``.
+
+    Returns
+    -------
+    AnisotropyFactorModel
+        Validated anisotropy factor model.
+
+    Raises
+    ------
+    ContractError
+        If the anisotropy factor is less than ``MIN_ANISOTROPY_FACTOR``, is
+        not finite, or if ``y_spacing`` and ``x_spacing`` are unequal.
+
+    """
+    try:
+        return AnisotropyFactorModel(
+            anisotropy_factor=anisotropy_factor,
+            y_spacing=y_spacing,
+            x_spacing=x_spacing,
+        )
+    except Exception as e:
+        msg = (
+            "Anisotropy factor validation failed. Please ensure that the "
+            "z-spacing is not finer than the y-spacing and that the y- and "
+            f"x-spacing are equal: {e}"
         )
         raise ContractError(msg)
 
