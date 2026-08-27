@@ -623,7 +623,13 @@
 
     <span class="c1"># Get original data</span>
     <span class="k">if</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">label_image</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;Metadata_Experiment_ImageSet&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;Metadata_Imaging_ImageID&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
     <span class="n">original_pixels</span> <span class="o">=</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">image</span>
     <span class="n">original_labels</span> <span class="o">=</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">label_image</span>
     <span class="n">original_shape</span> <span class="o">=</span> <span class="n">original_pixels</span><span class="o">.</span><span class="n">shape</span>

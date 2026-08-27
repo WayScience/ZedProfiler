@@ -519,7 +519,13 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">label_image</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;NeighborsCountAdjacent&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="sa">f</span><span class="s2">&quot;NeighborsCountByDistance-</span><span class="si">{</span><span class="n">distance_threshold</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
     <span class="n">label_object</span> <span class="o">=</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">label_image</span>
     <span class="n">labels</span> <span class="o">=</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">object_ids</span>
     <span class="c1"># set image global min and max coordinates</span>

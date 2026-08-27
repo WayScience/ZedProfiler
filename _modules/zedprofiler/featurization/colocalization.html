@@ -1081,7 +1081,13 @@
 
     <span class="c1"># Convert list of row-dicts into a dict-of-lists with stable ordering</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">list_of_dfs</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;Metadata_Experiment_ImageSet&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;Metadata_Imaging_ImageID&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
 
     <span class="c1"># Collect other metric keys preserving first-seen ordering</span>
     <span class="n">other_keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
