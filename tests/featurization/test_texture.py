@@ -159,6 +159,38 @@ def test_value_error_in_one_object_does_not_corrupt_others() -> None:
     assert np.isnan(obj2_asm), "Object 2 (single pixel) should have NaN texture values"
 
 
+def test_undersized_object_warns() -> None:
+    """An object smaller than the distance parameter must trigger a warning.
+
+    mahotas cannot compute GLCM features for an object below a minimum pixel
+    extent for the given distance; this is expected, but it must not happen
+    silently. Regression test for compute_texture previously swallowing the
+    resulting ValueError via contextlib.suppress with no warning at all.
+    """
+    shape = (20, 20, 20)
+    image = np.zeros(shape, dtype=np.uint8)
+    label = np.zeros(shape, dtype=np.int32)
+
+    # single pixel — no neighbour pairs → ValueError from mahotas
+    image[15, 15, 15] = 100
+    label[15, 15, 15] = LABEL_OBJ_2
+
+    imgset = ImageSetLoaderModel()
+    loader = ObjectLoaderModel(
+        image=image,
+        label_image=label,
+        object_ids=[LABEL_OBJ_2],
+        image_set_loader=imgset,
+    )
+
+    with pytest.warns(UserWarning, match=r"Object 2 is smaller than distance=1"):
+        df = compute_texture(loader, distance=1, grayscale=256)
+
+    asm_cols = [c for c in df.columns if "AngularSecondMoment" in c and "-00-" in c]
+    assert asm_cols
+    assert np.isnan(df[asm_cols[0]].iloc[0])
+
+
 def test_texture_values_correct_per_object() -> None:
     """Each object must receive its own Haralick values, not another object's.
 

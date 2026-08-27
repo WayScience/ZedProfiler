@@ -7,7 +7,7 @@ and objects.
 We want this module to be python api callable and scalable.
 """
 
-import contextlib
+import warnings
 
 import mahotas
 import numpy
@@ -112,7 +112,7 @@ def resample_to_isotropic(
     )
 
 
-def compute_texture(  # noqa: C901
+def compute_texture(  # noqa: C901, PLR0915
     object_loader: ObjectLoader,
     distance: int = 1,
     grayscale: int = 256,
@@ -261,7 +261,7 @@ def compute_texture(  # noqa: C901
         image_object[~resampled_mask.astype(bool)] = 0
 
         image_object = scale_image(image_object, num_gray_levels=grayscale)
-        with contextlib.suppress(ValueError):
+        try:
             # calculates 13 Haralick features for each direction (13)
             #  and each object, and stores them in a 3D array
             features[:, :, idx] = mahotas.features.haralick(
@@ -269,6 +269,15 @@ def compute_texture(  # noqa: C901
                 f=image_object,
                 distance=distance,
                 compute_14th_feature=False,
+            )
+        except ValueError:
+            # mahotas cannot compute GLCM features when an object's extent
+            # is smaller than the distance parameter; the object's texture
+            # values remain NaN in this case.
+            warnings.warn(
+                f"Object {label} is smaller than distance={distance}; "
+                "Texture features are undefined (NaN) for this object.",
+                stacklevel=2,
             )
     # iterate through the direction, feature, and object dimensions
     # of the features array to populate the output dictionary
