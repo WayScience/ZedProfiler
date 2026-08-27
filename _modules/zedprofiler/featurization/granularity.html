@@ -203,9 +203,11 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.colocalization.compute_colocalization"><code class="docutils literal notranslate"><span class="pre">compute_colocalization()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.colocalization.linear_costes_threshold_calculation"><code class="docutils literal notranslate"><span class="pre">linear_costes_threshold_calculation()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.colocalization.prepare_two_images_for_colocalization"><code class="docutils literal notranslate"><span class="pre">prepare_two_images_for_colocalization()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.granularity.anisotropic_ball"><code class="docutils literal notranslate"><span class="pre">anisotropic_ball()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.granularity.compute_granularity"><code class="docutils literal notranslate"><span class="pre">compute_granularity()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.intensity.compute_intensity"><code class="docutils literal notranslate"><span class="pre">compute_intensity()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.intensity.get_outline"><code class="docutils literal notranslate"><span class="pre">get_outline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.neighbors.adjacency_footprint"><code class="docutils literal notranslate"><span class="pre">adjacency_footprint()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.neighbors.calculate_centroid"><code class="docutils literal notranslate"><span class="pre">calculate_centroid()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.neighbors.classify_cells_into_shells"><code class="docutils literal notranslate"><span class="pre">classify_cells_into_shells()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.neighbors.compute_neighbors"><code class="docutils literal notranslate"><span class="pre">compute_neighbors()</span></code></a></li>
@@ -218,6 +220,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.neighbors.plot_distance_distributions"><code class="docutils literal notranslate"><span class="pre">plot_distance_distributions()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.neighbors.visualize_organoid_shells"><code class="docutils literal notranslate"><span class="pre">visualize_organoid_shells()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.texture.compute_texture"><code class="docutils literal notranslate"><span class="pre">compute_texture()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.texture.resample_to_isotropic"><code class="docutils literal notranslate"><span class="pre">resample_to_isotropic()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.texture.scale_image"><code class="docutils literal notranslate"><span class="pre">scale_image()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader"><code class="docutils literal notranslate"><span class="pre">SupportsImageSetLoader</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader.anisotropy_spacing"><code class="docutils literal notranslate"><span class="pre">SupportsImageSetLoader.anisotropy_spacing</span></code></a></li>
@@ -305,6 +308,15 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api.html#module-zedprofiler.contracts">Contracts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel.anisotropy_factor"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.anisotropy_factor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel.model_config"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel.validate_at_least_one"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.validate_at_least_one()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel.validate_transverse_spacing_equal"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.validate_transverse_spacing_equal()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel.x_spacing"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.x_spacing</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel.y_spacing"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.y_spacing</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.ColumnNameModel"><code class="docutils literal notranslate"><span class="pre">ColumnNameModel</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.ColumnNameModel.channel"><code class="docutils literal notranslate"><span class="pre">ColumnNameModel.channel</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.ColumnNameModel.column_name"><code class="docutils literal notranslate"><span class="pre">ColumnNameModel.column_name</span></code></a></li>
@@ -350,6 +362,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.create_image_array_schema"><code class="docutils literal notranslate"><span class="pre">create_image_array_schema()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.validate_anisotropy_factor_with_pydantic"><code class="docutils literal notranslate"><span class="pre">validate_anisotropy_factor_with_pydantic()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.validate_column_name_schema"><code class="docutils literal notranslate"><span class="pre">validate_column_name_schema()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.validate_column_name_with_pydantic"><code class="docutils literal notranslate"><span class="pre">validate_column_name_with_pydantic()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.validate_image_array_shape_contracts"><code class="docutils literal notranslate"><span class="pre">validate_image_array_shape_contracts()</span></code></a></li>
@@ -407,6 +420,8 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">scipy.ndimage</span>
@@ -415,6 +430,59 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">zedprofiler.contracts</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_column_name_schema</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">zedprofiler.IO.feature_writing_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">format_morphology_feature_name</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">zedprofiler.IO.loading_classes</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObjectLoader</span>
+
+
+<div class="viewcode-block" id="anisotropic_ball">
+<a class="viewcode-back" href="../../../api.html#zedprofiler.featurization.granularity.anisotropic_ball">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">anisotropic_ball</span><span class="p">(</span>
+    <span class="n">radius</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">spacing</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a spherical structuring element that is physically isotropic.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    radius : int</span>
+<span class="sd">        Radius of the structuring element in voxel units.</span>
+<span class="sd">    spacing : tuple[float, float, float] or None</span>
+<span class="sd">        Physical spacing of the image in (z, y, x) order.</span>
+<span class="sd">        If None, the structuring element is isotropic in voxel space.</span>
+<span class="sd">        If provided, the structuring element will be isotropic</span>
+<span class="sd">        in physical space, taking into account the anisotropy</span>
+<span class="sd">        of the voxel spacing.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        A boolean array representing the structuring element,</span>
+<span class="sd">        where True values indicate the presence of the struct</span>
+<span class="sd">        during element and False values indicate the absence.</span>
+
+<span class="sd">    ...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">spacing</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">skimage</span><span class="o">.</span><span class="n">morphology</span><span class="o">.</span><span class="n">ball</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="n">z_spacing</span><span class="p">,</span> <span class="n">y_spacing</span><span class="p">,</span> <span class="n">x_spacing</span> <span class="o">=</span> <span class="n">spacing</span>
+    <span class="k">if</span> <span class="n">z_spacing</span> <span class="o">==</span> <span class="n">y_spacing</span> <span class="o">==</span> <span class="n">x_spacing</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">skimage</span><span class="o">.</span><span class="n">morphology</span><span class="o">.</span><span class="n">ball</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="n">min_spacing</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">z_spacing</span><span class="p">,</span> <span class="n">y_spacing</span><span class="p">,</span> <span class="n">x_spacing</span><span class="p">)</span>
+    <span class="n">physical_radius</span> <span class="o">=</span> <span class="n">radius</span> <span class="o">*</span> <span class="n">min_spacing</span>
+
+    <span class="c1"># Largest voxel offset on each axis that can still land within the</span>
+    <span class="c1"># physical radius. floor() (not round()) so a coarse axis correctly</span>
+    <span class="c1"># collapses to 0 when even one voxel step overshoots the radius.</span>
+    <span class="n">rz</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">physical_radius</span> <span class="o">/</span> <span class="n">z_spacing</span><span class="p">)</span>
+    <span class="n">ry</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">physical_radius</span> <span class="o">/</span> <span class="n">y_spacing</span><span class="p">)</span>
+    <span class="n">rx</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">physical_radius</span> <span class="o">/</span> <span class="n">x_spacing</span><span class="p">)</span>
+
+    <span class="n">zz</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">xx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ogrid</span><span class="p">[</span><span class="o">-</span><span class="n">rz</span> <span class="p">:</span> <span class="n">rz</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">ry</span> <span class="p">:</span> <span class="n">ry</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">rx</span> <span class="p">:</span> <span class="n">rx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">physical_dist_sq</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">zz</span> <span class="o">*</span> <span class="n">z_spacing</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">yy</span> <span class="o">*</span> <span class="n">y_spacing</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">xx</span> <span class="o">*</span> <span class="n">x_spacing</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">physical_dist_sq</span> <span class="o">&lt;=</span> <span class="n">physical_radius</span><span class="o">**</span><span class="mi">2</span></div>
+
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_fix_scipy_ndimage_result</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -563,11 +631,17 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the granularity spectrum of a 3D image.</span>
 
-<span class="sd">    Follows the CellProfiler MeasureGranularity algorithm exactly for 3D:</span>
+<span class="sd">    Based on the CellProfiler MeasureGranularity algorithm, generalized to 3D:</span>
 <span class="sd">    1. Subsample the image uniformly (same factor for Z, Y, X).</span>
 <span class="sd">    2. Further subsample for background tophat removal.</span>
-<span class="sd">    3. Iteratively erode with ball(1) and reconstruct, measuring</span>
-<span class="sd">    signal lost at each scale as image-level and per-object values.</span>
+<span class="sd">    3. Iteratively erode with a spherical structuring element and</span>
+<span class="sd">    reconstruct, measuring signal lost at each scale as image-level and</span>
+<span class="sd">    per-object values.</span>
+
+<span class="sd">    The structuring elements used for background removal and the erosion</span>
+<span class="sd">    spectrum are physically isotropic spheres (see ``anisotropic_ball``),</span>
+<span class="sd">    not raw voxel-space spheres, so results are correct rather than biased</span>
+<span class="sd">    when z-spacing differs from x/y-spacing.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -633,6 +707,7 @@
     <span class="n">original_pixels</span> <span class="o">=</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">image</span>
     <span class="n">original_labels</span> <span class="o">=</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">label_image</span>
     <span class="n">original_shape</span> <span class="o">=</span> <span class="n">original_pixels</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">spacing</span> <span class="o">=</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">image_set_loader</span><span class="o">.</span><span class="n">anisotropy_spacing</span>
 
     <span class="c1"># Mask: CellProfiler uses im.mask (typically all-True for unmasked images)</span>
     <span class="k">if</span> <span class="n">image_mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -678,24 +753,24 @@
     <span class="c1"># ------------------------------------------------------------------</span>
     <span class="c1"># Step 2: Background removal via tophat filter</span>
     <span class="c1">#</span>
-    <span class="c1"># CellProfiler 3D BUG (replicated for compatibility):</span>
-    <span class="c1">#   The 3D branch uses new_shape for grid bounds and subsample_size</span>
-    <span class="c1">#   for coordinate division, instead of back_shape and</span>
-    <span class="c1">#   image_sample_size as the 2D branch does. This means:</span>
-    <span class="c1">#   - back_pixels has the SAME shape as pixels (not smaller)</span>
-    <span class="c1">#   - Many coordinates are out of bounds → map_coordinates returns 0</span>
-    <span class="c1">#   We replicate this exactly to match CellProfiler output.</span>
+    <span class="c1"># Downsample the (already subsampled) image and mask to back_shape</span>
+    <span class="c1"># for the background estimate, exactly mirroring CellProfiler&#39;s 2D</span>
+    <span class="c1"># branch: grid bounds are back_shape, and coordinates are divided by</span>
+    <span class="c1"># image_sample_size to map back into the new_shape-sized `pixels`</span>
+    <span class="c1"># array. CellProfiler&#39;s actual 3D implementation uses new_shape /</span>
+    <span class="c1"># subsample_size here instead, a bug that leaves back_pixels the same</span>
+    <span class="c1"># size as pixels (mostly zero-filled from out-of-bounds sampling) and</span>
+    <span class="c1"># applies the tophat radius at the wrong scale. We intentionally do</span>
+    <span class="c1"># not replicate that 3D bug.</span>
     <span class="c1"># ------------------------------------------------------------------</span>
     <span class="k">if</span> <span class="n">image_sample_size</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
         <span class="n">back_shape</span> <span class="o">=</span> <span class="n">new_shape</span> <span class="o">*</span> <span class="n">image_sample_size</span>
 
-        <span class="c1"># CellProfiler 3D: mgrid[0:new_shape] / subsample_size</span>
-        <span class="c1"># (NOT mgrid[0:back_shape] / image_sample_size as 2D does)</span>
         <span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">numpy</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="n">new_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span> <span class="p">:</span> <span class="n">new_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span> <span class="p">:</span> <span class="n">new_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+            <span class="n">numpy</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="n">back_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span> <span class="p">:</span> <span class="n">back_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span> <span class="p">:</span> <span class="n">back_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
                 <span class="nb">float</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="o">/</span> <span class="n">subsample_size</span>
+            <span class="o">/</span> <span class="n">image_sample_size</span>
         <span class="p">)</span>
         <span class="n">back_pixels</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">map_coordinates</span><span class="p">(</span><span class="n">pixels</span><span class="p">,</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">back_mask</span> <span class="o">=</span> <span class="p">(</span>
@@ -715,7 +790,7 @@
         <span class="n">back_shape</span> <span class="o">=</span> <span class="n">new_shape</span>
 
     <span class="c1"># Tophat filter: masked erosion + masked dilation</span>
-    <span class="n">footprint_bg</span> <span class="o">=</span> <span class="n">skimage</span><span class="o">.</span><span class="n">morphology</span><span class="o">.</span><span class="n">ball</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">footprint_bg</span> <span class="o">=</span> <span class="n">anisotropic_ball</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="n">spacing</span><span class="p">)</span>
 
     <span class="n">back_pixels_masked</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">back_pixels</span><span class="p">)</span>
     <span class="n">back_pixels_masked</span><span class="p">[</span><span class="n">back_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">back_pixels</span><span class="p">[</span><span class="n">back_mask</span><span class="p">]</span>
@@ -728,10 +803,10 @@
         <span class="n">footprint</span><span class="o">=</span><span class="n">footprint_bg</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="c1"># Upsample background back to subsampled image size</span>
+    <span class="c1"># Upsample background back to subsampled image size: grid over</span>
+    <span class="c1"># new_shape, with coordinates scaled by (back_shape - 1) / (new_shape - 1)</span>
+    <span class="c1"># to map back into the back_shape-sized back_pixels array.</span>
     <span class="k">if</span> <span class="n">image_sample_size</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
-        <span class="c1"># CellProfiler 3D: mgrid[0:new_shape] with coords scaled by</span>
-        <span class="c1"># (back_shape - 1) / (new_shape - 1)</span>
         <span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span>
             <span class="mi">0</span> <span class="p">:</span> <span class="n">new_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
             <span class="mi">0</span> <span class="p">:</span> <span class="n">new_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
@@ -813,8 +888,9 @@
     <span class="n">ero</span><span class="p">[</span><span class="o">~</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">currentmean</span> <span class="o">=</span> <span class="n">startmean</span>
 
-    <span class="c1"># CellProfiler uses ball(1) for the iterative erosion/reconstruction loop</span>
-    <span class="n">footprint</span> <span class="o">=</span> <span class="n">skimage</span><span class="o">.</span><span class="n">morphology</span><span class="o">.</span><span class="n">ball</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="c1"># Physically-isotropic radius-1 structuring element for the iterative</span>
+    <span class="c1"># erosion/reconstruction loop (see anisotropic_ball).</span>
+    <span class="n">footprint</span> <span class="o">=</span> <span class="n">anisotropic_ball</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">spacing</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span>

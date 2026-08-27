@@ -203,9 +203,11 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.colocalization.compute_colocalization"><code class="docutils literal notranslate"><span class="pre">compute_colocalization()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.colocalization.linear_costes_threshold_calculation"><code class="docutils literal notranslate"><span class="pre">linear_costes_threshold_calculation()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.colocalization.prepare_two_images_for_colocalization"><code class="docutils literal notranslate"><span class="pre">prepare_two_images_for_colocalization()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.granularity.anisotropic_ball"><code class="docutils literal notranslate"><span class="pre">anisotropic_ball()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.granularity.compute_granularity"><code class="docutils literal notranslate"><span class="pre">compute_granularity()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.intensity.compute_intensity"><code class="docutils literal notranslate"><span class="pre">compute_intensity()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.intensity.get_outline"><code class="docutils literal notranslate"><span class="pre">get_outline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.neighbors.adjacency_footprint"><code class="docutils literal notranslate"><span class="pre">adjacency_footprint()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.neighbors.calculate_centroid"><code class="docutils literal notranslate"><span class="pre">calculate_centroid()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.neighbors.classify_cells_into_shells"><code class="docutils literal notranslate"><span class="pre">classify_cells_into_shells()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.neighbors.compute_neighbors"><code class="docutils literal notranslate"><span class="pre">compute_neighbors()</span></code></a></li>
@@ -218,6 +220,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.neighbors.plot_distance_distributions"><code class="docutils literal notranslate"><span class="pre">plot_distance_distributions()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.neighbors.visualize_organoid_shells"><code class="docutils literal notranslate"><span class="pre">visualize_organoid_shells()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.texture.compute_texture"><code class="docutils literal notranslate"><span class="pre">compute_texture()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.texture.resample_to_isotropic"><code class="docutils literal notranslate"><span class="pre">resample_to_isotropic()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.texture.scale_image"><code class="docutils literal notranslate"><span class="pre">scale_image()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader"><code class="docutils literal notranslate"><span class="pre">SupportsImageSetLoader</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader.anisotropy_spacing"><code class="docutils literal notranslate"><span class="pre">SupportsImageSetLoader.anisotropy_spacing</span></code></a></li>
@@ -305,6 +308,15 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api.html#module-zedprofiler.contracts">Contracts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel.anisotropy_factor"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.anisotropy_factor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel.model_config"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel.validate_at_least_one"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.validate_at_least_one()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel.validate_transverse_spacing_equal"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.validate_transverse_spacing_equal()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel.x_spacing"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.x_spacing</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel.y_spacing"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.y_spacing</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.ColumnNameModel"><code class="docutils literal notranslate"><span class="pre">ColumnNameModel</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.ColumnNameModel.channel"><code class="docutils literal notranslate"><span class="pre">ColumnNameModel.channel</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.ColumnNameModel.column_name"><code class="docutils literal notranslate"><span class="pre">ColumnNameModel.column_name</span></code></a></li>
@@ -350,6 +362,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.create_image_array_schema"><code class="docutils literal notranslate"><span class="pre">create_image_array_schema()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.validate_anisotropy_factor_with_pydantic"><code class="docutils literal notranslate"><span class="pre">validate_anisotropy_factor_with_pydantic()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.validate_column_name_schema"><code class="docutils literal notranslate"><span class="pre">validate_column_name_schema()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.validate_column_name_with_pydantic"><code class="docutils literal notranslate"><span class="pre">validate_column_name_with_pydantic()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.validate_image_array_shape_contracts"><code class="docutils literal notranslate"><span class="pre">validate_image_array_shape_contracts()</span></code></a></li>
@@ -420,6 +433,51 @@
 <span class="n">BBoxCoord</span> <span class="o">=</span> <span class="nb">int</span>
 <span class="n">BBox3D</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">BBoxCoord</span><span class="p">,</span> <span class="n">BBoxCoord</span><span class="p">,</span> <span class="n">BBoxCoord</span><span class="p">,</span> <span class="n">BBoxCoord</span><span class="p">,</span> <span class="n">BBoxCoord</span><span class="p">,</span> <span class="n">BBoxCoord</span><span class="p">]</span>
 <span class="n">SMALL_SAMPLE_THRESHOLD</span> <span class="o">=</span> <span class="mi">20</span>
+
+
+<div class="viewcode-block" id="adjacency_footprint">
+<a class="viewcode-back" href="../../../api.html#zedprofiler.featurization.neighbors.adjacency_footprint">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">adjacency_footprint</span><span class="p">(</span><span class="n">anisotropy_factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a 6-connectivity dilation footprint sized to represent one</span>
+<span class="sd">    physical unit of &quot;touching&quot; distance in each direction.</span>
+
+<span class="sd">    ``skimage.morphology.dilation``&#39;s default footprint expands 1 voxel in</span>
+<span class="sd">    every axis, which only means the same physical distance in every</span>
+<span class="sd">    direction when voxels are isotropic. When z-spacing is coarser than</span>
+<span class="sd">    x/y-spacing (``anisotropy_factor`` &gt; 1), 1 z-voxel already represents</span>
+<span class="sd">    ``anisotropy_factor`` times more physical distance than 1 x/y-voxel, so</span>
+<span class="sd">    the x/y arms are extended by that same factor to match.</span>
+
+<span class="sd">    At ``anisotropy_factor == 1`` this reduces to exactly the same 6-connected</span>
+<span class="sd">    cross skimage uses by default.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    anisotropy_factor : float</span>
+<span class="sd">        Ratio of z-spacing to x/y-spacing.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        Boolean footprint of shape ``(3, 2*xy_radius + 1, 2*xy_radius + 1)``.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">z_radius</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># the next slice essentially represents the</span>
+    <span class="c1"># same physical distance as 1 z-voxel, so always expand by 1 in z</span>
+    <span class="c1"># if the objects are touching it will be caught in this discrete</span>
+    <span class="c1"># scale. No need to interpolate here</span>
+
+    <span class="n">xy_radius</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">anisotropy_factor</span><span class="p">)))</span>
+    <span class="n">footprint</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+        <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">z_radius</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">xy_radius</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">xy_radius</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">cz</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">cx</span> <span class="o">=</span> <span class="n">z_radius</span><span class="p">,</span> <span class="n">xy_radius</span><span class="p">,</span> <span class="n">xy_radius</span>
+    <span class="n">footprint</span><span class="p">[:,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">cx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">footprint</span><span class="p">[</span><span class="n">cz</span><span class="p">,</span> <span class="p">:,</span> <span class="n">cx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">footprint</span><span class="p">[</span><span class="n">cz</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">footprint</span></div>
+
 
 
 <div class="viewcode-block" id="neighbors_expand_box">
@@ -625,7 +683,10 @@
         <span class="p">)</span>
         <span class="n">adjacent_label_crop</span> <span class="o">=</span> <span class="n">crop_3D_image</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">label_object</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="n">adjacent_bbox</span><span class="p">)</span>
         <span class="n">binary_mask</span> <span class="o">=</span> <span class="n">adjacent_label_crop</span> <span class="o">==</span> <span class="n">label</span>
-        <span class="n">dilated_mask</span> <span class="o">=</span> <span class="n">skimage</span><span class="o">.</span><span class="n">morphology</span><span class="o">.</span><span class="n">dilation</span><span class="p">(</span><span class="n">binary_mask</span><span class="p">)</span>
+        <span class="n">dilated_mask</span> <span class="o">=</span> <span class="n">skimage</span><span class="o">.</span><span class="n">morphology</span><span class="o">.</span><span class="n">dilation</span><span class="p">(</span>
+            <span class="n">binary_mask</span><span class="p">,</span>
+            <span class="n">footprint</span><span class="o">=</span><span class="n">adjacency_footprint</span><span class="p">(</span><span class="n">anisotropy_factor</span><span class="p">),</span>
+        <span class="p">)</span>
         <span class="n">labels_in_dilation</span> <span class="o">=</span> <span class="n">adjacent_label_crop</span><span class="p">[</span><span class="n">dilated_mask</span><span class="p">]</span>
         <span class="n">adjacent_labels</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels_in_dilation</span><span class="p">)</span>
         <span class="n">n_neighbors_adjacent</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
@@ -718,12 +779,14 @@
     <span class="p">}</span>
 
     <span class="k">for</span> <span class="n">obj_id</span> <span class="ow">in</span> <span class="n">object_ids</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">obj_id</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>  <span class="c1"># skip background</span>
         <span class="n">z</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">nuclei_mask</span> <span class="o">==</span> <span class="n">obj_id</span><span class="p">)</span>
-        <span class="n">centroid</span> <span class="o">=</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+        <span class="n">centroid</span> <span class="o">=</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">z</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
         <span class="n">coords</span><span class="p">[</span><span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj_id</span><span class="p">)</span>
-        <span class="n">coords</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">centroid</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">coords</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">centroid</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">coords</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">centroid</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">coords</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">centroid</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">coords</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">centroid</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 
     <span class="k">return</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span></div>
 
@@ -742,10 +805,30 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">euclidean_distance_from_centroid</span><span class="p">(</span>
     <span class="n">coords</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">centroid</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">spacing</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate Euclidean distance from centroid for each cell.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate Euclidean distance from centroid for each cell.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    coords : ndarray</span>
+<span class="sd">        Cell coordinates (n_cells, 3), in (z, y, x) order.</span>
+<span class="sd">    centroid : ndarray</span>
+<span class="sd">        Centroid coordinates (3,), in (z, y, x) order.</span>
+<span class="sd">    spacing : tuple[float, float, float] or None</span>
+<span class="sd">        Physical voxel spacing in (z, y, x) order, matching ``coords``. If</span>
+<span class="sd">        None (default), coordinates are treated as already isotropic (all</span>
+<span class="sd">        axes weighted equally). Pass this whenever ``coords`` are raw voxel</span>
+<span class="sd">        indices from an anisotropic volume, so distances reflect physical</span>
+<span class="sd">        space rather than voxel counts.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">centroid</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">centroid</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">spacing</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">spacing_arr</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">spacing</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="n">coords</span> <span class="o">*</span> <span class="n">spacing_arr</span>
+        <span class="n">centroid</span> <span class="o">=</span> <span class="n">centroid</span> <span class="o">*</span> <span class="n">spacing_arr</span>
     <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">coords</span> <span class="o">-</span> <span class="n">centroid</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span></div>
 
 
@@ -756,6 +839,7 @@
     <span class="n">coords</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">centroid</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">min_cells_threshold</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+    <span class="n">spacing</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate Mahalanobis distance from centroid for each cell.</span>
 <span class="sd">    This accounts for the covariance structure (shape) of the organoid.</span>
@@ -765,11 +849,17 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    coords : ndarray</span>
-<span class="sd">        Cell coordinates (n_cells, 3)</span>
+<span class="sd">        Cell coordinates (n_cells, 3), in (z, y, x) order.</span>
 <span class="sd">    centroid : ndarray</span>
-<span class="sd">        Centroid coordinates (3,)</span>
+<span class="sd">        Centroid coordinates (3,), in (z, y, x) order.</span>
 <span class="sd">    min_cells_threshold : int</span>
 <span class="sd">        Minimum cells needed for reliable Mahalanobis (default: 50)</span>
+<span class="sd">    spacing : tuple[float, float, float] or None</span>
+<span class="sd">        Physical voxel spacing in (z, y, x) order, matching ``coords``. If</span>
+<span class="sd">        None (default), coordinates are treated as already isotropic. Pass</span>
+<span class="sd">        this whenever ``coords`` are raw voxel indices from an anisotropic</span>
+<span class="sd">        volume, so both the covariance structure and the distance reflect</span>
+<span class="sd">        physical space rather than voxel counts.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -779,6 +869,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">centroid</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">centroid</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">spacing</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">spacing_arr</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">spacing</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="n">coords</span> <span class="o">*</span> <span class="n">spacing_arr</span>
+        <span class="n">centroid</span> <span class="o">=</span> <span class="n">centroid</span> <span class="o">*</span> <span class="n">spacing_arr</span>
 
     <span class="n">n_cells</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
 
@@ -830,6 +924,7 @@
     <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mahalanobis&quot;</span><span class="p">,</span>
     <span class="n">min_cells_per_shell</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
     <span class="n">centroid</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">spacing</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Classify cells into radial shells based on distance from centroid.</span>
 
@@ -838,7 +933,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    coords : pandas.DataFrame or dict</span>
-<span class="sd">        Cell coordinates with /keys: object_id, x, y, z</span>
+<span class="sd">        Cell coordinates with /keys: object_id, z, y, x</span>
 <span class="sd">    n_shells : int</span>
 <span class="sd">        Number of concentric shells to create (will be adjusted if needed)</span>
 <span class="sd">    method : str</span>
@@ -847,6 +942,11 @@
 <span class="sd">        Minimum average cells per shell (default: 3)</span>
 <span class="sd">    centroid : numpy.ndarray, optional</span>
 <span class="sd">        Pre-calculated centroid (if None, will be calculated from coords)</span>
+<span class="sd">    spacing : tuple[float, float, float], optional</span>
+<span class="sd">        Physical voxel spacing in (z, y, x) order, matching ``coords``. Pass</span>
+<span class="sd">        this when the volume has anisotropic spacing so that distances (and</span>
+<span class="sd">        therefore shell assignments) reflect physical space rather than raw</span>
+<span class="sd">        voxel counts. Defaults to None (isotropic, all axes weighted equally).</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -861,10 +961,10 @@
     <span class="c1"># Handle both DataFrame and dict input</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
         <span class="n">object_ids</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-        <span class="n">coords_array</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="n">coords_array</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[[</span><span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">object_ids</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">])</span>
-        <span class="n">coords_array</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">coords</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="n">coords</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">]])</span>
+        <span class="n">coords_array</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">],</span> <span class="n">coords</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="n">coords</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]])</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords_array</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">results</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;Metadata_Object_ObjectID&quot;</span><span class="p">:</span> <span class="p">[],</span>
@@ -891,9 +991,17 @@
 
     <span class="c1"># Calculate distances based on method</span>
     <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;mahalanobis&quot;</span><span class="p">:</span>
-        <span class="n">distances</span> <span class="o">=</span> <span class="n">mahalanobis_distance_from_centroid</span><span class="p">(</span><span class="n">coords_array</span><span class="p">,</span> <span class="n">centroid</span><span class="p">)</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">mahalanobis_distance_from_centroid</span><span class="p">(</span>
+            <span class="n">coords_array</span><span class="p">,</span>
+            <span class="n">centroid</span><span class="p">,</span>
+            <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">,</span>
+        <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>  <span class="c1"># euclidean</span>
-        <span class="n">distances</span> <span class="o">=</span> <span class="n">euclidean_distance_from_centroid</span><span class="p">(</span><span class="n">coords_array</span><span class="p">,</span> <span class="n">centroid</span><span class="p">)</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">euclidean_distance_from_centroid</span><span class="p">(</span>
+            <span class="n">coords_array</span><span class="p">,</span>
+            <span class="n">centroid</span><span class="p">,</span>
+            <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="c1"># Normalize distances to 0-1 range</span>
     <span class="n">max_distance</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span>
@@ -971,7 +1079,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    coords : pandas.DataFrame or dict</span>
-<span class="sd">        Cell coordinates with columns/keys: object_id, x, y, z</span>
+<span class="sd">        Cell coordinates with columns/keys: object_id, z, y, x</span>
 <span class="sd">    classification_results : dict</span>
 <span class="sd">        Results from classify_cells_into_shells</span>
 <span class="sd">    title : str</span>
@@ -980,13 +1088,13 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Handle both DataFrame and dict input</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-        <span class="n">x_coords</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-        <span class="n">y_coords</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
         <span class="n">z_coords</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="n">y_coords</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="n">x_coords</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">x_coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">])</span>
-        <span class="n">y_coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">])</span>
         <span class="n">z_coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">])</span>
+        <span class="n">y_coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">])</span>
+        <span class="n">x_coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">])</span>
 
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 
@@ -1006,9 +1114,9 @@
         <span class="n">mask</span> <span class="o">=</span> <span class="n">shell_assignments</span> <span class="o">==</span> <span class="n">shell</span>
         <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Only plot if shell has cells</span>
             <span class="n">ax1</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>  <span class="c1"># type: ignore[misc]</span>
-                <span class="n">x_coords</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span>
-                <span class="n">y_coords</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span>
                 <span class="n">z_coords</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span>
+                <span class="n">y_coords</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span>
+                <span class="n">x_coords</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span>
                 <span class="n">c</span><span class="o">=</span><span class="p">[</span><span class="n">colors</span><span class="p">[</span><span class="n">shell</span><span class="p">]],</span>
                 <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Shell </span><span class="si">{</span><span class="n">shell</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> (n=</span><span class="si">{</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
                 <span class="n">s</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
@@ -1028,9 +1136,9 @@
             <span class="n">linewidths</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">)</span>
     <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">)</span>
-    <span class="n">ax1</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore[attr-defined]</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore[attr-defined]</span>
     <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
     <span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
 

@@ -203,9 +203,11 @@
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.colocalization.compute_colocalization"><code class="docutils literal notranslate"><span class="pre">compute_colocalization()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.colocalization.linear_costes_threshold_calculation"><code class="docutils literal notranslate"><span class="pre">linear_costes_threshold_calculation()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.colocalization.prepare_two_images_for_colocalization"><code class="docutils literal notranslate"><span class="pre">prepare_two_images_for_colocalization()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.granularity.anisotropic_ball"><code class="docutils literal notranslate"><span class="pre">anisotropic_ball()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.granularity.compute_granularity"><code class="docutils literal notranslate"><span class="pre">compute_granularity()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.intensity.compute_intensity"><code class="docutils literal notranslate"><span class="pre">compute_intensity()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.intensity.get_outline"><code class="docutils literal notranslate"><span class="pre">get_outline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.neighbors.adjacency_footprint"><code class="docutils literal notranslate"><span class="pre">adjacency_footprint()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.neighbors.calculate_centroid"><code class="docutils literal notranslate"><span class="pre">calculate_centroid()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.neighbors.classify_cells_into_shells"><code class="docutils literal notranslate"><span class="pre">classify_cells_into_shells()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.neighbors.compute_neighbors"><code class="docutils literal notranslate"><span class="pre">compute_neighbors()</span></code></a></li>
@@ -218,6 +220,7 @@
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.neighbors.plot_distance_distributions"><code class="docutils literal notranslate"><span class="pre">plot_distance_distributions()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.neighbors.visualize_organoid_shells"><code class="docutils literal notranslate"><span class="pre">visualize_organoid_shells()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.texture.compute_texture"><code class="docutils literal notranslate"><span class="pre">compute_texture()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.texture.resample_to_isotropic"><code class="docutils literal notranslate"><span class="pre">resample_to_isotropic()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.texture.scale_image"><code class="docutils literal notranslate"><span class="pre">scale_image()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader"><code class="docutils literal notranslate"><span class="pre">SupportsImageSetLoader</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader.anisotropy_spacing"><code class="docutils literal notranslate"><span class="pre">SupportsImageSetLoader.anisotropy_spacing</span></code></a></li>
@@ -305,6 +308,15 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#module-zedprofiler.contracts">Contracts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.contracts.AnisotropyFactorModel"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.contracts.AnisotropyFactorModel.anisotropy_factor"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.anisotropy_factor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.contracts.AnisotropyFactorModel.model_config"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.contracts.AnisotropyFactorModel.validate_at_least_one"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.validate_at_least_one()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.contracts.AnisotropyFactorModel.validate_transverse_spacing_equal"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.validate_transverse_spacing_equal()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.contracts.AnisotropyFactorModel.x_spacing"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.x_spacing</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.contracts.AnisotropyFactorModel.y_spacing"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.y_spacing</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.contracts.ColumnNameModel"><code class="docutils literal notranslate"><span class="pre">ColumnNameModel</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.contracts.ColumnNameModel.channel"><code class="docutils literal notranslate"><span class="pre">ColumnNameModel.channel</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api.html#zedprofiler.contracts.ColumnNameModel.column_name"><code class="docutils literal notranslate"><span class="pre">ColumnNameModel.column_name</span></code></a></li>
@@ -350,6 +362,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.contracts.create_image_array_schema"><code class="docutils literal notranslate"><span class="pre">create_image_array_schema()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.contracts.validate_anisotropy_factor_with_pydantic"><code class="docutils literal notranslate"><span class="pre">validate_anisotropy_factor_with_pydantic()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.contracts.validate_column_name_schema"><code class="docutils literal notranslate"><span class="pre">validate_column_name_schema()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.contracts.validate_column_name_with_pydantic"><code class="docutils literal notranslate"><span class="pre">validate_column_name_with_pydantic()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#zedprofiler.contracts.validate_image_array_shape_contracts"><code class="docutils literal notranslate"><span class="pre">validate_image_array_shape_contracts()</span></code></a></li>
@@ -424,6 +437,8 @@
  | <a href="#U"><strong>U</strong></a>
  | <a href="#V"><strong>V</strong></a>
  | <a href="#W"><strong>W</strong></a>
+ | <a href="#X"><strong>X</strong></a>
+ | <a href="#Y"><strong>Y</strong></a>
  | <a href="#Z"><strong>Z</strong></a>
  
 </div>
@@ -442,16 +457,26 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.anisotropy_factor">anisotropy_factor (zedprofiler.IO.loading_classes.ImageSetLoader attribute)</a>
+      <li><a href="api.html#zedprofiler.featurization.neighbors.adjacency_footprint">adjacency_footprint() (in module zedprofiler.featurization.neighbors)</a>
 </li>
+      <li><a href="api.html#zedprofiler.featurization.granularity.anisotropic_ball">anisotropic_ball() (in module zedprofiler.featurization.granularity)</a>
+</li>
+      <li><a href="api.html#zedprofiler.contracts.AnisotropyFactorModel.anisotropy_factor">anisotropy_factor (zedprofiler.contracts.AnisotropyFactorModel attribute)</a>
+
+      <ul>
+        <li><a href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.anisotropy_factor">(zedprofiler.IO.loading_classes.ImageSetLoader attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader.anisotropy_spacing">anisotropy_spacing (zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader attribute)</a>
 
       <ul>
         <li><a href="api.html#zedprofiler.IO.loading_classes.ImageSetLoader.anisotropy_spacing">(zedprofiler.IO.loading_classes.ImageSetLoader attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#zedprofiler.contracts.AnisotropyFactorModel">AnisotropyFactorModel (class in zedprofiler.contracts)</a>
+</li>
       <li><a href="api.html#zedprofiler.contracts.ImageArrayModel.array">array (zedprofiler.contracts.ImageArrayModel attribute)</a>
 </li>
   </ul></td>
@@ -688,9 +713,11 @@
 </li>
       <li><a href="api.html#zedprofiler.contracts.MetadataDictModel">MetadataDictModel (class in zedprofiler.contracts)</a>
 </li>
-      <li><a href="api.html#zedprofiler.contracts.ColumnNameModel.model_config">model_config (zedprofiler.contracts.ColumnNameModel attribute)</a>
+      <li><a href="api.html#zedprofiler.contracts.AnisotropyFactorModel.model_config">model_config (zedprofiler.contracts.AnisotropyFactorModel attribute)</a>
 
       <ul>
+        <li><a href="api.html#zedprofiler.contracts.ColumnNameModel.model_config">(zedprofiler.contracts.ColumnNameModel attribute)</a>
+</li>
         <li><a href="api.html#zedprofiler.contracts.ExpectedFeatureNameValues.model_config">(zedprofiler.contracts.ExpectedFeatureNameValues attribute)</a>
 </li>
         <li><a href="api.html#zedprofiler.contracts.FeatureDictModel.model_config">(zedprofiler.contracts.FeatureDictModel attribute)</a>
@@ -702,6 +729,8 @@
         <li><a href="api.html#zedprofiler.contracts.ReturnSchemaModel.model_config">(zedprofiler.contracts.ReturnSchemaModel attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     module
 
@@ -791,6 +820,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#zedprofiler.featurization.texture.resample_to_isotropic">resample_to_isotropic() (in module zedprofiler.featurization.texture)</a>
+</li>
       <li><a href="api.html#zedprofiler.contracts.ReturnSchemaModel.result">result (zedprofiler.contracts.ReturnSchemaModel attribute)</a>
 </li>
       <li><a href="api.html#zedprofiler.contracts.ReturnSchemaModel">ReturnSchemaModel (class in zedprofiler.contracts)</a>
@@ -845,9 +876,13 @@
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#zedprofiler.contracts.validate_anisotropy_factor_with_pydantic">validate_anisotropy_factor_with_pydantic() (in module zedprofiler.contracts)</a>
+</li>
       <li><a href="api.html#zedprofiler.contracts.ImageArrayModel.validate_array_dtype_and_shape">validate_array_dtype_and_shape() (zedprofiler.contracts.ImageArrayModel class method)</a>
 </li>
       <li><a href="api.html#zedprofiler.contracts.ImageArrayModel.validate_array_type">validate_array_type() (zedprofiler.contracts.ImageArrayModel class method)</a>
+</li>
+      <li><a href="api.html#zedprofiler.contracts.AnisotropyFactorModel.validate_at_least_one">validate_at_least_one() (zedprofiler.contracts.AnisotropyFactorModel class method)</a>
 </li>
       <li><a href="api.html#zedprofiler.contracts.validate_column_name_schema">validate_column_name_schema() (in module zedprofiler.contracts)</a>
 </li>
@@ -877,6 +912,8 @@
 </li>
       <li><a href="api.html#zedprofiler.contracts.validate_return_with_pydantic">validate_return_with_pydantic() (in module zedprofiler.contracts)</a>
 </li>
+      <li><a href="api.html#zedprofiler.contracts.AnisotropyFactorModel.validate_transverse_spacing_equal">validate_transverse_spacing_equal() (zedprofiler.contracts.AnisotropyFactorModel method)</a>
+</li>
       <li><a href="api.html#zedprofiler.featurization.neighbors.visualize_organoid_shells">visualize_organoid_shells() (in module zedprofiler.featurization.neighbors)</a>
 </li>
   </ul></td>
@@ -886,6 +923,22 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#zedprofiler.IO.loading_classes.ImageSetConfig.well">well (zedprofiler.IO.loading_classes.ImageSetConfig attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="X">X</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#zedprofiler.contracts.AnisotropyFactorModel.x_spacing">x_spacing (zedprofiler.contracts.AnisotropyFactorModel attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Y">Y</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#zedprofiler.contracts.AnisotropyFactorModel.y_spacing">y_spacing (zedprofiler.contracts.AnisotropyFactorModel attribute)</a>
 </li>
   </ul></td>
 </tr></table>

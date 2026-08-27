@@ -206,9 +206,11 @@
 <li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.colocalization.compute_colocalization"><code class="docutils literal notranslate"><span class="pre">compute_colocalization()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.colocalization.linear_costes_threshold_calculation"><code class="docutils literal notranslate"><span class="pre">linear_costes_threshold_calculation()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.colocalization.prepare_two_images_for_colocalization"><code class="docutils literal notranslate"><span class="pre">prepare_two_images_for_colocalization()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.granularity.anisotropic_ball"><code class="docutils literal notranslate"><span class="pre">anisotropic_ball()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.granularity.compute_granularity"><code class="docutils literal notranslate"><span class="pre">compute_granularity()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.intensity.compute_intensity"><code class="docutils literal notranslate"><span class="pre">compute_intensity()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.intensity.get_outline"><code class="docutils literal notranslate"><span class="pre">get_outline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.neighbors.adjacency_footprint"><code class="docutils literal notranslate"><span class="pre">adjacency_footprint()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.neighbors.calculate_centroid"><code class="docutils literal notranslate"><span class="pre">calculate_centroid()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.neighbors.classify_cells_into_shells"><code class="docutils literal notranslate"><span class="pre">classify_cells_into_shells()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.neighbors.compute_neighbors"><code class="docutils literal notranslate"><span class="pre">compute_neighbors()</span></code></a></li>
@@ -221,6 +223,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.neighbors.plot_distance_distributions"><code class="docutils literal notranslate"><span class="pre">plot_distance_distributions()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.neighbors.visualize_organoid_shells"><code class="docutils literal notranslate"><span class="pre">visualize_organoid_shells()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.texture.compute_texture"><code class="docutils literal notranslate"><span class="pre">compute_texture()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.texture.resample_to_isotropic"><code class="docutils literal notranslate"><span class="pre">resample_to_isotropic()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.texture.scale_image"><code class="docutils literal notranslate"><span class="pre">scale_image()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader"><code class="docutils literal notranslate"><span class="pre">SupportsImageSetLoader</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader.anisotropy_spacing"><code class="docutils literal notranslate"><span class="pre">SupportsImageSetLoader.anisotropy_spacing</span></code></a></li>
@@ -308,6 +311,15 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-zedprofiler.contracts">Contracts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.contracts.AnisotropyFactorModel"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.contracts.AnisotropyFactorModel.anisotropy_factor"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.anisotropy_factor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.contracts.AnisotropyFactorModel.model_config"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.contracts.AnisotropyFactorModel.validate_at_least_one"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.validate_at_least_one()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.contracts.AnisotropyFactorModel.validate_transverse_spacing_equal"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.validate_transverse_spacing_equal()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.contracts.AnisotropyFactorModel.x_spacing"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.x_spacing</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zedprofiler.contracts.AnisotropyFactorModel.y_spacing"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.y_spacing</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#zedprofiler.contracts.ColumnNameModel"><code class="docutils literal notranslate"><span class="pre">ColumnNameModel</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#zedprofiler.contracts.ColumnNameModel.channel"><code class="docutils literal notranslate"><span class="pre">ColumnNameModel.channel</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#zedprofiler.contracts.ColumnNameModel.column_name"><code class="docutils literal notranslate"><span class="pre">ColumnNameModel.column_name</span></code></a></li>
@@ -353,6 +365,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#zedprofiler.contracts.create_image_array_schema"><code class="docutils literal notranslate"><span class="pre">create_image_array_schema()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zedprofiler.contracts.validate_anisotropy_factor_with_pydantic"><code class="docutils literal notranslate"><span class="pre">validate_anisotropy_factor_with_pydantic()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#zedprofiler.contracts.validate_column_name_schema"><code class="docutils literal notranslate"><span class="pre">validate_column_name_schema()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#zedprofiler.contracts.validate_column_name_with_pydantic"><code class="docutils literal notranslate"><span class="pre">validate_column_name_with_pydantic()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#zedprofiler.contracts.validate_image_array_shape_contracts"><code class="docutils literal notranslate"><span class="pre">validate_image_array_shape_contracts()</span></code></a></li>
@@ -594,14 +607,46 @@ and crops both images accordingly.</p>
 
 <p id="module-zedprofiler.featurization.granularity">Calculate the granularity spectrum of a 3D image.</p>
 <dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.granularity.anisotropic_ball">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.granularity.</span></span><span class="sig-name descname"><span class="pre">anisotropic_ball</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/granularity.html#anisotropic_ball"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.granularity.anisotropic_ball" title="Link to this definition"></a></dt>
+<dd><p>Build a spherical structuring element that is physically isotropic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>radius</strong> (<em>int</em>) – Radius of the structuring element in voxel units.</p></li>
+<li><p><strong>spacing</strong> (<em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>] or </em><em>None</em>) – Physical spacing of the image in (z, y, x) order.
+If None, the structuring element is isotropic in voxel space.
+If provided, the structuring element will be isotropic
+in physical space, taking into account the anisotropy
+of the voxel spacing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>numpy.ndarray</em> – A boolean array representing the structuring element,
+where True values indicate the presence of the struct
+during element and False values indicate the absence.</p></li>
+<li><p><em>…</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="zedprofiler.featurization.granularity.compute_granularity">
 <span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.granularity.</span></span><span class="sig-name descname"><span class="pre">compute_granularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#zedprofiler.IO.loading_classes.ObjectLoader" title="zedprofiler.IO.loading_classes.ObjectLoader"><span class="pre">ObjectLoader</span></a></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">granular_spectrum_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsample_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_sample_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/granularity.html#compute_granularity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.granularity.compute_granularity" title="Link to this definition"></a></dt>
 <dd><p>Calculate the granularity spectrum of a 3D image.</p>
-<p>Follows the CellProfiler MeasureGranularity algorithm exactly for 3D:
+<p>Based on the CellProfiler MeasureGranularity algorithm, generalized to 3D:
 1. Subsample the image uniformly (same factor for Z, Y, X).
 2. Further subsample for background tophat removal.
-3. Iteratively erode with ball(1) and reconstruct, measuring
-signal lost at each scale as image-level and per-object values.</p>
+3. Iteratively erode with a spherical structuring element and
+reconstruct, measuring signal lost at each scale as image-level and
+per-object values.</p>
+<p>The structuring elements used for background removal and the erosion
+spectrum are physically isotropic spheres (see <code class="docutils literal notranslate"><span class="pre">anisotropic_ball</span></code>),
+not raw voxel-space spheres, so results are correct rather than biased
+when z-spacing differs from x/y-spacing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -675,6 +720,32 @@ intensity measurement, plus Metadata columns.</p>
 
 <p id="module-zedprofiler.featurization.neighbors">Neighbors featurization module.</p>
 <dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.neighbors.adjacency_footprint">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.neighbors.</span></span><span class="sig-name descname"><span class="pre">adjacency_footprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">anisotropy_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/neighbors.html#adjacency_footprint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.neighbors.adjacency_footprint" title="Link to this definition"></a></dt>
+<dd><p>Build a 6-connectivity dilation footprint sized to represent one
+physical unit of “touching” distance in each direction.</p>
+<p><code class="docutils literal notranslate"><span class="pre">skimage.morphology.dilation</span></code>’s default footprint expands 1 voxel in
+every axis, which only means the same physical distance in every
+direction when voxels are isotropic. When z-spacing is coarser than
+x/y-spacing (<code class="docutils literal notranslate"><span class="pre">anisotropy_factor</span></code> &gt; 1), 1 z-voxel already represents
+<code class="docutils literal notranslate"><span class="pre">anisotropy_factor</span></code> times more physical distance than 1 x/y-voxel, so
+the x/y arms are extended by that same factor to match.</p>
+<p>At <code class="docutils literal notranslate"><span class="pre">anisotropy_factor</span> <span class="pre">==</span> <span class="pre">1</span></code> this reduces to exactly the same 6-connected
+cross skimage uses by default.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>anisotropy_factor</strong> (<em>float</em>) – Ratio of z-spacing to x/y-spacing.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Boolean footprint of shape <code class="docutils literal notranslate"><span class="pre">(3,</span> <span class="pre">2*xy_radius</span> <span class="pre">+</span> <span class="pre">1,</span> <span class="pre">2*xy_radius</span> <span class="pre">+</span> <span class="pre">1)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="zedprofiler.featurization.neighbors.calculate_centroid">
 <span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.neighbors.</span></span><span class="sig-name descname"><span class="pre">calculate_centroid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/neighbors.html#calculate_centroid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.neighbors.calculate_centroid" title="Link to this definition"></a></dt>
 <dd><p>Calculate the centroid of cell coordinates.</p>
@@ -682,17 +753,21 @@ intensity measurement, plus Metadata columns.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="zedprofiler.featurization.neighbors.classify_cells_into_shells">
-<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.neighbors.</span></span><span class="sig-name descname"><span class="pre">classify_cells_into_shells</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_shells</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mahalanobis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_cells_per_shell</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/neighbors.html#classify_cells_into_shells"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.neighbors.classify_cells_into_shells" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.neighbors.</span></span><span class="sig-name descname"><span class="pre">classify_cells_into_shells</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_shells</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mahalanobis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_cells_per_shell</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/neighbors.html#classify_cells_into_shells"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.neighbors.classify_cells_into_shells" title="Link to this definition"></a></dt>
 <dd><p>Classify cells into radial shells based on distance from centroid.</p>
 <p>Automatically adjusts n_shells for small organoids to ensure meaningful statistics.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>coords</strong> (<em>pandas.DataFrame</em><em> or </em><em>dict</em>) – Cell coordinates with /keys: object_id, x, y, z</p></li>
+<li><p><strong>coords</strong> (<em>pandas.DataFrame</em><em> or </em><em>dict</em>) – Cell coordinates with /keys: object_id, z, y, x</p></li>
 <li><p><strong>n_shells</strong> (<em>int</em>) – Number of concentric shells to create (will be adjusted if needed)</p></li>
 <li><p><strong>method</strong> (<em>str</em>) – ‘euclidean’ or ‘mahalanobis’</p></li>
 <li><p><strong>min_cells_per_shell</strong> (<em>int</em>) – Minimum average cells per shell (default: 3)</p></li>
 <li><p><strong>centroid</strong> (<em>numpy.ndarray</em><em>, </em><em>optional</em>) – Pre-calculated centroid (if None, will be calculated from coords)</p></li>
+<li><p><strong>spacing</strong> (<em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – Physical voxel spacing in (z, y, x) order, matching <code class="docutils literal notranslate"><span class="pre">coords</span></code>. Pass
+this when the volume has anisotropic spacing so that distances (and
+therefore shell assignments) reflect physical space rather than raw
+voxel counts. Defaults to None (isotropic, all axes weighted equally).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -771,8 +846,21 @@ NeighborsCountAdjacent and NeighborsCountByDistance, plus Metadata columns.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="zedprofiler.featurization.neighbors.euclidean_distance_from_centroid">
-<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.neighbors.</span></span><span class="sig-name descname"><span class="pre">euclidean_distance_from_centroid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/neighbors.html#euclidean_distance_from_centroid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.neighbors.euclidean_distance_from_centroid" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.neighbors.</span></span><span class="sig-name descname"><span class="pre">euclidean_distance_from_centroid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/neighbors.html#euclidean_distance_from_centroid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.neighbors.euclidean_distance_from_centroid" title="Link to this definition"></a></dt>
 <dd><p>Calculate Euclidean distance from centroid for each cell.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coords</strong> (<em>ndarray</em>) – Cell coordinates (n_cells, 3), in (z, y, x) order.</p></li>
+<li><p><strong>centroid</strong> (<em>ndarray</em>) – Centroid coordinates (3,), in (z, y, x) order.</p></li>
+<li><p><strong>spacing</strong> (<em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>] or </em><em>None</em>) – Physical voxel spacing in (z, y, x) order, matching <code class="docutils literal notranslate"><span class="pre">coords</span></code>. If
+None (default), coordinates are treated as already isotropic (all
+axes weighted equally). Pass this whenever <code class="docutils literal notranslate"><span class="pre">coords</span></code> are raw voxel
+indices from an anisotropic volume, so distances reflect physical
+space rather than voxel counts.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -797,16 +885,21 @@ NeighborsCountAdjacent and NeighborsCountByDistance, plus Metadata columns.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="zedprofiler.featurization.neighbors.mahalanobis_distance_from_centroid">
-<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.neighbors.</span></span><span class="sig-name descname"><span class="pre">mahalanobis_distance_from_centroid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_cells_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/neighbors.html#mahalanobis_distance_from_centroid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.neighbors.mahalanobis_distance_from_centroid" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.neighbors.</span></span><span class="sig-name descname"><span class="pre">mahalanobis_distance_from_centroid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_cells_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/neighbors.html#mahalanobis_distance_from_centroid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.neighbors.mahalanobis_distance_from_centroid" title="Link to this definition"></a></dt>
 <dd><p>Calculate Mahalanobis distance from centroid for each cell.
 This accounts for the covariance structure (shape) of the organoid.</p>
 <p>For small sample sizes (&lt;50 cells), uses regularization or falls back to Euclidean.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>coords</strong> (<em>ndarray</em>) – Cell coordinates (n_cells, 3)</p></li>
-<li><p><strong>centroid</strong> (<em>ndarray</em>) – Centroid coordinates (3,)</p></li>
+<li><p><strong>coords</strong> (<em>ndarray</em>) – Cell coordinates (n_cells, 3), in (z, y, x) order.</p></li>
+<li><p><strong>centroid</strong> (<em>ndarray</em>) – Centroid coordinates (3,), in (z, y, x) order.</p></li>
 <li><p><strong>min_cells_threshold</strong> (<em>int</em>) – Minimum cells needed for reliable Mahalanobis (default: 50)</p></li>
+<li><p><strong>spacing</strong> (<em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>] or </em><em>None</em>) – Physical voxel spacing in (z, y, x) order, matching <code class="docutils literal notranslate"><span class="pre">coords</span></code>. If
+None (default), coordinates are treated as already isotropic. Pass
+this whenever <code class="docutils literal notranslate"><span class="pre">coords</span></code> are raw voxel indices from an anisotropic
+volume, so both the covariance structure and the distance reflect
+physical space rather than voxel counts.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -862,7 +955,7 @@ This accounts for the covariance structure (shape) of the organoid.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>coords</strong> (<em>pandas.DataFrame</em><em> or </em><em>dict</em>) – Cell coordinates with columns/keys: object_id, x, y, z</p></li>
+<li><p><strong>coords</strong> (<em>pandas.DataFrame</em><em> or </em><em>dict</em>) – Cell coordinates with columns/keys: object_id, z, y, x</p></li>
 <li><p><strong>classification_results</strong> (<em>dict</em>) – Results from classify_cells_into_shells</p></li>
 <li><p><strong>title</strong> (<em>str</em>) – Plot title</p></li>
 </ul>
@@ -904,6 +997,40 @@ InformationMeasureOfCorrelation1, InformationMeasureOfCorrelation2</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.featurization.texture.resample_to_isotropic">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.featurization.texture.</span></span><span class="sig-name descname"><span class="pre">resample_to_isotropic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">anisotropy_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/zedprofiler/featurization/texture.html#resample_to_isotropic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.featurization.texture.resample_to_isotropic" title="Link to this definition"></a></dt>
+<dd><p>Resample a (z, y, x) volume to isotropic voxel spacing along z.
+This function is written to be used for both the signal image
+and the mask image.
+The order parameter controls the interpolation
+for the resampling.
+For the signal image, we use cubic spline interpolation (order=3).
+For the mask image, we use nearest neighbor interpolation (order=0).</p>
+<p>mahotas.features.haralick’s <code class="docutils literal notranslate"><span class="pre">distance</span></code> parameter is a voxel count, not
+a physical length, and several of its 13 directions step along z. If z
+spacing is coarser than x/y spacing (the common microscopy case), those
+directions sample a larger physical distance than the in-plane
+directions, which biases the resulting Haralick features. Stretching the
+z axis by the anisotropy factor before computing texture makes “1 voxel”
+represent the same physical distance in every direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>numpy.ndarray</em>) – 3D array in (z, y, x) order.</p></li>
+<li><p><strong>anisotropy_factor</strong> (<em>float</em>) – Ratio of z-spacing to x/y-spacing (assumes isotropic x/y spacing).</p></li>
+<li><p><strong>order</strong> (<em>int</em><em>, </em><em>optional</em>) – Interpolation order for the resampling, by default 1 (linear).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The volume resampled so that voxels are isotropic in physical space.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1712,6 +1839,51 @@ Outputs are the feature DataFrame and metadata dictionary/Dfs.</p>
 <p>The package accepts:
 - Single-channel 3D arrays shaped (z, y, x)</p>
 <dl class="py class">
+<dt class="sig sig-object py" id="zedprofiler.contracts.AnisotropyFactorModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">zedprofiler.contracts.</span></span><span class="sig-name descname"><span class="pre">AnisotropyFactorModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">anisotropy_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_spacing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_spacing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/zedprofiler/contracts.html#AnisotropyFactorModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.contracts.AnisotropyFactorModel" title="Link to this definition"></a></dt>
+<dd><p>Pydantic model for validating the anisotropy factor.</p>
+<p>Feature modules (e.g. texture, neighbors) assume the z-spacing is never
+finer than the x/y-spacing, so <code class="docutils literal notranslate"><span class="pre">anisotropy_factor</span></code> (z_spacing /
+y_spacing) must be 1 or greater. <code class="docutils literal notranslate"><span class="pre">anisotropy_factor</span></code> collapses to a
+single z/y ratio, so it is only meaningful when the transverse (y, x)
+spacings are equal; <code class="docutils literal notranslate"><span class="pre">y_spacing</span></code>/<code class="docutils literal notranslate"><span class="pre">x_spacing</span></code> are optional and, when
+both are provided, are checked for equality.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.contracts.AnisotropyFactorModel.anisotropy_factor">
+<span class="sig-name descname"><span class="pre">anisotropy_factor</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#zedprofiler.contracts.AnisotropyFactorModel.anisotropy_factor" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.contracts.AnisotropyFactorModel.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#zedprofiler.contracts.AnisotropyFactorModel.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zedprofiler.contracts.AnisotropyFactorModel.validate_at_least_one">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">validate_at_least_one</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/zedprofiler/contracts.html#AnisotropyFactorModel.validate_at_least_one"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.contracts.AnisotropyFactorModel.validate_at_least_one" title="Link to this definition"></a></dt>
+<dd><p>Ensure the anisotropy factor is finite and 1 or greater.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zedprofiler.contracts.AnisotropyFactorModel.validate_transverse_spacing_equal">
+<span class="sig-name descname"><span class="pre">validate_transverse_spacing_equal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#zedprofiler.contracts.AnisotropyFactorModel" title="zedprofiler.contracts.AnisotropyFactorModel"><span class="pre">AnisotropyFactorModel</span></a></span></span><a class="reference internal" href="_modules/zedprofiler/contracts.html#AnisotropyFactorModel.validate_transverse_spacing_equal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.contracts.AnisotropyFactorModel.validate_transverse_spacing_equal" title="Link to this definition"></a></dt>
+<dd><p>Ensure y/x spacing are equal, when both are provided.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.contracts.AnisotropyFactorModel.x_spacing">
+<span class="sig-name descname"><span class="pre">x_spacing</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#zedprofiler.contracts.AnisotropyFactorModel.x_spacing" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zedprofiler.contracts.AnisotropyFactorModel.y_spacing">
+<span class="sig-name descname"><span class="pre">y_spacing</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#zedprofiler.contracts.AnisotropyFactorModel.y_spacing" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="zedprofiler.contracts.ColumnNameModel">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">zedprofiler.contracts.</span></span><span class="sig-name descname"><span class="pre">ColumnNameModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compartment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/zedprofiler/contracts.html#ColumnNameModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.contracts.ColumnNameModel" title="Link to this definition"></a></dt>
 <dd><p>Pydantic model for parsing and validating column names.</p>
@@ -1901,6 +2073,33 @@ Outputs are the feature DataFrame and metadata dictionary/Dfs.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>pa.SeriesSchema</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zedprofiler.contracts.validate_anisotropy_factor_with_pydantic">
+<span class="sig-prename descclassname"><span class="pre">zedprofiler.contracts.</span></span><span class="sig-name descname"><span class="pre">validate_anisotropy_factor_with_pydantic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">anisotropy_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_spacing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_spacing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#zedprofiler.contracts.AnisotropyFactorModel" title="zedprofiler.contracts.AnisotropyFactorModel"><span class="pre">AnisotropyFactorModel</span></a></span></span><a class="reference internal" href="_modules/zedprofiler/contracts.html#validate_anisotropy_factor_with_pydantic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zedprofiler.contracts.validate_anisotropy_factor_with_pydantic" title="Link to this definition"></a></dt>
+<dd><p>Validate the anisotropy factor using a Pydantic model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>anisotropy_factor</strong> (<em>float</em>) – Ratio of z-spacing to y-spacing to validate.</p></li>
+<li><p><strong>y_spacing</strong> (<em>float</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – Y (transverse) spacing. When provided along with <code class="docutils literal notranslate"><span class="pre">x_spacing</span></code>, they
+are checked for equality since <code class="docutils literal notranslate"><span class="pre">anisotropy_factor</span></code> only captures a
+single z/y ratio.</p></li>
+<li><p><strong>x_spacing</strong> (<em>float</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – X (transverse) spacing. See <code class="docutils literal notranslate"><span class="pre">y_spacing</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Validated anisotropy factor model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#zedprofiler.contracts.AnisotropyFactorModel" title="zedprofiler.contracts.AnisotropyFactorModel">AnisotropyFactorModel</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#zedprofiler.exceptions.ContractError" title="zedprofiler.exceptions.ContractError"><strong>ContractError</strong></a> – If the anisotropy factor is less than <code class="docutils literal notranslate"><span class="pre">MIN_ANISOTROPY_FACTOR</span></code>, is
+    not finite, or if <code class="docutils literal notranslate"><span class="pre">y_spacing</span></code> and <code class="docutils literal notranslate"><span class="pre">x_spacing</span></code> are unequal.</p>
 </dd>
 </dl>
 </dd></dl>

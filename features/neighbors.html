@@ -206,9 +206,11 @@
 <li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.featurization.colocalization.compute_colocalization"><code class="docutils literal notranslate"><span class="pre">compute_colocalization()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.featurization.colocalization.linear_costes_threshold_calculation"><code class="docutils literal notranslate"><span class="pre">linear_costes_threshold_calculation()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.featurization.colocalization.prepare_two_images_for_colocalization"><code class="docutils literal notranslate"><span class="pre">prepare_two_images_for_colocalization()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.featurization.granularity.anisotropic_ball"><code class="docutils literal notranslate"><span class="pre">anisotropic_ball()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.featurization.granularity.compute_granularity"><code class="docutils literal notranslate"><span class="pre">compute_granularity()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.featurization.intensity.compute_intensity"><code class="docutils literal notranslate"><span class="pre">compute_intensity()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.featurization.intensity.get_outline"><code class="docutils literal notranslate"><span class="pre">get_outline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.featurization.neighbors.adjacency_footprint"><code class="docutils literal notranslate"><span class="pre">adjacency_footprint()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.featurization.neighbors.calculate_centroid"><code class="docutils literal notranslate"><span class="pre">calculate_centroid()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.featurization.neighbors.classify_cells_into_shells"><code class="docutils literal notranslate"><span class="pre">classify_cells_into_shells()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.featurization.neighbors.compute_neighbors"><code class="docutils literal notranslate"><span class="pre">compute_neighbors()</span></code></a></li>
@@ -221,6 +223,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.featurization.neighbors.plot_distance_distributions"><code class="docutils literal notranslate"><span class="pre">plot_distance_distributions()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.featurization.neighbors.visualize_organoid_shells"><code class="docutils literal notranslate"><span class="pre">visualize_organoid_shells()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.featurization.texture.compute_texture"><code class="docutils literal notranslate"><span class="pre">compute_texture()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.featurization.texture.resample_to_isotropic"><code class="docutils literal notranslate"><span class="pre">resample_to_isotropic()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.featurization.texture.scale_image"><code class="docutils literal notranslate"><span class="pre">scale_image()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader"><code class="docutils literal notranslate"><span class="pre">SupportsImageSetLoader</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../api.html#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader.anisotropy_spacing"><code class="docutils literal notranslate"><span class="pre">SupportsImageSetLoader.anisotropy_spacing</span></code></a></li>
@@ -308,6 +311,15 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../api.html#module-zedprofiler.contracts">Contracts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.contracts.AnisotropyFactorModel"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api.html#zedprofiler.contracts.AnisotropyFactorModel.anisotropy_factor"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.anisotropy_factor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api.html#zedprofiler.contracts.AnisotropyFactorModel.model_config"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api.html#zedprofiler.contracts.AnisotropyFactorModel.validate_at_least_one"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.validate_at_least_one()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api.html#zedprofiler.contracts.AnisotropyFactorModel.validate_transverse_spacing_equal"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.validate_transverse_spacing_equal()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api.html#zedprofiler.contracts.AnisotropyFactorModel.x_spacing"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.x_spacing</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api.html#zedprofiler.contracts.AnisotropyFactorModel.y_spacing"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.y_spacing</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.contracts.ColumnNameModel"><code class="docutils literal notranslate"><span class="pre">ColumnNameModel</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../api.html#zedprofiler.contracts.ColumnNameModel.channel"><code class="docutils literal notranslate"><span class="pre">ColumnNameModel.channel</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api.html#zedprofiler.contracts.ColumnNameModel.column_name"><code class="docutils literal notranslate"><span class="pre">ColumnNameModel.column_name</span></code></a></li>
@@ -353,6 +365,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.contracts.create_image_array_schema"><code class="docutils literal notranslate"><span class="pre">create_image_array_schema()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.contracts.validate_anisotropy_factor_with_pydantic"><code class="docutils literal notranslate"><span class="pre">validate_anisotropy_factor_with_pydantic()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.contracts.validate_column_name_schema"><code class="docutils literal notranslate"><span class="pre">validate_column_name_schema()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.contracts.validate_column_name_with_pydantic"><code class="docutils literal notranslate"><span class="pre">validate_column_name_with_pydantic()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api.html#zedprofiler.contracts.validate_image_array_shape_contracts"><code class="docutils literal notranslate"><span class="pre">validate_image_array_shape_contracts()</span></code></a></li>

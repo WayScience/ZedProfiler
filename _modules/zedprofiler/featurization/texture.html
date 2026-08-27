@@ -203,9 +203,11 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.colocalization.compute_colocalization"><code class="docutils literal notranslate"><span class="pre">compute_colocalization()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.colocalization.linear_costes_threshold_calculation"><code class="docutils literal notranslate"><span class="pre">linear_costes_threshold_calculation()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.colocalization.prepare_two_images_for_colocalization"><code class="docutils literal notranslate"><span class="pre">prepare_two_images_for_colocalization()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.granularity.anisotropic_ball"><code class="docutils literal notranslate"><span class="pre">anisotropic_ball()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.granularity.compute_granularity"><code class="docutils literal notranslate"><span class="pre">compute_granularity()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.intensity.compute_intensity"><code class="docutils literal notranslate"><span class="pre">compute_intensity()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.intensity.get_outline"><code class="docutils literal notranslate"><span class="pre">get_outline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.neighbors.adjacency_footprint"><code class="docutils literal notranslate"><span class="pre">adjacency_footprint()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.neighbors.calculate_centroid"><code class="docutils literal notranslate"><span class="pre">calculate_centroid()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.neighbors.classify_cells_into_shells"><code class="docutils literal notranslate"><span class="pre">classify_cells_into_shells()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.neighbors.compute_neighbors"><code class="docutils literal notranslate"><span class="pre">compute_neighbors()</span></code></a></li>
@@ -218,6 +220,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.neighbors.plot_distance_distributions"><code class="docutils literal notranslate"><span class="pre">plot_distance_distributions()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.neighbors.visualize_organoid_shells"><code class="docutils literal notranslate"><span class="pre">visualize_organoid_shells()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.texture.compute_texture"><code class="docutils literal notranslate"><span class="pre">compute_texture()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.texture.resample_to_isotropic"><code class="docutils literal notranslate"><span class="pre">resample_to_isotropic()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.texture.scale_image"><code class="docutils literal notranslate"><span class="pre">scale_image()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader"><code class="docutils literal notranslate"><span class="pre">SupportsImageSetLoader</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.featurization.volumesizeshape.SupportsImageSetLoader.anisotropy_spacing"><code class="docutils literal notranslate"><span class="pre">SupportsImageSetLoader.anisotropy_spacing</span></code></a></li>
@@ -305,6 +308,15 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api.html#module-zedprofiler.contracts">Contracts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel.anisotropy_factor"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.anisotropy_factor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel.model_config"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel.validate_at_least_one"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.validate_at_least_one()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel.validate_transverse_spacing_equal"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.validate_transverse_spacing_equal()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel.x_spacing"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.x_spacing</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.AnisotropyFactorModel.y_spacing"><code class="docutils literal notranslate"><span class="pre">AnisotropyFactorModel.y_spacing</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.ColumnNameModel"><code class="docutils literal notranslate"><span class="pre">ColumnNameModel</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.ColumnNameModel.channel"><code class="docutils literal notranslate"><span class="pre">ColumnNameModel.channel</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.ColumnNameModel.column_name"><code class="docutils literal notranslate"><span class="pre">ColumnNameModel.column_name</span></code></a></li>
@@ -350,6 +362,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.create_image_array_schema"><code class="docutils literal notranslate"><span class="pre">create_image_array_schema()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.validate_anisotropy_factor_with_pydantic"><code class="docutils literal notranslate"><span class="pre">validate_anisotropy_factor_with_pydantic()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.validate_column_name_schema"><code class="docutils literal notranslate"><span class="pre">validate_column_name_schema()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.validate_column_name_with_pydantic"><code class="docutils literal notranslate"><span class="pre">validate_column_name_with_pydantic()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../api.html#zedprofiler.contracts.validate_image_array_shape_contracts"><code class="docutils literal notranslate"><span class="pre">validate_image_array_shape_contracts()</span></code></a></li>
@@ -417,10 +430,14 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">mahotas</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.ndimage</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">skimage</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">skimage.measure</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">zedprofiler.contracts</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_column_name_schema</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">zedprofiler.contracts</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">validate_anisotropy_factor_with_pydantic</span><span class="p">,</span>
+    <span class="n">validate_column_name_schema</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">zedprofiler.IO.feature_writing_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">format_morphology_feature_name</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">zedprofiler.IO.loading_classes</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObjectLoader</span>
 
@@ -462,6 +479,59 @@
         <span class="n">image</span><span class="p">,</span>
         <span class="n">in_range</span><span class="o">=</span><span class="s2">&quot;image&quot;</span><span class="p">,</span>
         <span class="n">out_range</span><span class="o">=</span><span class="n">out_range</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="resample_to_isotropic">
+<a class="viewcode-back" href="../../../api.html#zedprofiler.featurization.texture.resample_to_isotropic">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">resample_to_isotropic</span><span class="p">(</span>
+    <span class="n">image</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">anisotropy_factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resample a (z, y, x) volume to isotropic voxel spacing along z.</span>
+<span class="sd">    This function is written to be used for both the signal image</span>
+<span class="sd">    and the mask image.</span>
+<span class="sd">    The order parameter controls the interpolation</span>
+<span class="sd">    for the resampling.</span>
+<span class="sd">    For the signal image, we use cubic spline interpolation (order=3).</span>
+<span class="sd">    For the mask image, we use nearest neighbor interpolation (order=0).</span>
+
+<span class="sd">    mahotas.features.haralick&#39;s ``distance`` parameter is a voxel count, not</span>
+<span class="sd">    a physical length, and several of its 13 directions step along z. If z</span>
+<span class="sd">    spacing is coarser than x/y spacing (the common microscopy case), those</span>
+<span class="sd">    directions sample a larger physical distance than the in-plane</span>
+<span class="sd">    directions, which biases the resulting Haralick features. Stretching the</span>
+<span class="sd">    z axis by the anisotropy factor before computing texture makes &quot;1 voxel&quot;</span>
+<span class="sd">    represent the same physical distance in every direction.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : numpy.ndarray</span>
+<span class="sd">        3D array in (z, y, x) order.</span>
+<span class="sd">    anisotropy_factor : float</span>
+<span class="sd">        Ratio of z-spacing to x/y-spacing (assumes isotropic x/y spacing).</span>
+<span class="sd">    order : int, optional</span>
+<span class="sd">        Interpolation order for the resampling, by default 1 (linear).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        The volume resampled so that voxels are isotropic in physical space.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">anisotropy_factor</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">image</span>
+
+    <span class="n">input_dtype</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">dtype</span>
+    <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">input_dtype</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span>
+        <span class="n">image</span><span class="p">,</span>
+        <span class="n">zoom</span><span class="o">=</span><span class="p">(</span><span class="n">anisotropy_factor</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+        <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -512,6 +582,13 @@
         <span class="p">)</span>
     <span class="n">label_object</span> <span class="o">=</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">label_image</span>
     <span class="n">labels</span> <span class="o">=</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">object_ids</span>
+    <span class="c1"># Haralick&#39;s `distance` is a voxel count, not a physical length, so</span>
+    <span class="c1"># anisotropic z-spacing must be corrected for before computing texture</span>
+    <span class="c1"># (see resample_to_isotropic).</span>
+    <span class="n">z_spacing</span><span class="p">,</span> <span class="n">y_spacing</span><span class="p">,</span> <span class="n">_x_spacing</span> <span class="o">=</span> <span class="n">object_loader</span><span class="o">.</span><span class="n">image_set_loader</span><span class="o">.</span><span class="n">anisotropy_spacing</span>
+    <span class="n">anisotropy_factor</span> <span class="o">=</span> <span class="n">validate_anisotropy_factor_with_pydantic</span><span class="p">(</span>
+        <span class="n">z_spacing</span> <span class="o">/</span> <span class="n">y_spacing</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">anisotropy_factor</span>
     <span class="n">feature_names</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s2">&quot;AngularSecondMoment&quot;</span><span class="p">,</span>
         <span class="s2">&quot;Contrast&quot;</span><span class="p">,</span>
@@ -576,6 +653,39 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">object_mask</span><span class="p">):</span>
             <span class="k">continue</span>
         <span class="n">image_object</span><span class="p">[</span><span class="o">~</span><span class="n">object_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># order of operations here are as follows:</span>
+        <span class="c1"># 1. resample to isotropic voxel spacing</span>
+        <span class="c1"># a. this will interpolate the image, which will bleed over</span>
+        <span class="c1"># the object edges into the background, so we need to remask</span>
+        <span class="c1"># the image after resampling</span>
+        <span class="c1"># 2. resample the mask to isotropic</span>
+        <span class="c1"># voxel spacing (nearest neighbor)</span>
+        <span class="c1"># 3. remask the resampled image to ensure background is zero</span>
+        <span class="c1">#    this removes the bleed over from the interpolation</span>
+        <span class="c1"># of the object edges</span>
+        <span class="c1"># 4. mahotas can now use the resampled image and mask to</span>
+        <span class="c1"># compute the Haralick features for this object</span>
+
+        <span class="c1"># resample to isotropic after getting the object,</span>
+        <span class="c1"># this avoid the need to interpolate the mask</span>
+        <span class="c1"># image interpolation is done with</span>
+        <span class="c1"># cubic spline interpolation (order=3)</span>
+        <span class="c1"># mask interpolation is done with nearest neighbor (order=0)</span>
+        <span class="n">image_object</span> <span class="o">=</span> <span class="n">resample_to_isotropic</span><span class="p">(</span>
+            <span class="n">image_object</span><span class="p">,</span>
+            <span class="n">anisotropy_factor</span><span class="o">=</span><span class="n">anisotropy_factor</span><span class="p">,</span>
+            <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>  <span class="c1"># cubic spline interpolation for image</span>
+        <span class="p">)</span>
+        <span class="n">resampled_mask</span> <span class="o">=</span> <span class="n">resample_to_isotropic</span><span class="p">(</span>
+            <span class="n">object_mask</span><span class="p">,</span>
+            <span class="n">anisotropy_factor</span><span class="o">=</span><span class="n">anisotropy_factor</span><span class="p">,</span>
+            <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># nearest neighbor for mask</span>
+        <span class="p">)</span>
+        <span class="c1"># remask the resampled image to ensure background is zero</span>
+        <span class="c1"># this removes the bleed over from the interpolation of the object edges</span>
+        <span class="n">image_object</span><span class="p">[</span><span class="o">~</span><span class="n">resampled_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+
         <span class="n">image_object</span> <span class="o">=</span> <span class="n">scale_image</span><span class="p">(</span><span class="n">image_object</span><span class="p">,</span> <span class="n">num_gray_levels</span><span class="o">=</span><span class="n">grayscale</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
             <span class="c1"># calculates 13 Haralick features for each direction (13)</span>
