@@ -425,7 +425,7 @@
 <span class="sd">We want this module to be python api callable and scalable.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">mahotas</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
@@ -538,7 +538,7 @@
 
 <div class="viewcode-block" id="compute_texture">
 <a class="viewcode-back" href="../../../api.html#zedprofiler.featurization.texture.compute_texture">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">compute_texture</span><span class="p">(</span>  <span class="c1"># noqa: C901</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_texture</span><span class="p">(</span>  <span class="c1"># noqa: C901, PLR0915</span>
     <span class="n">object_loader</span><span class="p">:</span> <span class="n">ObjectLoader</span><span class="p">,</span>
     <span class="n">distance</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="n">grayscale</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span>
@@ -687,7 +687,7 @@
         <span class="n">image_object</span><span class="p">[</span><span class="o">~</span><span class="n">resampled_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="n">image_object</span> <span class="o">=</span> <span class="n">scale_image</span><span class="p">(</span><span class="n">image_object</span><span class="p">,</span> <span class="n">num_gray_levels</span><span class="o">=</span><span class="n">grayscale</span><span class="p">)</span>
-        <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
             <span class="c1"># calculates 13 Haralick features for each direction (13)</span>
             <span class="c1">#  and each object, and stores them in a 3D array</span>
             <span class="n">features</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">mahotas</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">haralick</span><span class="p">(</span>
@@ -695,6 +695,15 @@
                 <span class="n">f</span><span class="o">=</span><span class="n">image_object</span><span class="p">,</span>
                 <span class="n">distance</span><span class="o">=</span><span class="n">distance</span><span class="p">,</span>
                 <span class="n">compute_14th_feature</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c1"># mahotas cannot compute GLCM features when an object&#39;s extent</span>
+            <span class="c1"># is smaller than the distance parameter; the object&#39;s texture</span>
+            <span class="c1"># values remain NaN in this case.</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Object </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> is smaller than distance=</span><span class="si">{</span><span class="n">distance</span><span class="si">}</span><span class="s2">; &quot;</span>
+                <span class="s2">&quot;Texture features are undefined (NaN) for this object.&quot;</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
             <span class="p">)</span>
     <span class="c1"># iterate through the direction, feature, and object dimensions</span>
     <span class="c1"># of the features array to populate the output dictionary</span>
