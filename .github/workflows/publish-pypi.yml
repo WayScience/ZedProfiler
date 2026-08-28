@@ -30,3 +30,8 @@ jobs:
         run: uv build
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # The v0.1.4 wheel already uploaded successfully before the sdist
+          # was rejected for exceeding PyPI's size limit (see MANIFEST.in).
+          # Skip re-uploading files PyPI already has instead of erroring.
+          skip-existing: true
