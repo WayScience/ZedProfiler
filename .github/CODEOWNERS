@@ -1,0 +1,6 @@
+# CODEOWNERS for WayScience/ZedProfiler
+# Defines path ownership and automatic review-request routing for this repository.
+# See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for the entire repository
+* @MikeLippincott @gwaybio @d33bs
