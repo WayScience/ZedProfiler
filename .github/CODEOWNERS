@@ -1,5 +1,5 @@
 # CODEOWNERS for WayScience/ZedProfiler
-# Lists the GitHub users who have reviewed pull requests in this repository.
+# Defines path ownership and automatic review-request routing for this repository.
 # See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 
 # Default owners for the entire repository
