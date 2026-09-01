@@ -1,0 +1,6 @@
+# setuptools-scm defaults to including every git-tracked file in the sdist.
+# These directories are dev/branding/test assets, not needed to build or
+# install the package, and their binary contents (video, images, tif
+# fixtures) push the sdist past PyPI's 100 MB upload limit.
+prune logo
+prune tests/data
