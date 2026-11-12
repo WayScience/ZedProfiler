@@ -1,0 +1,7 @@
+# actionlint 1.7.12 does not yet recognize the ubuntu-26.04 or macos-26
+# GitHub-hosted runner labels. This is a validation-only exception so lint
+# keeps passing until actionlint ships a release that knows about them.
+self-hosted-runner:
+  labels:
+    - ubuntu-26.04
+    - macos-26
